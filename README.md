@@ -1,5 +1,6 @@
-[![CI Status](https://github.com/se-edu/addressbook-level3/workflows/Java%20CI/badge.svg)](https://github.com/se-edu/addressbook-level3/actions)
-
+[![CI Status](https://github.com/AY2526S2-CS2103T-T16-3/tp/workflows/Java%20CI/badge.svg)](https://github.com/AY2526S2-CS2103T-T16-3/tp/actions)
+![Java](https://img.shields.io/badge/Java-17-informational)
+[![Made with Jekyll](https://img.shields.io/badge/Jekyll-3.9-blue?logo=jekyll&logoColor=white)](https://jekyllrb.com "Go to Jekyll homepage")
 ![Ui](docs/images/Ui.png)
 
 * This is **a sample project for Software Engineering (SE) students**.<br>
