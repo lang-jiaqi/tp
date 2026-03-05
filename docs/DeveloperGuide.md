@@ -315,11 +315,29 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 *{More to be added}*
 
-### Non-Functional Requirements
+## Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
-2.  Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+### Compatibility
+- Should work on any mainstream OS (Windows, macOS, Linux) as long as Java `17` or above is installed.
+
+### Performance
+- Should be able to hold up to 1000 cat records without noticeable sluggishness in performance for typical usage.
+- Response time for adding, deleting, or editing a record should be under 1 second.
+- Search results should be displayed within 0.5 seconds of input.
+
+### Usability
+- A user with above average typing speed for regular English text should be able to accomplish most tasks faster using commands than using the mouse.
+- A new user should be able to complete their first cat record entry within 5 minutes.
+
+### Reliability
+- Data should be automatically saved after each operation without requiring manual saving.
+- Data should be fully recoverable after an unexpected application crash.
+
+### Maintainability
+- Adding new fields should not require significant code refactoring.
+
+### Portability
+- Should support exporting data in CSV or JSON format for backup or migration purposes.
 
 *{More to be added}*
 
