@@ -19,7 +19,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ### Lang Jiaqi
 
-<img src="images/lang.png" width="200px">
+<img src="images/lang-jiaqi.png" width="200px">
 
 [[github](https://github.com/lang-jiaqi?tab=repositories)]
 
