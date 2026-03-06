@@ -196,7 +196,7 @@ public class EditCommand extends Command {
             return Optional.ofNullable(address);
         }
 
-        public void setRemark(Remark remark){
+        public void setRemark(Remark remark) {
             this.remark = remark;
         }
 
@@ -249,7 +249,7 @@ public class EditCommand extends Command {
                     .add("phone", phone)
                     .add("email", email)
                     .add("address", address)
-                    .add("remark",remark)
+                    .add("remark", remark)
                     .add("tags", tags)
                     .toString();
         }
