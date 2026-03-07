@@ -320,14 +320,65 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
 (For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: Delete a person**
+**Use case: Add a cat**
 
 **MSS**
 
-1. User requests to list persons
-2. AddressBook shows a list of persons
-3. User requests to delete a specific person in the list
-4. AddressBook deletes the person
+1.  User requests to add a cat
+2.  CatPals adds the cat
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The provided name is blank.
+    * 1a1. CatPals shows an error message: "Name must not be blank!".
+      Use case ends.
+
+* 1b. The name length exceeds 30 characters.
+    * 1b1. CatPals shows an error message: "Name must be no longer than 30 chars!".
+      Use case ends.
+
+* 1c. The name contains symbols.
+    * 1c1. CatPals shows an error message: "The name must not contain symbols!".
+      Use case ends.
+
+* 1d. A cat with the same name already exists in CatPals.
+    * 1d1. CatPals shows an error message: "The cat name already exists!".
+      Use case ends.
+
+* 1e. The trait field is blank.
+    * 1e1. CatPals shows an error message: "Your Add command is incomplete. Please enter again.".
+      Use case ends.
+
+* 1f. The user inputs more than 3 traits.
+    * 1f1. CatPals shows an error message: "You added more than 3 traits to the cat. Please only add up to 3 traits.".
+      Use case ends.
+
+* 1g. The user inputs duplicate traits.
+    * 1g1. CatPals shows an error message: "You cannot add duplicate traits!".
+      Use case ends.
+
+* 1h. The location field is blank.
+    * 1h1. CatPals shows an error message: "Location must not be blank!".
+      Use case ends.
+
+* 1i. The location length exceeds 50 characters.
+    * 1i1. CatPals shows an error message: "Location must be no longer than 50 chars!".
+      Use case ends.
+
+* 1j. The user inputs duplicate locations.
+    * 1j1. CatPals shows an error message: "You cannot add duplicate locations!".
+      Use case ends.
+
+**Use case: Delete a cat**
+
+**MSS**
+
+1. User requests to list cats
+2. CatPals shows a list of cats
+3. User requests to delete a specific cat in the list
+4. CatPals deletes the cat
 
    Use case ends.
 
@@ -336,13 +387,145 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * 2a. The list is empty.
 
   Use case ends.
-* 3a. The given index is invalid.
 
-  * 3a1. AddressBook shows an error message.
+* 3a. The user requests to delete by name.
+    * 3a1. The name is blank.
+        * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+          Use case ends.
+    * 3a2. The name contains symbols.
+        * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
+          Use case ends.
+    * 3a3. The name does not match any cat in CatPals.
+        * 3a3a. CatPals shows an error message: "The input name does not match any cat in CatPal. Is there a typo?".
+          Use case ends.
 
-    Use case resumes at step 2.
+* 3b. The user requests to delete by number (index).
+    * 3b1. The number is blank.
+        * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+          Use case ends.
+    * 3b2. The number is out of range (invalid index).
+        * 3b2a. CatPals shows an error message: "The input number is out of range. Please try again.".
+          Use case resumes at step 2.
 
-*{More to be added}*
+**Use case: Filter cats**
+
+**MSS**
+
+1. User requests to list cats
+2. CatPals shows a list of cats
+3. User requests to find a specific cat by name
+4. CatPals shows all cat profiles that match the search
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The name is missing for the find command.
+
+    * 3a1. CatPals shows an error message: "Name is missing for this find command.".
+
+      Use case ends.
+
+* 3b. The name contains symbols.
+
+    * 3b1. CatPals shows an error message: "The name must not contain symbols".
+
+      Use case ends.
+
+* 3c. There is no profile with a matching name.
+
+    * 3c1. CatPals shows an error message: "There is no such profile in my records! Is there a typo?".
+
+      Use case ends.
+
+**Use case: Help command**
+
+**MSS**
+
+1. User requests to see the help guide
+2. CatPals shows a list of available commands and their formats
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The help command is typed incorrectly.
+
+    * 1a1. CatPals shows an error message: "No such command found!".
+
+      Use case ends.
+
+**Use case: Update cat status**
+
+**MSS**
+
+1. User requests to list cats
+2. CatPals shows a list of cats
+3. User requests to update the status (traits, location, or health) of a specific cat in the list
+4. CatPals updates the status of the cat
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The user requests to update by name.
+    * 3a1. The name is blank.
+        * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+          Use case ends.
+    * 3a2. The name contains symbols.
+        * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
+          Use case ends.
+    * 3a3. The name does not match any cat in CatPals.
+        * 3a3a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat’s name is spelled correctly.".
+          Use case ends.
+
+* 3b. The user requests to update by number (index).
+    * 3b1. The number is blank.
+        * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+          Use case ends.
+    * 3b2. The number is out of range (invalid index).
+        * 3b2a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat number is in the range!".
+          Use case resumes at step 2.
+
+* 3c. The updated status data is invalid.
+    * 3c1. The user inputs more than 3 traits.
+        * 3c1a. CatPals shows an error message: "You added more than 3 traits to the cat. Please only add up to 3 traits.".
+          Use case ends.
+    * 3c2. The user inputs duplicate traits or locations.
+        * 3c2a. CatPals shows an error message: "You cannot add duplicate [traits/locations]!".
+          Use case ends.
+
+**Use case: Undo last action**
+
+**MSS**
+
+1. User requests to undo the previous command
+2. CatPals reverts the last change made to the notebook
+3. CatPals shows a success message confirming the restoration
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. There is no previous command to undo.
+
+    * 1a1. CatPals shows an error message: "No more commands to undo!".
+
+      Use case ends.
+
+* 1b. The last command was a "Find" or "List" command (no state change).
+
+    * 1b1. CatPals shows an error message: "Last command did not change data; nothing to undo.".
+
+      Use case ends.
 
 ## Non-Functional Requirements
 
