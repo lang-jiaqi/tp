@@ -1,9 +1,10 @@
 [![CI Status](https://github.com/AY2526S2-CS2103T-T16-3/tp/workflows/Java%20CI/badge.svg)](https://github.com/AY2526S2-CS2103T-T16-3/tp/actions)
 ![Java](https://img.shields.io/badge/Java-17-informational)
 [![Made with Jekyll](https://img.shields.io/badge/Jekyll-3.9-blue?logo=jekyll&logoColor=white)](https://jekyllrb.com "Go to Jekyll homepage")
-![Ui](docs/images/Ui.png)
 
 ![banner](docs/images/CatPals_banner.png)
+
+![Ui](docs/images/Ui.png)
 
 ![GitHub Created At](https://img.shields.io/github/created-at/lang-jiaqi/tp?color=...)
 ![contributors](https://img.shields.io/badge/contributors-5-brightgreen)
@@ -16,6 +17,7 @@
 - [Install](#install)
 - [Usage](#usage)
 - [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
 - [License](#license)
 
 ## Background
@@ -32,15 +34,6 @@ Building on this base, our team adapted the original contact-management applicat
 It is intended for personal or small-team volunteer use, rather than as a veterinary medical system, shelter operations tool, or public registry.
 
 For the detailed documentation of this project, see the **[Cat Pals Website](https://ay2526s2-cs2103t-t16-3.github.io/tp/)**.
-
-
-## Security
-
-We propose a feature in our [user stories](https://github.com/orgs/AY2526S2-CS2103T-T16-3/projects/1)
-that only **authorized user** can have the access to CatPals. This can be achieved by using
-a pair of `UserID` and `UserKey`.
-<br>
-*[To be implemented]*
 
 ## Install
 1. To successfully use our application, it is best to ensure that you are using **Java 17**.
