@@ -1,6 +1,10 @@
-# 🐱CatPals🐱
+[![CI Status](https://github.com/AY2526S2-CS2103T-T16-3/tp/workflows/Java%20CI/badge.svg)](https://github.com/AY2526S2-CS2103T-T16-3/tp/actions)
+![Java](https://img.shields.io/badge/Java-17-informational)
+[![Made with Jekyll](https://img.shields.io/badge/Jekyll-3.9-blue?logo=jekyll&logoColor=white)](https://jekyllrb.com "Go to Jekyll homepage")
 
 ![banner](docs/images/CatPals_banner.png)
+
+![Ui](docs/images/Ui.png)
 
 ![GitHub Created At](https://img.shields.io/github/created-at/lang-jiaqi/tp?color=...)
 ![contributors](https://img.shields.io/badge/contributors-5-brightgreen)
@@ -13,6 +17,7 @@
 - [Install](#install)
 - [Usage](#usage)
 - [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
 - [License](#license)
 
 ## Background
@@ -28,6 +33,47 @@ Building on this base, our team adapted the original contact-management applicat
 <br>
 It is intended for personal or small-team volunteer use, rather than as a veterinary medical system, shelter operations tool, or public registry.
 
+For the detailed documentation of this project, see the **[Cat Pals Website](https://ay2526s2-cs2103t-t16-3.github.io/tp/)**.
+
+## Install
+1. To successfully use our application, it is best to ensure that you are using **Java 17**.
+Check your current Java version in terminal by running:
+```bash
+java -version
+```
+2. Download the latest version of catpals.jar from our repository.
+3. Put the jar file in an empty folder to avoid being affected by other files in the folder.
+4. Navigate to the folder in your terminal and run the following command:
+```bash
+java -jar catpals.jar
+```
+
+## Usage
+
+Type a command in the command box and press **Enter** to execute it.
+
+### Command Summary
+
+| Command | Format | Example |
+|---|---|---|
+| **Add** a contact | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [t/TAG]…` | `add n/John Doe p/98765432 e/johnd@example.com a/123 Street` |
+| **List** all contacts | `list` | `list` |
+| **Edit** a contact | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…` | `edit 1 p/91234567 e/new@email.com` |
+| **Find** contacts by name | `find KEYWORD [MORE_KEYWORDS]` | `find John` |
+| **Delete** a contact | `delete INDEX` | `delete 3` |
+| **Clear** all contacts | `clear` | `clear` |
+| **Help** | `help` | `help` |
+| **Exit** | `exit` | `exit` |
+
+### Notes
+- Parameters in `UPPER_CASE` are supplied by the user (e.g. `n/NAME` → `n/John Doe`).
+- Items in `[square brackets]` are optional.
+- Items followed by `…` can be used multiple times or omitted entirely.
+- Parameters can be provided in any order.g
+
+### Data Storage
+Contact data is saved automatically to `[JAR location]/data/addressbook.json` after every change — no manual saving required.
+
 ## Contributing
 This project was developed by a team of five as a brownfield Software Engineering project based on AddressBook Level 3 (AB3).
 - [Hongshan](https://github.com/ChenHongshan333)
@@ -36,6 +82,10 @@ This project was developed by a team of five as a brownfield Software Engineerin
 - [Lexi](https://github.com/LexiAKAtiff)
 - [Sai](https://github.com/chirlasai)
 
+## Acknowledgements
+This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org).
+
+AddressBook-Level3 project is a **part of the se-education.org** initiative. If you would like to contribute code to this project, see [se-education.org](https://se-education.org/#contributing-to-se-edu) for more info.
 
 ## License
 
