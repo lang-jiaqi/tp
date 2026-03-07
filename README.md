@@ -3,29 +3,6 @@
 [![Made with Jekyll](https://img.shields.io/badge/Jekyll-3.9-blue?logo=jekyll&logoColor=white)](https://jekyllrb.com "Go to Jekyll homepage")
 ![Ui](docs/images/Ui.png)
 
-* This is **a sample project for Software Engineering (SE) students**.<br>
-  Example usages:
-  * as a starting point of a course project (as opposed to writing everything from scratch)
-  * as a case study
-* The project simulates an ongoing software project for a desktop application (called _AddressBook_) used for managing contact details.
-  * It is **written in OOP fashion**. It provides a **reasonably well-written** code base **bigger** (around 6 KLoC) than what students usually write in beginner-level SE modules, without being overwhelmingly big.
-  * It comes with a **reasonable level of user and developer documentation**.
-* It is named `AddressBook Level 3` (`AB3` for short) because it was initially created as a part of a series of `AddressBook` projects (`Level 1`, `Level 2`, `Level 3` ...).
-* For the detailed documentation of this project, see the **[Address Book Product Website](https://se-education.org/addressbook-level3)**.
-* This project is a **part of the se-education.org** initiative. If you would like to contribute code to this project, see [se-education.org](https://se-education.org/#contributing-to-se-edu) for more info.
-
-## Acknowledgements
-* This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org).
-*****
-
-## Security
-
-We propose a feature in our [user stories](https://github.com/orgs/AY2526S2-CS2103T-T16-3/projects/1)
-that only **authorized user** can have the access to CatPals. This can be achieved by using
-a pair of `UserID` and `UserKey`.
-<br>
-*[To be implemented]*
-
 ## Background
 
 This project is a **brownfield** software engineering project developed by a team of five,
@@ -37,7 +14,57 @@ In the sample project, AB3 simulates an ongoing software project with an existin
 Building on this base, our team adapted the original contact-management application into a desktop app for NUS Cate Cafe CCA volunteers to manage information about stray cats on the NUS campus. The app is designed for users who prefer fast keyboard-based interaction, are comfortable with CLI-style workflows, and need an efficient way to identify cats and keep important status details up to date.
 <br>
 <br>
-It is intended for personal or small-team volunteer use, rather than as a veterinary medical system, shelter operations tool, or public registry.
+It is intended for personal or small-team volunteer use, rather than as a veterinary medical system, shelter operations tool, or public registry.  
+
+For the detailed documentation of this project, see the **[Cat Pals Website](https://ay2526s2-cs2103t-t16-3.github.io/tp/)**.
+
+
+## Security
+
+We propose a feature in our [user stories](https://github.com/orgs/AY2526S2-CS2103T-T16-3/projects/1)
+that only **authorized user** can have the access to CatPals. This can be achieved by using
+a pair of `UserID` and `UserKey`.
+<br>
+*[To be implemented]*
+
+## Install
+1. To successfully use our application, it is best to ensure that you are using **Java 17**.
+Check your current Java version in terminal by running:
+```bash
+java -version
+```
+2. Download the latest version of catpals.jar from our repository.
+3. Put the jar file in an empty folder to avoid being affected by other files in the folder.
+4. Navigate to the folder in your terminal and run the following command:
+```bash
+java -jar catpals.jar
+```
+
+## Usage
+
+Type a command in the command box and press **Enter** to execute it.
+
+### Command Summary
+
+| Command | Format | Example |
+|---|---|---|
+| **Add** a contact | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [t/TAG]…` | `add n/John Doe p/98765432 e/johnd@example.com a/123 Street` |
+| **List** all contacts | `list` | `list` |
+| **Edit** a contact | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…` | `edit 1 p/91234567 e/new@email.com` |
+| **Find** contacts by name | `find KEYWORD [MORE_KEYWORDS]` | `find John` |
+| **Delete** a contact | `delete INDEX` | `delete 3` |
+| **Clear** all contacts | `clear` | `clear` |
+| **Help** | `help` | `help` |
+| **Exit** | `exit` | `exit` |
+
+### Notes
+- Parameters in `UPPER_CASE` are supplied by the user (e.g. `n/NAME` → `n/John Doe`).
+- Items in `[square brackets]` are optional.
+- Items followed by `…` can be used multiple times or omitted entirely.
+- Parameters can be provided in any order.g
+
+### Data Storage
+Contact data is saved automatically to `[JAR location]/data/addressbook.json` after every change — no manual saving required.
 
 ## Contributing
 This project was developed by a team of five as a brownfield Software Engineering project based on AddressBook Level 3 (AB3).
@@ -47,6 +74,10 @@ This project was developed by a team of five as a brownfield Software Engineerin
 - [Lexi](https://github.com/LexiAKAtiff)
 - [Sai](https://github.com/chirlasai)
 
+## Acknowledgements
+This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org).
+
+AddressBook-Level3 project is a **part of the se-education.org** initiative. If you would like to contribute code to this project, see [se-education.org](https://se-education.org/#contributing-to-se-edu) for more info.
 
 ## License
 
