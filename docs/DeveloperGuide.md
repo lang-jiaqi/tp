@@ -3,7 +3,39 @@ layout: page
 title: Developer Guide
 ---
 * Table of Contents
-  {:toc}
+  <!-- TOC -->
+  * [**Acknowledgements**](#acknowledgements)
+  * [**Setting up, getting started**](#setting-up-getting-started)
+  * [**Design**](#design)
+    * [Architecture](#architecture)
+    * [UI component](#ui-component)
+    * [Logic component](#logic-component)
+    * [Model component](#model-component)
+    * [Storage component](#storage-component)
+    * [Common classes](#common-classes)
+  * [**Implementation**](#implementation)
+    * [\[Proposed\] Undo/redo feature](#proposed-undoredo-feature)
+      * [Proposed Implementation](#proposed-implementation)
+      * [Design considerations:](#design-considerations)
+    * [\[Proposed\] Data archiving](#proposed-data-archiving)
+  * [**Documentation, logging, testing, configuration, dev-ops**](#documentation-logging-testing-configuration-dev-ops)
+  * [**Appendix: Requirements**](#appendix-requirements)
+    * [Product scope](#product-scope)
+    * [User stories](#user-stories)
+    * [Use cases](#use-cases)
+  * [**Non-Functional Requirements**](#non-functional-requirements)
+    * [Compatibility](#compatibility)
+    * [Performance](#performance)
+    * [Usability](#usability)
+    * [Reliability](#reliability)
+    * [Maintainability](#maintainability)
+    * [Portability](#portability)
+    * [Glossary](#glossary)
+  * [**Appendix: Instructions for manual testing**](#appendix-instructions-for-manual-testing)
+    * [Launch and shutdown](#launch-and-shutdown)
+    * [Deleting a person](#deleting-a-person)
+    * [Saving data](#saving-data)
+<!-- TOC -->
 
 ---
 
@@ -281,46 +313,45 @@ Provides fast, CLI-optimized access to information of stray cats living in NUS c
 Priorities:
 MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-
-| Priority   | As a …                            | I want to …                                                                            | So that I can…                                                                         |
-|------------|-----------------------------------| --------------------------------------------------------------------------------------- |----------------------------------------------------------------------------------------|
-| `* * * * ` | regular feeder                    | search a cat by name/alias in the CLI                                                   | identify it quickly on the spot                                                        |
-| `* * * *`  | volunteer                         | update a cat’s key status fields (e.g., sterilised/ear-tipped, friendliness, usual area) | our data stays accurate for small-team coordination                                    |
-| `* * * *`  | volunteer                         | add cat entries                                                                         | keep the record of a newly-found stray cat                                             |
-| `* * * *`  | user                              | delete a cat profile                                                                    | remove duplicate entries or data errors to keep the database clean                     |
-| `* * *`    | frequent user                     | use short-hand flags (e.g., -n for name, -t for territory)                          | type faster                                                                            |
-| `* * *`    | volunteer                         | add and search by multiple identifiers (alias, coat color, landmark)                  | still find a cat when I don’t know its name                                            |
-| `* * *`    | volunteer updating a cat’s record | the CLI to prompt for confirmation before applying changes     | not accidentally overwrite important information                                       |
-| `* * *`    | volunteer                         | export the list of cats data stored in this app             | get a physical cooy of the list                                                        |
-| `* * *`    | volunteer                         | undo or revert my last update                                                            | be away from the risk where accidental edits permanently corrupt records               |
-| `* * *`    | volunteer                         | tag a cat with quick flags (e.g., “shy”, “approachable”, “avoid”)              | interact safely and consistently                                                       |
-| `* * *`    | user                              | see a quick profile of each cat on the main page | get an overview of all the cats without diving into details                            |
-| `* * *`    | new user                          | run a guided “first-time” CLI help command  | learn the workflow quickly                                                             |
-| `* * *`    | volunteer                         |  filter cats by certain attributes     | get the information of a group of cats that share some similarities                    |
-| `* * *`    | volunteer                         | attach an image of the cat                                                                   | see how the cat is looked like in the most directly way                                |
-| `* *`      | user                              | use a personal account and a corresponding key to login          | be away from the issue that unauthorized users will have access to this system         |
-| `* *`      | user                              | attach a link that keeps an archive of the cat (videos, more pirctures) for each cat recorded in this system             | more information of cats can be retrieved without taking up storage inside of this app |
-| `* *`      | commitee member                   | edit a cat’s profile to change their status to "adopted"                  | stop deploying resources for cats that are no longer on campus                         |
-| `* *`      | volunteer                         | mark a cat's entry grey to indicate that the cat has unfortunately died         | show respect and R.I.P to cats                                                         |
-| `* *`      | first time user                   | learn how to use this app with a tutorial provided when I first open it  | get myself familiar without exploring by myself                                        |
-| `*`        | volunteer                         | auto-identify a cat from a photo using on-device recognition                      | be free from typing names at all                                                       |
-| `*`        | volunteer                         | see a list of "Missing in Action" cat                                                                  | rescue them in time                                                                    |
-| `*`        | volunteer                         |use fuzzy search and typo tolerance        | find cats quickly even with imperfect spelling                                         |
-| `*`        | volunteer                         | “favorite” a set of cats    | pull up my usual watchlist with one command                                            |
-| `*`        | volunteer                         | create a “needs follow-up” note (non-medical)       | be in the situation where the next person knows what to check without guessing         |
-| `*`        | volunteer                         | maintain a “cat family tree / social graph” (friendships, rivalries, territories) | understand colony dynamics over time                                                   |
-| `*`        | volunteer                         | record structured medical observations (symptoms checklist + severity) | get to the concerns consistently (not a diagnosis)                                     |
-| `*`        | volunteer                         | log medication administration (drug name, dosage, time, handler)| track the treatment history and thus reduces mistakes                                  |
-| `*`        | volunteer                         | get “triage suggestions” based on symptoms   | know whether to monitor, isolate, or escalate (high-risk, needs careful disclaimers)   |
-| `*`        | volunteer                         | use arrow keys (or command history)  | quickly repeat a previous complex command without re-typing it entirely                |
-| `*`        | volunteer                         | keep track of where the cat is last seen (especially if out of its own territory)| track the cat in a more detailed way                                                   |
+| Priority   | As a …                            | I want to …                                                                                                  | So that I can…                                                                         |
+|------------|-----------------------------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| `* * * * ` | regular feeder                    | search a cat by name/alias in the CLI                                                                        | identify it quickly on the spot                                                        |
+| `* * * *`  | volunteer                         | update a cat’s key status fields (e.g., sterilised/ear-tipped, friendliness, usual area)                     | our data stays accurate for small-team coordination                                    |
+| `* * * *`  | volunteer                         | add cat entries                                                                                              | keep the record of a newly-found stray cat                                             |
+| `* * * *`  | user                              | delete a cat profile                                                                                         | remove duplicate entries or data errors to keep the database clean                     |
+| `* * *`    | frequent user                     | use short-hand flags (e.g., -n for name, -t for territory)                                                   | type faster                                                                            |
+| `* * *`    | volunteer                         | add and search by multiple identifiers (alias, coat color, landmark)                                         | still find a cat when I don’t know its name                                            |
+| `* * *`    | volunteer updating a cat’s record | prompted by the CLI for confirmation before applying changes                                                 | not accidentally overwrite important information                                       |
+| `* * *`    | volunteer                         | export the list of cats data stored in this app                                                              | get a physical copy of the list                                                        |
+| `* * *`    | volunteer                         | undo or revert my last update                                                                                | be away from the risk where accidental edits permanently corrupt records               |
+| `* * *`    | volunteer                         | tag a cat with quick flags (e.g., “shy”, “approachable”, “avoid”)                                            | interact safely and consistently                                                       |
+| `* * *`    | user                              | see a quick profile of each cat on the main page                                                             | get an overview of all the cats without diving into details                            |
+| `* * *`    | new user                          | run a guided “first-time” CLI help command                                                                   | learn the workflow quickly                                                             |
+| `* * *`    | volunteer                         | filter cats by certain attributes                                                                            | get the information of a group of cats that share some similarities                    |
+| `* * *`    | volunteer                         | attach an image of the cat                                                                                   | see how the cat is looked like in the most directly way                                |
+| `* *`      | user                              | use a personal account and a corresponding key to login                                                      | be away from the issue that unauthorized users will have access to this system         |
+| `* *`      | user                              | attach a link that keeps an archive of the cat (videos, more pirctures) for each cat recorded in this system | more information of cats can be retrieved without taking up storage inside of this app |
+| `* *`      | commitee member                   | edit a cat’s profile to change their status to "adopted"                                                     | stop deploying resources for cats that are no longer on campus                         |
+| `* *`      | volunteer                         | mark a cat's entry grey to indicate that the cat has unfortunately died                                      | show respect and R.I.P to cats                                                         |
+| `* *`      | first time user                   | learn how to use this app with a tutorial provided when I first open it                                      | get myself familiar without exploring by myself                                        |
+| `*`        | volunteer                         | auto-identify a cat from a photo using on-device recognition                                                 | be free from typing names at all                                                       |
+| `*`        | volunteer                         | see a list of "Missing in Action" cat                                                                        | rescue them in time                                                                    |
+| `*`        | volunteer                         | use fuzzy search and typo tolerance                                                                          | find cats quickly even with imperfect spelling                                         |
+| `*`        | volunteer                         | “favorite” a set of cats                                                                                     | pull up my usual watchlist with one command                                            |
+| `*`        | volunteer                         | create a “needs follow-up” note (non-medical)                                                                | be in the situation where the next person knows what to check without guessing         |
+| `*`        | volunteer                         | maintain a “cat family tree / social graph” (friendships, rivalries, territories)                            | understand colony dynamics over time                                                   |
+| `*`        | volunteer                         | record structured medical observations (symptoms checklist + severity)                                       | get to the concerns consistently (not a diagnosis)                                     |
+| `*`        | volunteer                         | log medication administration (drug name, dosage, time, handler)                                             | track the treatment history and thus reduces mistakes                                  |
+| `*`        | volunteer                         | get “triage suggestions” based on symptoms                                                                   | know whether to monitor, isolate, or escalate (high-risk, needs careful disclaimers)   |
+| `*`        | volunteer                         | use arrow keys (or command history)                                                                          | quickly repeat a previous complex command without re-typing it entirely                |
+| `*`        | volunteer                         | keep track of where the cat is last seen (especially if out of its own territory)                            | track the cat in a more detailed way                                                   |
 *{More to be added}*
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is the `CatPals` app and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: Add a cat**
+**Use case 1 (U1): Add a cat**
 
 **MSS**
 
@@ -371,7 +402,8 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
     * 1j1. CatPals shows an error message: "You cannot add duplicate locations!".
       Use case ends.
 
-**Use case: Delete a cat**
+
+**Use case 2 (U2): Delete a cat**
 
 **MSS**
 
@@ -407,14 +439,14 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
         * 3b2a. CatPals shows an error message: "The input number is out of range. Please try again.".
           Use case resumes at step 2.
 
-**Use case: Filter cats**
+
+**Use case 3 (U3): Search for a cat using its name**
 
 **MSS**
 
-1. User requests to list cats
-2. CatPals shows a list of cats
-3. User requests to find a specific cat by name
-4. CatPals shows all cat profiles that match the search
+1. User requests to find a specific cat by name
+2. CatPals shows all cat profiles that match the search
+3. User selects a cat profile from the search results to view its details
 
    Use case ends.
 
@@ -442,7 +474,8 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
       Use case ends.
 
-**Use case: Help command**
+
+**Use case 4 (U4): Help command**
 
 **MSS**
 
@@ -459,7 +492,8 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
       Use case ends.
 
-**Use case: Update cat status**
+
+**Use case 5 (U5): Update cat status**
 
 **MSS**
 
@@ -487,11 +521,11 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
         * 3a3a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat’s name is spelled correctly.".
           Use case ends.
 
-* 3b. The user requests to update by number (index).
-    * 3b1. The number is blank.
+* 3b. The user requests to update by index.
+    * 3b1. The index is blank.
         * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
           Use case ends.
-    * 3b2. The number is out of range (invalid index).
+    * 3b2. The index is out of range (invalid index).
         * 3b2a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat number is in the range!".
           Use case resumes at step 2.
 
@@ -503,7 +537,8 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
         * 3c2a. CatPals shows an error message: "You cannot add duplicate [traits/locations]!".
           Use case ends.
 
-**Use case: Undo last action**
+
+**Use case 6 (U6): Undo last action**
 
 **MSS**
 
@@ -526,6 +561,70 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
     * 1b1. CatPals shows an error message: "Last command did not change data; nothing to undo.".
 
       Use case ends.
+
+
+**Use case 7 (U7): Attach an image to a cat profile**
+
+**MSS**
+
+1. User requests to attach an image to a specific cat profile
+2. CatPals prompts the user to provide the file path of the image
+3. User provides the file path
+4. CatPals validates the file path and attaches the image to the cat profile
+5. CatPals shows a success message confirming the attachment
+   
+   Use case ends.
+
+**Extensions**
+* 4a. The provided file path is invalid or the file is not an image.
+    * 4a1. CatPals shows an error message: "Invalid file path or unsupported file type. Please provide a valid image file.".
+    * 4a2. CatPals prompts the user to provide the file path again.
+      Use case resumes at step 3.
+
+
+**Use case 8 (U8): Export cat data**
+
+**MSS**
+
+1. User requests to export cat data
+2. CatPals prompts the user to choose a file format (CSV or JSON)
+3. User selects a file format
+4. CatPals prompts the user to provide a file path for the export
+5. User provides the file path
+6. CatPals validates the file path and exports the cat data in the chosen format
+7. CatPals shows a success message confirming the export
+
+   Use case ends.
+
+**Extensions**
+* 6a. The provided file path is invalid or not writable.
+    * 6a1. CatPals shows an error message: "Invalid file path or insufficient permissions. Please provide a valid file path.".
+    * 6a2. CatPals prompts the user to provide the file path again.
+      Use case resumes at step 5.
+
+
+**Use case 9 (U9): Filter cats by traits**
+
+**MSS**
+
+1. User requests to filter cats by specific traits
+2. CatPals prompts the user to input the traits to filter by
+3. User provides the traits
+4. CatPals validates the input and displays a list of cats that match the specified traits.
+5. User selects a cat profile from the filtered list to view its details
+
+   Use case ends.
+
+**Extensions**
+* 4a. The user inputs invalid traits (e.g., more than 3 traits, duplicate traits).
+    * 4a1. CatPals shows an error message: "Invalid traits input. Please provide up to 3 unique traits.".
+    * 4a2. CatPals prompts the user to input the traits again.
+      Use case resumes at step 2.
+* 4b. No cats match the specified traits.
+    * 4b1. CatPals shows a message: "No cats found with the specified traits."
+      Use case ends.
+ 
+
 
 ## Non-Functional Requirements
 
