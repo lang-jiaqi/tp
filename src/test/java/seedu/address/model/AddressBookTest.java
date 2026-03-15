@@ -3,10 +3,10 @@ package seedu.address.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_LOCATION_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_FLUFFY;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalCats.ALICE;
+import static seedu.address.testutil.TypicalCats.BOWIE;
 import static seedu.address.testutil.TypicalCats.getTypicalAddressBook;
 
 import java.util.Arrays;
@@ -46,9 +46,9 @@ public class AddressBookTest {
     @Test
     public void resetData_withDuplicateCats_throwsDuplicateCatException() {
         // Two cats with the same identity fields
-        Cat editedAlice = new CatBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
+        Cat editedBowie = new CatBuilder(BOWIE).withLocation(VALID_LOCATION_BOB).withTraits(VALID_TRAIT_FLUFFY)
                 .build();
-        List<Cat> newCats = Arrays.asList(ALICE, editedAlice);
+        List<Cat> newCats = Arrays.asList(BOWIE, editedBowie);
         AddressBookStub newData = new AddressBookStub(newCats);
 
         assertThrows(DuplicateCatException.class, () -> addressBook.resetData(newData));
@@ -61,21 +61,21 @@ public class AddressBookTest {
 
     @Test
     public void hasCat_catNotInAddressBook_returnsFalse() {
-        assertFalse(addressBook.hasCat(ALICE));
+        assertFalse(addressBook.hasCat(BOWIE));
     }
 
     @Test
     public void hasCat_catInAddressBook_returnsTrue() {
-        addressBook.addCat(ALICE);
-        assertTrue(addressBook.hasCat(ALICE));
+        addressBook.addCat(BOWIE);
+        assertTrue(addressBook.hasCat(BOWIE));
     }
 
     @Test
     public void hasCat_catWithSameIdentityFieldsInAddressBook_returnsTrue() {
-        addressBook.addCat(ALICE);
-        Cat editedAlice = new CatBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
+        addressBook.addCat(BOWIE);
+        Cat editedBowie = new CatBuilder(BOWIE).withLocation(VALID_LOCATION_BOB).withTraits(VALID_TRAIT_FLUFFY)
                 .build();
-        assertTrue(addressBook.hasCat(editedAlice));
+        assertTrue(addressBook.hasCat(editedBowie));
     }
 
     @Test

@@ -17,8 +17,8 @@ public class TraitContainsKeywordsPredicate implements Predicate<Cat> {
     @Override
     public boolean test(Cat cat) {
         return keywords.stream()
-                .anyMatch(keyword -> cat.getTags().stream()
-                        .anyMatch(tag -> tag.tagName.equalsIgnoreCase(keyword)));
+                .anyMatch(keyword -> cat.getTraits().stream()
+                        .anyMatch(trait -> trait.traitName.equalsIgnoreCase(keyword)));
     }
 
     @Override

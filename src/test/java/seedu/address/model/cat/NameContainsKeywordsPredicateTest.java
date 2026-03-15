@@ -61,18 +61,10 @@ public class NameContainsKeywordsPredicateTest {
         predicate = new NameContainsKeywordsPredicate(Arrays.asList("Carol"));
         assertFalse(predicate.test(new CatBuilder().withName("Alice Bob").build()));
 
-        // Case-sensitive: mixed case should now fail
-        predicate = new NameContainsKeywordsPredicate(Arrays.asList("aLIce", "bOB"));
-        assertFalse(predicate.test(new CatBuilder().withName("Alice Bob").build()));
-
-        // Keywords match phone/email/address but not name
-        predicate = new NameContainsKeywordsPredicate(
-                Arrays.asList("12345", "alice@email.com", "Main", "Street"));
-        assertFalse(predicate.test(new CatBuilder().withName("Alice")
-                .withPhone("12345")
-                .withEmail("alice@email.com")
-                .withAddress("Main Street")
-                .build()));
+        // Keywords match location and trait, but does not match name
+        predicate = new NameContainsKeywordsPredicate(Arrays.asList("Utown", "Orange"));
+        assertFalse(predicate.test(new CatBuilder().withName("Alice").withLocation("Utown")
+                .withTraits("Orange").build()));
     }
 
     @Test

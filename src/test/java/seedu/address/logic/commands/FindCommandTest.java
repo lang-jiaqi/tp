@@ -3,6 +3,9 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.testutil.TypicalCats.BOWIE;
+import static seedu.address.testutil.TypicalCats.LUNA;
+import static seedu.address.testutil.TypicalCats.MOCHI;
 import static seedu.address.testutil.TypicalCats.getTypicalAddressBook;
 
 import java.util.Arrays;
@@ -60,17 +63,12 @@ public class FindCommandTest {
     }
 
     @Test
-    public void execute_multipleKeywords_multiplePersonsFound() {
-        String firstKeyword = model.getFilteredCatList().get(0).getName().fullName.split("\\s+")[0];
-        String secondKeyword = model.getFilteredCatList().get(1).getName().fullName.split("\\s+")[0];
-
-        NameContainsKeywordsPredicate predicate =
-                new NameContainsKeywordsPredicate(Arrays.asList(firstKeyword, secondKeyword));
+    public void execute_multipleKeywords_multipleCatsFound() {
+        NameContainsKeywordsPredicate predicate = preparePredicate("Bowie Mochi Luna");
         FindCommand command = new FindCommand(predicate);
-
         expectedModel.updateFilteredCatList(predicate);
-
         assertCommandSuccess(command, model, FindCommand.MESSAGE_SUCCESS, expectedModel);
+        assertEquals(Arrays.asList(BOWIE, MOCHI, LUNA), model.getFilteredCatList());
     }
 
     /**

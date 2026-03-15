@@ -1,14 +1,13 @@
 package seedu.address.testutil;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import seedu.address.model.cat.Address;
 import seedu.address.model.cat.Cat;
-import seedu.address.model.cat.Email;
+import seedu.address.model.cat.Health;
+import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
-import seedu.address.model.cat.Phone;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.cat.Trait;
 import seedu.address.model.util.SampleDataUtil;
 
 /**
@@ -16,26 +15,24 @@ import seedu.address.model.util.SampleDataUtil;
  */
 public class CatBuilder {
 
-    public static final String DEFAULT_NAME = "Amy Bee";
-    public static final String DEFAULT_PHONE = "85355255";
-    public static final String DEFAULT_EMAIL = "amy@gmail.com";
-    public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final String DEFAULT_NAME = "Bowie";
+    public static final String DEFAULT_TRAIT = "Orange";
+    public static final String DEFAULT_LOCATION = "Utown";
+    public static final String DEFAULT_HEALTH = "Vaccinated";
 
     private Name name;
-    private Phone phone;
-    private Email email;
-    private Address address;
-    private Set<Tag> tags;
+    private List<Trait> traits;
+    private Location location;
+    private Health health;
 
     /**
      * Creates a {@code CatBuilder} with the default details.
      */
     public CatBuilder() {
         name = new Name(DEFAULT_NAME);
-        phone = new Phone(DEFAULT_PHONE);
-        email = new Email(DEFAULT_EMAIL);
-        address = new Address(DEFAULT_ADDRESS);
-        tags = new HashSet<>();
+        traits = SampleDataUtil.getTraitList(DEFAULT_TRAIT);
+        location = new Location(DEFAULT_LOCATION);
+        health = new Health(DEFAULT_HEALTH);
     }
 
     /**
@@ -43,10 +40,9 @@ public class CatBuilder {
      */
     public CatBuilder(Cat catToCopy) {
         name = catToCopy.getName();
-        phone = catToCopy.getPhone();
-        email = catToCopy.getEmail();
-        address = catToCopy.getAddress();
-        tags = new HashSet<>(catToCopy.getTags());
+        traits = new ArrayList<>(catToCopy.getTraits());
+        location = catToCopy.getLocation();
+        health = catToCopy.getHealth();
     }
 
     /**
@@ -58,39 +54,31 @@ public class CatBuilder {
     }
 
     /**
-     * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code Cat} that we are building.
+     * Parses the {@code traits} into a {@code List<Trait>} and set it to the {@code Cat} that we are building.
      */
-    public CatBuilder withTags(String ... tags) {
-        this.tags = SampleDataUtil.getTagSet(tags);
+    public CatBuilder withTraits(String... traits) {
+        this.traits = SampleDataUtil.getTraitList(traits);
         return this;
     }
 
     /**
-     * Sets the {@code Address} of the {@code Cat} that we are building.
+     * Sets the {@code Location} of the {@code Cat} that we are building.
      */
-    public CatBuilder withAddress(String address) {
-        this.address = new Address(address);
+    public CatBuilder withLocation(String location) {
+        this.location = new Location(location);
         return this;
     }
 
     /**
-     * Sets the {@code Phone} of the {@code Cat} that we are building.
+     * Sets the {@code Health} of the {@code Cat} that we are building.
      */
-    public CatBuilder withPhone(String phone) {
-        this.phone = new Phone(phone);
-        return this;
-    }
-
-    /**
-     * Sets the {@code Email} of the {@code Cat} that we are building.
-     */
-    public CatBuilder withEmail(String email) {
-        this.email = new Email(email);
+    public CatBuilder withHealth(String health) {
+        this.health = new Health(health);
         return this;
     }
 
     public Cat build() {
-        return new Cat(name, phone, email, address, tags);
+        return new Cat(name, traits, location, health);
     }
 
 }

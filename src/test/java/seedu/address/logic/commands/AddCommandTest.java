@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalCats.ALICE;
+import static seedu.address.testutil.TypicalCats.BOWIE;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -54,6 +54,16 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_duplicateCatCaseInsensitive_throwsCommandException() {
+        Cat validCat = new CatBuilder().withName("Bowie").build();
+        Cat duplicateWithDifferentCase = new CatBuilder().withName("BOWIE").build();
+        AddCommand addCommand = new AddCommand(duplicateWithDifferentCase);
+        ModelStub modelStub = new ModelStubWithCat(validCat);
+
+        assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_CAT, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
     public void equals() {
         Cat alice = new CatBuilder().withName("Alice").build();
         Cat bob = new CatBuilder().withName("Bob").build();
@@ -73,14 +83,14 @@ public class AddCommandTest {
         // null -> returns false
         assertFalse(addAliceCommand.equals(null));
 
-        // different person -> returns false
+        // different cat -> returns false
         assertFalse(addAliceCommand.equals(addBobCommand));
     }
 
     @Test
     public void toStringMethod() {
-        AddCommand addCommand = new AddCommand(ALICE);
-        String expected = AddCommand.class.getCanonicalName() + "{toAdd=" + ALICE + "}";
+        AddCommand addCommand = new AddCommand(BOWIE);
+        String expected = AddCommand.class.getCanonicalName() + "{toAdd=" + BOWIE + "}";
         assertEquals(expected, addCommand.toString());
     }
 

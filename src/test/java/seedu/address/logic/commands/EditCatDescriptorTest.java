@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_LOCATION_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_FLUFFY;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,20 +38,12 @@ public class EditCatDescriptorTest {
         EditCatDescriptor editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withName(VALID_NAME_BOB).build();
         assertFalse(DESC_AMY.equals(editedAmy));
 
-        // different phone -> returns false
-        editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withPhone(VALID_PHONE_BOB).build();
+        // different location -> returns false
+        editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withLocation(VALID_LOCATION_BOB).build();
         assertFalse(DESC_AMY.equals(editedAmy));
 
-        // different email -> returns false
-        editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withEmail(VALID_EMAIL_BOB).build();
-        assertFalse(DESC_AMY.equals(editedAmy));
-
-        // different address -> returns false
-        editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withAddress(VALID_ADDRESS_BOB).build();
-        assertFalse(DESC_AMY.equals(editedAmy));
-
-        // different tags -> returns false
-        editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withTags(VALID_TAG_HUSBAND).build();
+        // different traits -> returns false
+        editedAmy = new EditCatDescriptorBuilder(DESC_AMY).withTraits(VALID_TRAIT_FLUFFY).build();
         assertFalse(DESC_AMY.equals(editedAmy));
     }
 
@@ -61,11 +51,10 @@ public class EditCatDescriptorTest {
     public void toStringMethod() {
         EditCatDescriptor editCatDescriptor = new EditCatDescriptor();
         String expected = EditCatDescriptor.class.getCanonicalName() + "{name="
-                + editCatDescriptor.getName().orElse(null) + ", phone="
-                + editCatDescriptor.getPhone().orElse(null) + ", email="
-                + editCatDescriptor.getEmail().orElse(null) + ", address="
-                + editCatDescriptor.getAddress().orElse(null) + ", tags="
-                + editCatDescriptor.getTags().orElse(null) + "}";
+                + editCatDescriptor.getName().orElse(null) + ", traits="
+                + editCatDescriptor.getTraits().orElse(null) + ", location="
+                + editCatDescriptor.getLocation().orElse(null) + ", health="
+                + editCatDescriptor.getHealth().orElse(null) + "}";
         assertEquals(expected, editCatDescriptor.toString());
     }
 }

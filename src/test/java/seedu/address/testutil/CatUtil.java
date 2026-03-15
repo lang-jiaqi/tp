@@ -1,17 +1,16 @@
 package seedu.address.testutil;
 
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_HEALTH;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TRAIT;
 
-import java.util.Set;
+import java.util.List;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
 import seedu.address.model.cat.Cat;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.cat.Trait;
 
 /**
  * A utility class for Cat.
@@ -31,12 +30,11 @@ public class CatUtil {
     public static String getCatDetails(Cat cat) {
         StringBuilder sb = new StringBuilder();
         sb.append(PREFIX_NAME + cat.getName().fullName + " ");
-        sb.append(PREFIX_PHONE + cat.getPhone().value + " ");
-        sb.append(PREFIX_EMAIL + cat.getEmail().value + " ");
-        sb.append(PREFIX_ADDRESS + cat.getAddress().value + " ");
-        cat.getTags().stream().forEach(
-            s -> sb.append(PREFIX_TAG + s.tagName + " ")
+        cat.getTraits().forEach(
+            s -> sb.append(PREFIX_TRAIT + s.traitName + " ")
         );
+        sb.append(PREFIX_LOCATION + cat.getLocation().value + " ");
+        sb.append(PREFIX_HEALTH + cat.getHealth().value + " ");
         return sb.toString();
     }
 
@@ -46,17 +44,16 @@ public class CatUtil {
     public static String getEditCatDescriptorDetails(EditCatDescriptor descriptor) {
         StringBuilder sb = new StringBuilder();
         descriptor.getName().ifPresent(name -> sb.append(PREFIX_NAME).append(name.fullName).append(" "));
-        descriptor.getPhone().ifPresent(phone -> sb.append(PREFIX_PHONE).append(phone.value).append(" "));
-        descriptor.getEmail().ifPresent(email -> sb.append(PREFIX_EMAIL).append(email.value).append(" "));
-        descriptor.getAddress().ifPresent(address -> sb.append(PREFIX_ADDRESS).append(address.value).append(" "));
-        if (descriptor.getTags().isPresent()) {
-            Set<Tag> tags = descriptor.getTags().get();
-            if (tags.isEmpty()) {
-                sb.append(PREFIX_TAG);
+        if (descriptor.getTraits().isPresent()) {
+            List<Trait> traits = descriptor.getTraits().get();
+            if (traits.isEmpty()) {
+                sb.append(PREFIX_TRAIT);
             } else {
-                tags.forEach(s -> sb.append(PREFIX_TAG).append(s.tagName).append(" "));
+                traits.forEach(s -> sb.append(PREFIX_TRAIT).append(s.traitName).append(" "));
             }
         }
+        descriptor.getLocation().ifPresent(location -> sb.append(PREFIX_LOCATION).append(location.value).append(" "));
+        descriptor.getHealth().ifPresent(health -> sb.append(PREFIX_HEALTH).append(health.value).append(" "));
         return sb.toString();
     }
 }

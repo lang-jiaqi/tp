@@ -3,10 +3,10 @@ package seedu.address.logic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
-import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.HEALTH_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.LOCATION_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.TRAIT_DESC_ORANGE;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalCats.AMY;
 
@@ -165,9 +165,9 @@ public class LogicManagerTest {
         logic = new LogicManager(model, storage);
 
         // Triggers the saveAddressBook method by executing an add command
-        String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
-                + EMAIL_DESC_AMY + ADDRESS_DESC_AMY;
-        Cat expectedCat = new CatBuilder(AMY).withTags().build();
+        String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + TRAIT_DESC_ORANGE + LOCATION_DESC_AMY
+                + HEALTH_DESC_AMY;
+        Cat expectedCat = new CatBuilder(AMY).build();
         ModelManager expectedModel = new ModelManager();
         expectedModel.addCat(expectedCat);
         assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);

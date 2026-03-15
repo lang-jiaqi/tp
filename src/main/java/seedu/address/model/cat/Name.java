@@ -12,6 +12,12 @@ public class Name {
     public static final String MESSAGE_CONSTRAINTS =
             "Names should only contain alphanumeric characters and spaces, and it should not be blank";
 
+    // Specific error messages for Add command validation
+    public static final String MESSAGE_BLANK = "Name must not be blank!";
+    public static final String MESSAGE_TOO_LONG = "Name must be no longer than 30 chars!";
+    public static final String MESSAGE_HAS_SYMBOLS = "The name must not contain symbols!";
+    public static final int MAX_LENGTH = 30;
+
     /*
      * The first character of the address must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.

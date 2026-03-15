@@ -28,7 +28,8 @@ public class AddCommandIntegrationTest {
 
     @Test
     public void execute_newCat_success() {
-        Cat validCat = new CatBuilder().build();
+        Cat validCat = new CatBuilder().withName("Whiskers").withTraits("Striped")
+                .withLocation("Kent Ridge").withHealth("Unknown").build();
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.addCat(validCat);
@@ -40,8 +41,8 @@ public class AddCommandIntegrationTest {
 
     @Test
     public void execute_duplicateCat_throwsCommandException() {
-        Cat personInList = model.getAddressBook().getCatList().get(0);
-        assertCommandFailure(new AddCommand(personInList), model,
+        Cat catInList = model.getAddressBook().getCatList().get(0);
+        assertCommandFailure(new AddCommand(catInList), model,
                 AddCommand.MESSAGE_DUPLICATE_CAT);
     }
 

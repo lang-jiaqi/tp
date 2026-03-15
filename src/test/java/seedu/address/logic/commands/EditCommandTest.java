@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_LOCATION_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_FLUFFY;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showCatAtIndex;
@@ -55,11 +55,10 @@ public class EditCommandTest {
         Cat lastCat = model.getFilteredCatList().get(indexLastCat.getZeroBased());
 
         CatBuilder catInList = new CatBuilder(lastCat);
-        Cat editedCat = catInList.withName(VALID_NAME_BOB).withPhone(VALID_PHONE_BOB)
-                .withTags(VALID_TAG_HUSBAND).build();
+        Cat editedCat = catInList.withName(VALID_NAME_BOB).withTraits(VALID_TRAIT_FLUFFY).build();
 
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withName(VALID_NAME_BOB)
-                .withPhone(VALID_PHONE_BOB).withTags(VALID_TAG_HUSBAND).build();
+                .withTraits(VALID_TRAIT_FLUFFY).build();
         EditCommand editCommand = new EditCommand(indexLastCat, descriptor);
 
         String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_CAT_SUCCESS, Messages.format(editedCat));
@@ -100,7 +99,7 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_duplicatePersonUnfilteredList_failure() {
+    public void execute_duplicateCatUnfilteredList_failure() {
         Cat firstCat = model.getFilteredCatList().get(INDEX_FIRST_PERSON.getZeroBased());
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder(firstCat).build();
         EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
@@ -109,10 +108,9 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_duplicatePersonFilteredList_failure() {
+    public void execute_duplicateCatFilteredList_failure() {
         showCatAtIndex(model, INDEX_FIRST_PERSON);
 
-        // edit person in filtered list into a duplicate in address book
         Cat catInList = model.getAddressBook().getCatList().get(INDEX_SECOND_PERSON.getZeroBased());
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON,
                 new EditCatDescriptorBuilder(catInList).build());
@@ -121,7 +119,7 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_invalidPersonIndexUnfilteredList_failure() {
+    public void execute_invalidCatIndexUnfilteredList_failure() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredCatList().size() + 1);
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withName(VALID_NAME_BOB).build();
         EditCommand editCommand = new EditCommand(outOfBoundIndex, descriptor);
@@ -129,21 +127,32 @@ public class EditCommandTest {
         assertCommandFailure(editCommand, model, Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX);
     }
 
-    /**
-     * Edit filtered list where index is larger than size of filtered list,
-     * but smaller than size of address book
-     */
     @Test
-    public void execute_invalidPersonIndexFilteredList_failure() {
+    public void execute_invalidCatIndexFilteredList_failure() {
         showCatAtIndex(model, INDEX_FIRST_PERSON);
         Index outOfBoundIndex = INDEX_SECOND_PERSON;
-        // ensures that outOfBoundIndex is still in bounds of address book list
         assertTrue(outOfBoundIndex.getZeroBased() < model.getAddressBook().getCatList().size());
 
         EditCommand editCommand = new EditCommand(outOfBoundIndex,
                 new EditCatDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
         assertCommandFailure(editCommand, model, Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_editLocation_success() {
+        Cat catToEdit = model.getFilteredCatList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Cat editedCat = new CatBuilder(catToEdit).withLocation(VALID_LOCATION_BOB).build();
+
+        EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withLocation(VALID_LOCATION_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_CAT_SUCCESS, Messages.format(editedCat));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setCat(catToEdit, editedCat);
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
     }
 
     @Test
@@ -180,5 +189,4 @@ public class EditCommandTest {
                 + editCatDescriptor + "}";
         assertEquals(expected, editCommand.toString());
     }
-
 }

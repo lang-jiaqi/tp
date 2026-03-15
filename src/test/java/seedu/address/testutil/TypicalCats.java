@@ -1,15 +1,13 @@
 package seedu.address.testutil;
 
-import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_HEALTH_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_HEALTH_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_LOCATION_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_LOCATION_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_AMY;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_FLUFFY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_ORANGE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,39 +21,35 @@ import seedu.address.model.cat.Cat;
  */
 public class TypicalCats {
 
-    public static final Cat ALICE = new CatBuilder().withName("Alice Pauline")
-            .withAddress("123, Jurong West Ave 6, #08-111").withEmail("alice@example.com")
-            .withPhone("94351253")
-            .withTags("friends").build();
-    public static final Cat BENSON = new CatBuilder().withName("Benson Meier")
-            .withAddress("311, Clementi Ave 2, #02-25")
-            .withEmail("johnd@example.com").withPhone("98765432")
-            .withTags("owesMoney", "friends").build();
-    public static final Cat CARL = new CatBuilder().withName("Carl Kurz").withPhone("95352563")
-            .withEmail("heinz@example.com").withAddress("wall street").build();
-    public static final Cat DANIEL = new CatBuilder().withName("Daniel Meier").withPhone("87652533")
-            .withEmail("cornelia@example.com").withAddress("10th street").withTags("friends").build();
-    public static final Cat ELLE = new CatBuilder().withName("Elle Meyer").withPhone("9482224")
-            .withEmail("werner@example.com").withAddress("michegan ave").build();
-    public static final Cat FIONA = new CatBuilder().withName("Fiona Kunz").withPhone("9482427")
-            .withEmail("lydia@example.com").withAddress("little tokyo").build();
-    public static final Cat GEORGE = new CatBuilder().withName("George Best").withPhone("9482442")
-            .withEmail("anna@example.com").withAddress("4th street").build();
+    public static final Cat BOWIE = new CatBuilder().withName("Bowie")
+            .withTraits("Orange").withLocation("Utown").withHealth("Vaccinated").build();
+    public static final Cat MOCHI = new CatBuilder().withName("Mochi")
+            .withTraits("White", "Fluffy").withLocation("Science").withHealth("Unknown").build();
+    public static final Cat LUNA = new CatBuilder().withName("Luna")
+            .withTraits("Black").withLocation("PGP").withHealth("Vaccinated").build();
+    public static final Cat KIKI = new CatBuilder().withName("Kiki")
+            .withTraits("Tabby", "short tail").withLocation("SDE").withHealth("Healthy").build();
+    public static final Cat PIPI = new CatBuilder().withName("Pipi")
+            .withTraits("Calico").withLocation("Biz").withHealth("Unknown").build();
+    public static final Cat NEMO = new CatBuilder().withName("Nemo")
+            .withTraits("Orange", "striped").withLocation("CLB").withHealth("Vaccinated").build();
+    public static final Cat SIMBA = new CatBuilder().withName("Simba")
+            .withTraits("Brown").withLocation("FASS").withHealth("Unknown").build();
 
     // Manually added
-    public static final Cat HOON = new CatBuilder().withName("Hoon Meier").withPhone("8482424")
-            .withEmail("stefan@example.com").withAddress("little india").build();
-    public static final Cat IDA = new CatBuilder().withName("Ida Mueller").withPhone("8482131")
-            .withEmail("hans@example.com").withAddress("chicago ave").build();
+    public static final Cat FELIX = new CatBuilder().withName("Felix")
+            .withTraits("Grey").withLocation("UTown").withHealth("Unknown").build();
+    public static final Cat OSCAR = new CatBuilder().withName("Oscar")
+            .withTraits("Black", "White").withLocation("Medicine").withHealth("Unknown").build();
 
     // Manually added - Cat's details found in {@code CommandTestUtil}
-    public static final Cat AMY = new CatBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
-            .withEmail(VALID_EMAIL_AMY).withAddress(VALID_ADDRESS_AMY).withTags(VALID_TAG_FRIEND).build();
-    public static final Cat BOB = new CatBuilder().withName(VALID_NAME_BOB).withPhone(VALID_PHONE_BOB)
-            .withEmail(VALID_EMAIL_BOB).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND)
-            .build();
+    public static final Cat AMY = new CatBuilder().withName(VALID_NAME_AMY)
+            .withTraits(VALID_TRAIT_ORANGE).withLocation(VALID_LOCATION_AMY).withHealth(VALID_HEALTH_AMY).build();
+    public static final Cat BOB = new CatBuilder().withName(VALID_NAME_BOB)
+            .withTraits(VALID_TRAIT_FLUFFY, VALID_TRAIT_ORANGE).withLocation(VALID_LOCATION_BOB)
+            .withHealth(VALID_HEALTH_BOB).build();
 
-    public static final String KEYWORD_MATCHING_MEIER = "Meier"; // A keyword that matches MEIER
+    public static final String KEYWORD_MATCHING_MOCHI = "Mochi"; // A keyword that matches MOCHI
 
     private TypicalCats() {} // prevents instantiation
 
@@ -71,6 +65,6 @@ public class TypicalCats {
     }
 
     public static List<Cat> getTypicalCats() {
-        return new ArrayList<>(Arrays.asList(ALICE, BENSON, CARL, DANIEL, ELLE, FIONA, GEORGE));
+        return new ArrayList<>(Arrays.asList(BOWIE, MOCHI, LUNA, KIKI, PIPI, NEMO, SIMBA));
     }
 }

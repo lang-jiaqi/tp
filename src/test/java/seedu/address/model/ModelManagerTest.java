@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_CATS;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalCats.ALICE;
-import static seedu.address.testutil.TypicalCats.BENSON;
+import static seedu.address.testutil.TypicalCats.BOWIE;
+import static seedu.address.testutil.TypicalCats.MOCHI;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,13 +79,13 @@ public class ModelManagerTest {
 
     @Test
     public void hasCat_catNotInAddressBook_returnsFalse() {
-        assertFalse(modelManager.hasCat(ALICE));
+        assertFalse(modelManager.hasCat(BOWIE));
     }
 
     @Test
     public void hasCat_catInAddressBook_returnsTrue() {
-        modelManager.addCat(ALICE);
-        assertTrue(modelManager.hasCat(ALICE));
+        modelManager.addCat(BOWIE);
+        assertTrue(modelManager.hasCat(BOWIE));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ModelManagerTest {
 
     @Test
     public void equals() {
-        AddressBook addressBook = new AddressBookBuilder().withCat(ALICE).withCat(BENSON).build();
+        AddressBook addressBook = new AddressBookBuilder().withCat(BOWIE).withCat(MOCHI).build();
         AddressBook differentAddressBook = new AddressBook();
         UserPrefs userPrefs = new UserPrefs();
 
@@ -117,7 +117,7 @@ public class ModelManagerTest {
         assertFalse(modelManager.equals(new ModelManager(differentAddressBook, userPrefs)));
 
         // different filteredList -> returns false
-        String[] keywords = ALICE.getName().fullName.split("\\s+");
+        String[] keywords = BOWIE.getName().fullName.split("\\s+");
         modelManager.updateFilteredCatList(new NameContainsKeywordsPredicate(Arrays.asList(keywords)));
         assertFalse(modelManager.equals(new ModelManager(addressBook, userPrefs)));
 

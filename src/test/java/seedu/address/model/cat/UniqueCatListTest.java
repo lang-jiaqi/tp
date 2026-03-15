@@ -3,11 +3,11 @@ package seedu.address.model.cat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
-import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_LOCATION_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_FLUFFY;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalCats.ALICE;
 import static seedu.address.testutil.TypicalCats.BOB;
+import static seedu.address.testutil.TypicalCats.BOWIE;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,21 +30,21 @@ public class UniqueCatListTest {
 
     @Test
     public void contains_catNotInList_returnsFalse() {
-        assertFalse(uniqueCatList.contains(ALICE));
+        assertFalse(uniqueCatList.contains(BOWIE));
     }
 
     @Test
     public void contains_catInList_returnsTrue() {
-        uniqueCatList.add(ALICE);
-        assertTrue(uniqueCatList.contains(ALICE));
+        uniqueCatList.add(BOWIE);
+        assertTrue(uniqueCatList.contains(BOWIE));
     }
 
     @Test
     public void contains_catWithSameIdentityFieldsInList_returnsTrue() {
-        uniqueCatList.add(ALICE);
-        Cat editedAlice = new CatBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
+        uniqueCatList.add(BOWIE);
+        Cat editedBowie = new CatBuilder(BOWIE).withLocation(VALID_LOCATION_BOB).withTraits(VALID_TRAIT_FLUFFY)
                 .build();
-        assertTrue(uniqueCatList.contains(editedAlice));
+        assertTrue(uniqueCatList.contains(editedBowie));
     }
 
     @Test
@@ -54,49 +54,49 @@ public class UniqueCatListTest {
 
     @Test
     public void add_duplicateCat_throwsDuplicateCatException() {
-        uniqueCatList.add(ALICE);
-        assertThrows(DuplicateCatException.class, () -> uniqueCatList.add(ALICE));
+        uniqueCatList.add(BOWIE);
+        assertThrows(DuplicateCatException.class, () -> uniqueCatList.add(BOWIE));
     }
 
     @Test
     public void setCat_nullTargetCat_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> uniqueCatList.setCat(null, ALICE));
+        assertThrows(NullPointerException.class, () -> uniqueCatList.setCat(null, BOWIE));
     }
 
     @Test
     public void setCat_nullEditedCat_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> uniqueCatList.setCat(ALICE, null));
+        assertThrows(NullPointerException.class, () -> uniqueCatList.setCat(BOWIE, null));
     }
 
     @Test
     public void setCat_targetCatNotInList_throwsCatNotFoundException() {
-        assertThrows(CatNotFoundException.class, () -> uniqueCatList.setCat(ALICE, ALICE));
+        assertThrows(CatNotFoundException.class, () -> uniqueCatList.setCat(BOWIE, BOWIE));
     }
 
     @Test
     public void setCat_editedCatIsSameCat_success() {
-        uniqueCatList.add(ALICE);
-        uniqueCatList.setCat(ALICE, ALICE);
+        uniqueCatList.add(BOWIE);
+        uniqueCatList.setCat(BOWIE, BOWIE);
         UniqueCatList expectedUniqueCatList = new UniqueCatList();
-        expectedUniqueCatList.add(ALICE);
+        expectedUniqueCatList.add(BOWIE);
         assertEquals(expectedUniqueCatList, uniqueCatList);
     }
 
     @Test
     public void setCat_editedCatHasSameIdentity_success() {
-        uniqueCatList.add(ALICE);
-        Cat editedAlice = new CatBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
+        uniqueCatList.add(BOWIE);
+        Cat editedBowie = new CatBuilder(BOWIE).withLocation(VALID_LOCATION_BOB).withTraits(VALID_TRAIT_FLUFFY)
                 .build();
-        uniqueCatList.setCat(ALICE, editedAlice);
+        uniqueCatList.setCat(BOWIE, editedBowie);
         UniqueCatList expectedUniqueCatList = new UniqueCatList();
-        expectedUniqueCatList.add(editedAlice);
+        expectedUniqueCatList.add(editedBowie);
         assertEquals(expectedUniqueCatList, uniqueCatList);
     }
 
     @Test
     public void setCat_editedCatHasDifferentIdentity_success() {
-        uniqueCatList.add(ALICE);
-        uniqueCatList.setCat(ALICE, BOB);
+        uniqueCatList.add(BOWIE);
+        uniqueCatList.setCat(BOWIE, BOB);
         UniqueCatList expectedUniqueCatList = new UniqueCatList();
         expectedUniqueCatList.add(BOB);
         assertEquals(expectedUniqueCatList, uniqueCatList);
@@ -104,9 +104,9 @@ public class UniqueCatListTest {
 
     @Test
     public void setCat_editedCatHasNonUniqueIdentity_throwsDuplicateCatException() {
-        uniqueCatList.add(ALICE);
+        uniqueCatList.add(BOWIE);
         uniqueCatList.add(BOB);
-        assertThrows(DuplicateCatException.class, () -> uniqueCatList.setCat(ALICE, BOB));
+        assertThrows(DuplicateCatException.class, () -> uniqueCatList.setCat(BOWIE, BOB));
     }
 
     @Test
@@ -116,13 +116,13 @@ public class UniqueCatListTest {
 
     @Test
     public void remove_catDoesNotExist_throwsCatNotFoundException() {
-        assertThrows(CatNotFoundException.class, () -> uniqueCatList.remove(ALICE));
+        assertThrows(CatNotFoundException.class, () -> uniqueCatList.remove(BOWIE));
     }
 
     @Test
     public void remove_existingCat_removesCat() {
-        uniqueCatList.add(ALICE);
-        uniqueCatList.remove(ALICE);
+        uniqueCatList.add(BOWIE);
+        uniqueCatList.remove(BOWIE);
         UniqueCatList expectedUniqueCatList = new UniqueCatList();
         assertEquals(expectedUniqueCatList, uniqueCatList);
     }
@@ -134,7 +134,7 @@ public class UniqueCatListTest {
 
     @Test
     public void setCats_uniqueCatList_replacesOwnListWithProvidedUniqueCatList() {
-        uniqueCatList.add(ALICE);
+        uniqueCatList.add(BOWIE);
         UniqueCatList expectedUniqueCatList = new UniqueCatList();
         expectedUniqueCatList.add(BOB);
         uniqueCatList.setCats(expectedUniqueCatList);
@@ -148,7 +148,7 @@ public class UniqueCatListTest {
 
     @Test
     public void setCats_list_replacesOwnListWithProvidedList() {
-        uniqueCatList.add(ALICE);
+        uniqueCatList.add(BOWIE);
         List<Cat> catList = Collections.singletonList(BOB);
         uniqueCatList.setCats(catList);
         UniqueCatList expectedUniqueCatList = new UniqueCatList();
@@ -158,7 +158,7 @@ public class UniqueCatListTest {
 
     @Test
     public void setCats_listWithDuplicateCats_throwsDuplicateCatException() {
-        List<Cat> listWithDuplicateCats = Arrays.asList(ALICE, ALICE);
+        List<Cat> listWithDuplicateCats = Arrays.asList(BOWIE, BOWIE);
         assertThrows(DuplicateCatException.class, () -> uniqueCatList.setCats(listWithDuplicateCats));
     }
 

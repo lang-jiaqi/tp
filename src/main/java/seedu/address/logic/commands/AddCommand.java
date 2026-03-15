@@ -1,11 +1,10 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_HEALTH;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TRAIT;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
@@ -14,29 +13,29 @@ import seedu.address.model.Model;
 import seedu.address.model.cat.Cat;
 
 /**
- * Adds a cat to the address book.
+ * Adds a cat profile to the cat notebook.
  */
 public class AddCommand extends Command {
 
     public static final String COMMAND_WORD = "add";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a cat to the address book. "
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a cat profile to the cat notebook. "
             + "Parameters: "
             + PREFIX_NAME + "NAME "
-            + PREFIX_PHONE + "PHONE "
-            + PREFIX_EMAIL + "EMAIL "
-            + PREFIX_ADDRESS + "ADDRESS "
-            + "[" + PREFIX_TAG + "TAG]...\n"
+            + PREFIX_TRAIT + "TRAIT "
+            + PREFIX_LOCATION + "LOCATION "
+            + "[" + PREFIX_HEALTH + "HEALTH_STATUS]\n"
             + "Example: " + COMMAND_WORD + " "
-            + PREFIX_NAME + "John Doe "
-            + PREFIX_PHONE + "98765432 "
-            + PREFIX_EMAIL + "johnd@example.com "
-            + PREFIX_ADDRESS + "311, Clementi Ave 2, #02-25 "
-            + PREFIX_TAG + "friends "
-            + PREFIX_TAG + "owesMoney";
+            + PREFIX_NAME + "Bowie "
+            + PREFIX_TRAIT + "Orange "
+            + PREFIX_LOCATION + "Utown "
+            + PREFIX_HEALTH + "Vaccinated";
 
-    public static final String MESSAGE_SUCCESS = "New cat added: %1$s";
-    public static final String MESSAGE_DUPLICATE_CAT = "This cat already exists in the address book";
+    public static final String MESSAGE_SUCCESS = "New cat profile successfully added: %1$s.";
+    public static final String MESSAGE_DUPLICATE_CAT = "The cat name already exists!";
+    public static final String MESSAGE_MISSING_ATTRIBUTES = "Missing attribute. Make sure to include key attributes";
+    public static final String MESSAGE_INVALID_PARAMETERS = "Invalid command parameters!";
+    public static final String MESSAGE_DUPLICATION_DETECTED = "Duplication detected!";
 
     private final Cat toAdd;
 

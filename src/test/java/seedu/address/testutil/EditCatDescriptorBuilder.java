@@ -1,16 +1,15 @@
 package seedu.address.testutil;
 
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
-import seedu.address.model.cat.Address;
 import seedu.address.model.cat.Cat;
-import seedu.address.model.cat.Email;
+import seedu.address.model.cat.Health;
+import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
-import seedu.address.model.cat.Phone;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.cat.Trait;
 
 /**
  * A utility class to help with building EditCatDescriptor objects.
@@ -33,10 +32,9 @@ public class EditCatDescriptorBuilder {
     public EditCatDescriptorBuilder(Cat cat) {
         descriptor = new EditCatDescriptor();
         descriptor.setName(cat.getName());
-        descriptor.setPhone(cat.getPhone());
-        descriptor.setEmail(cat.getEmail());
-        descriptor.setAddress(cat.getAddress());
-        descriptor.setTags(cat.getTags());
+        descriptor.setTraits(cat.getTraits());
+        descriptor.setLocation(cat.getLocation());
+        descriptor.setHealth(cat.getHealth());
     }
 
     /**
@@ -48,36 +46,28 @@ public class EditCatDescriptorBuilder {
     }
 
     /**
-     * Sets the {@code Phone} of the {@code EditCatDescriptor} that we are building.
-     */
-    public EditCatDescriptorBuilder withPhone(String phone) {
-        descriptor.setPhone(new Phone(phone));
-        return this;
-    }
-
-    /**
-     * Sets the {@code Email} of the {@code EditCatDescriptor} that we are building.
-     */
-    public EditCatDescriptorBuilder withEmail(String email) {
-        descriptor.setEmail(new Email(email));
-        return this;
-    }
-
-    /**
-     * Sets the {@code Address} of the {@code EditCatDescriptor} that we are building.
-     */
-    public EditCatDescriptorBuilder withAddress(String address) {
-        descriptor.setAddress(new Address(address));
-        return this;
-    }
-
-    /**
-     * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code EditCatDescriptor}
+     * Parses the {@code traits} into a {@code List<Trait>} and set it to the {@code EditCatDescriptor}
      * that we are building.
      */
-    public EditCatDescriptorBuilder withTags(String... tags) {
-        Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
-        descriptor.setTags(tagSet);
+    public EditCatDescriptorBuilder withTraits(String... traits) {
+        List<Trait> traitList = Arrays.stream(traits).map(Trait::new).collect(Collectors.toList());
+        descriptor.setTraits(traitList);
+        return this;
+    }
+
+    /**
+     * Sets the {@code Location} of the {@code EditCatDescriptor} that we are building.
+     */
+    public EditCatDescriptorBuilder withLocation(String location) {
+        descriptor.setLocation(new Location(location));
+        return this;
+    }
+
+    /**
+     * Sets the {@code Health} of the {@code EditCatDescriptor} that we are building.
+     */
+    public EditCatDescriptorBuilder withHealth(String health) {
+        descriptor.setHealth(new Health(health));
         return this;
     }
 

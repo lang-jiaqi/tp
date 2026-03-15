@@ -2,67 +2,74 @@ package seedu.address.model.cat;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
-import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Cat in the address book.
+ * Represents a Cat in the cat notebook.
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Cat {
 
-    // Identity fields
+    // Identity field
     private final Name name;
-    private final Phone phone;
-    private final Email email;
 
     // Data fields
-    private final Address address;
-    private final Set<Tag> tags = new HashSet<>();
+    private final List<Trait> traits = new ArrayList<>();
+    private final Location location;
+    private final Health health;
 
     /**
      * Every field must be present and not null.
+     *
+     * @param name     the cat's name.
+     * @param traits   the cat's traits.
+     * @param location the cat's location.
+     * @param health   the cat's health status.
      */
-    public Cat(Name name, Phone phone, Email email, Address address, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, tags);
+    public Cat(Name name, List<Trait> traits, Location location, Health health) {
+        requireAllNonNull(name, traits, location, health);
         this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.tags.addAll(tags);
+        this.traits.addAll(traits);
+        this.location = location;
+        this.health = health;
     }
 
+    /**
+     * Returns the cat's name.
+     */
     public Name getName() {
         return name;
     }
 
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
     /**
-     * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
+     * Returns an immutable trait list, which throws {@code UnsupportedOperationException}
      * if modification is attempted.
      */
-    public Set<Tag> getTags() {
-        return Collections.unmodifiableSet(tags);
+    public List<Trait> getTraits() {
+        return Collections.unmodifiableList(traits);
     }
 
     /**
-     * Returns true if both cats have the same name.
+     * Returns the cat's location.
+     */
+    public Location getLocation() {
+        return location;
+    }
+
+    /**
+     * Returns the cat's health status.
+     */
+    public Health getHealth() {
+        return health;
+    }
+
+    /**
+     * Returns true if both cats have the same name (case-insensitive).
      * This defines a weaker notion of equality between two cats.
      */
     public boolean isSameCat(Cat otherCat) {
@@ -71,7 +78,7 @@ public class Cat {
         }
 
         return otherCat != null
-                && otherCat.getName().equals(getName());
+                && otherCat.getName().fullName.equalsIgnoreCase(this.getName().fullName);
     }
 
     /**
@@ -91,26 +98,23 @@ public class Cat {
 
         Cat otherCat = (Cat) other;
         return name.equals(otherCat.name)
-                && phone.equals(otherCat.phone)
-                && email.equals(otherCat.email)
-                && address.equals(otherCat.address)
-                && tags.equals(otherCat.tags);
+                && traits.equals(otherCat.traits)
+                && location.equals(otherCat.location)
+                && health.equals(otherCat.health);
     }
 
     @Override
     public int hashCode() {
-        // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags);
+        return Objects.hash(name, traits, location, health);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("name", name)
-                .add("phone", phone)
-                .add("email", email)
-                .add("address", address)
-                .add("tags", tags)
+                .add("traits", traits)
+                .add("location", location)
+                .add("health", health)
                 .toString();
     }
 

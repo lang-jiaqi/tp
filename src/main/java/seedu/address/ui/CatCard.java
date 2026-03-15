@@ -1,13 +1,12 @@
 package seedu.address.ui;
 
-import java.util.Comparator;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import seedu.address.model.cat.Cat;
+import seedu.address.model.cat.Trait;
 
 /**
  * An UI component that displays information of a {@code Cat}.
@@ -33,27 +32,27 @@ public class CatCard extends UiPart<Region> {
     @FXML
     private Label id;
     @FXML
-    private Label phone;
+    private Label catLocation;
     @FXML
-    private Label address;
+    private Label health;
     @FXML
-    private Label email;
-    @FXML
-    private FlowPane tags;
+    private FlowPane traits;
 
     /**
      * Creates a {@code CatCard} with the given {@code Cat} and index to display.
+     *
+     * @param cat            the cat to display.
+     * @param displayedIndex the 1-based index shown in the list.
      */
     public CatCard(Cat cat, int displayedIndex) {
         super(FXML);
         this.cat = cat;
         id.setText(displayedIndex + ". ");
         name.setText(cat.getName().fullName);
-        phone.setText(cat.getPhone().value);
-        address.setText(cat.getAddress().value);
-        email.setText(cat.getEmail().value);
-        cat.getTags().stream()
-                .sorted(Comparator.comparing(tag -> tag.tagName))
-                .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
+        catLocation.setText(cat.getLocation().value);
+        health.setText(cat.getHealth().value);
+        for (Trait trait : cat.getTraits()) {
+            traits.getChildren().add(new Label(trait.traitName));
+        }
     }
 }
