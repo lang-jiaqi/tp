@@ -31,5 +31,23 @@ public class FindTraitCommand extends Command {
         return new CommandResult(
                 String.format(Messages.MESSAGE_CATS_LISTED_OVERVIEW, model.getFilteredCatList().size()));
     }
-}
 
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof FindTraitCommand)) {
+            return false;
+        }
+
+        FindTraitCommand otherFindTraitCommand = (FindTraitCommand) other;
+        return predicate.equals(otherFindTraitCommand.predicate);
+    }
+
+    @Override
+    public int hashCode() {
+        return predicate.hashCode();
+    }
+}
