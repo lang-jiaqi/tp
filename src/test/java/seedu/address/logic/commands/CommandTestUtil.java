@@ -50,8 +50,8 @@ public class CommandTestUtil {
     public static final String PREAMBLE_WHITESPACE = "\t  \r  \n";
     public static final String PREAMBLE_NON_EMPTY = "NonEmptyPreamble";
 
-    public static final EditCommand.EditCatDescriptor DESC_AMY;
-    public static final EditCommand.EditCatDescriptor DESC_BOB;
+    public static final UpdateCommand.EditCatDescriptor DESC_AMY;
+    public static final UpdateCommand.EditCatDescriptor DESC_BOB;
 
     static {
         DESC_AMY = new EditCatDescriptorBuilder().withName(VALID_NAME_AMY)

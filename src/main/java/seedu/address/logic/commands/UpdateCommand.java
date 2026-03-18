@@ -26,40 +26,58 @@ import seedu.address.model.cat.Name;
 import seedu.address.model.cat.Trait;
 
 /**
- * Edits the details of an existing cat in the cat notebook.
+ * Updates the details of an existing cat in the cat notebook.
  */
-public class EditCommand extends Command {
+public class UpdateCommand extends Command {
 
-    public static final String COMMAND_WORD = "edit";
+    public static final String COMMAND_WORD = "update";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the cat identified "
-            + "by the index number used in the displayed cat list. "
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Updates the details of the cat identified "
+            + "by its name or index number in the displayed cat list. "
             + "Existing values will be overwritten by the input values.\n"
-            + "Parameters: INDEX (must be a positive integer) "
-            + "[" + PREFIX_NAME + "NAME] "
+            + "Parameters: CAT_NAME [" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_TRAIT + "TRAIT]... "
             + "[" + PREFIX_LOCATION + "LOCATION] "
             + "[" + PREFIX_HEALTH + "HEALTH_STATUS]\n"
-            + "Example: " + COMMAND_WORD + " 1 "
-            + PREFIX_LOCATION + "Science "
-            + PREFIX_HEALTH + "Vaccinated";
+            + "   OR: INDEX (must be a positive integer) [" + PREFIX_NAME + "NAME] "
+            + "[" + PREFIX_TRAIT + "TRAIT]... "
+            + "[" + PREFIX_LOCATION + "LOCATION] "
+            + "[" + PREFIX_HEALTH + "HEALTH_STATUS]\n"
+            + "Example: " + COMMAND_WORD + " Snowy " + PREFIX_LOCATION + "utown\n"
+            + "Example: " + COMMAND_WORD + " 3 " + PREFIX_LOCATION + "PGPR";
 
-    public static final String MESSAGE_EDIT_CAT_SUCCESS = "Edited Cat: %1$s";
-    public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
+    public static final String MESSAGE_EDIT_CAT_SUCCESS = "Updated Cat: %1$s";
+    public static final String MESSAGE_NOT_EDITED = "At least one field to update must be provided.";
     public static final String MESSAGE_DUPLICATE_CAT = "This cat already exists in the cat notebook.";
+    public static final String MESSAGE_CAT_NOT_FOUND = "No cat with the name \"%1$s\" found in the list.";
 
     private final Index index;
+    private final Name targetName;
     private final EditCatDescriptor editCatDescriptor;
 
     /**
-     * @param index             of the cat in the filtered cat list to edit
-     * @param editCatDescriptor details to edit the cat with
+     * @param index             of the cat in the filtered cat list to update
+     * @param editCatDescriptor details to update the cat with
      */
-    public EditCommand(Index index, EditCatDescriptor editCatDescriptor) {
+    public UpdateCommand(Index index, EditCatDescriptor editCatDescriptor) {
         requireNonNull(index);
         requireNonNull(editCatDescriptor);
 
         this.index = index;
+        this.targetName = null;
+        this.editCatDescriptor = new EditCatDescriptor(editCatDescriptor);
+    }
+
+    /**
+     * @param targetName        name of the cat in the filtered cat list to update
+     * @param editCatDescriptor details to update the cat with
+     */
+    public UpdateCommand(Name targetName, EditCatDescriptor editCatDescriptor) {
+        requireNonNull(targetName);
+        requireNonNull(editCatDescriptor);
+
+        this.index = null;
+        this.targetName = targetName;
         this.editCatDescriptor = new EditCatDescriptor(editCatDescriptor);
     }
 
@@ -68,11 +86,20 @@ public class EditCommand extends Command {
         requireNonNull(model);
         List<Cat> lastShownList = model.getFilteredCatList();
 
-        if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX);
+        Cat catToEdit;
+        if (index != null) {
+            if (index.getZeroBased() >= lastShownList.size()) {
+                throw new CommandException(Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX);
+            }
+            catToEdit = lastShownList.get(index.getZeroBased());
+        } else {
+            catToEdit = lastShownList.stream()
+                    .filter(cat -> cat.getName().equals(targetName))
+                    .findFirst()
+                    .orElseThrow(() -> new CommandException(
+                            String.format(MESSAGE_CAT_NOT_FOUND, targetName)));
         }
 
-        Cat catToEdit = lastShownList.get(index.getZeroBased());
         Cat editedCat = createEditedCat(catToEdit, editCatDescriptor);
 
         if (!catToEdit.isSameCat(editedCat) && model.hasCat(editedCat)) {
@@ -106,25 +133,27 @@ public class EditCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof EditCommand)) {
+        if (!(other instanceof UpdateCommand)) {
             return false;
         }
 
-        EditCommand otherEditCommand = (EditCommand) other;
-        return index.equals(otherEditCommand.index)
-                && editCatDescriptor.equals(otherEditCommand.editCatDescriptor);
+        UpdateCommand otherUpdateCommand = (UpdateCommand) other;
+        return Objects.equals(index, otherUpdateCommand.index)
+                && Objects.equals(targetName, otherUpdateCommand.targetName)
+                && editCatDescriptor.equals(otherUpdateCommand.editCatDescriptor);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("index", index)
+                .add("targetName", targetName)
                 .add("editCatDescriptor", editCatDescriptor)
                 .toString();
     }
 
     /**
-     * Stores the details to edit the cat with. Each non-empty field value will replace the
+     * Stores the details to update the cat with. Each non-empty field value will replace the
      * corresponding field value of the cat.
      */
     public static class EditCatDescriptor {

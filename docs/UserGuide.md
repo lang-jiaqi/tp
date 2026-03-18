@@ -94,23 +94,22 @@ Shows a list of all persons in the address book.
 
 Format: `list`
 
-### Editing a person : `edit`
+### Update a cat entry: `Update`
 
-Edits an existing person in the address book.
+Update an existing cat entry in CatPals.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…`
+Format: `update INDEX [n/NAME] t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS] `
+        `update [NAME] [n/NAME] t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS] `
 
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …
+* Edits the cat at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
-* When editing tags, the existing tags of the person will be removed i.e adding of tags is not cumulative.
-* You can remove all the person’s tags by typing `t/` without
-  specifying any tags after it.
+* When updating tags, the existing tags of the cat will be removed i.e adding of tags is not cumulative.
 
 Examples:
 
-* `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-* `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+* `Update Snowy n/Sofie l/utown ` 
+* `Update 3 l/PGPR`
 
 ### Locating persons by name: `find`
 
@@ -209,14 +208,14 @@ _Details coming soon ..._
 ## Command summary
 
 
-| Command                           | Format                                                                         | Examples                                    |
-|-----------------------------------|--------------------------------------------------------------------------------|---------------------------------------------|
-| **Add** a cat                     | `n/[NAME] t/[TRAIT]... l/[LOCATION] {h/[HEALTH_STATUS]}`                       | `add n/Bowie t/Orange l/Utown h/Vaccinated` |
-| **Delete** a cat by name or index | `delete [CAT_NAME]`or `delete [CAT_NUMBER]`                                    | `delete Snowy` or `delete 3`                |
-| **Edit** a cat by name or index   | `Update [CAT_NAME] [UPDATED_STATUS]` or `Update [CAT_NUMBER] [UPDATED_STATUS]` | `Update Snowy l/utown` or `Update 3 l/PGPR` |
-| **Find** a cat name               | `find [CAT_NAME]`                                                              | `find Snowy`                                |
-| **Findtrait** a cat by trait(s)   | `find [CAT_TRAIT]...`                                                          | `findtrait white small`                     |
-| **Clear** all cats                | `clear`                                                                        | `clear`                                     |
-| **List** all cats                 | `list`                                                                         | `list`                                      |
-| **Help**                          | `help`                                                                         | `help`                                      |
-| **Exit**                          | `exit`                                                                         | `exit`                                      |
+| Command                           | Format                                                                         | Examples                                            |
+|-----------------------------------|--------------------------------------------------------------------------------|-----------------------------------------------------|
+| **Add** a cat                     | `n/[NAME] t/[TRAIT]... l/[LOCATION] {h/[HEALTH_STATUS]}`                       | `add n/Bowie t/Orange l/Utown h/Vaccinated`         |
+| **Delete** a cat by name or index | `delete [CAT_NAME]`or `delete [CAT_NUMBER]`                                    | `delete Snowy` or `delete 3`                        |
+| **Update** a cat by name or index | `Update [CAT_NAME] [UPDATED_STATUS]` or `Update [CAT_NUMBER] [UPDATED_STATUS]` | `Update Snowy n/Sofie l/utown` or `Update 3 l/PGPR` |
+| **Find** a cat name               | `find [CAT_NAME]`                                                              | `find Snowy`                                        |
+| **Findtrait** a cat by trait(s)   | `find [CAT_TRAIT]...`                                                          | `findtrait white small`                             |
+| **Clear** all cats                | `clear`                                                                        | `clear`                                             |
+| **List** all cats                 | `list`                                                                         | `list`                                              |
+| **Help**                          | `help`                                                                         | `help`                                              |
+| **Exit**                          | `exit`                                                                         | `exit`                                              |

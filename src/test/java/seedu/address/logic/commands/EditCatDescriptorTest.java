@@ -11,7 +11,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_TRAIT_FLUFFY;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
+import seedu.address.logic.commands.UpdateCommand.EditCatDescriptor;
 import seedu.address.testutil.EditCatDescriptorBuilder;
 
 public class EditCatDescriptorTest {

@@ -13,32 +13,34 @@ import java.util.List;
 import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
+import seedu.address.logic.commands.UpdateCommand;
+import seedu.address.logic.commands.UpdateCommand.EditCatDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.cat.Name;
 import seedu.address.model.cat.Trait;
 
 /**
- * Parses input arguments and creates a new EditCommand object
+ * Parses input arguments and creates a new UpdateCommand object.
+ * Supports identifying the target cat by index number or by name.
  */
-public class EditCommandParser implements Parser<EditCommand> {
+public class UpdateCommandParser implements Parser<UpdateCommand> {
 
     /**
-     * Parses the given {@code String} of arguments in the context of the EditCommand
-     * and returns an EditCommand object for execution.
+     * Parses the given {@code String} of arguments in the context of the UpdateCommand
+     * and returns an UpdateCommand object for execution.
+     * The preamble is treated as an index if it is a positive integer, otherwise as a cat name.
+     *
      * @throws ParseException if the user input does not conform the expected format
      */
-    public EditCommand parse(String args) throws ParseException {
+    public UpdateCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_TRAIT, PREFIX_LOCATION, PREFIX_HEALTH);
 
-        Index index;
+        String preamble = argMultimap.getPreamble().trim();
 
-        try {
-            index = ParserUtil.parseIndex(argMultimap.getPreamble());
-        } catch (ParseException pe) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE), pe);
+        if (preamble.isEmpty()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE));
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_LOCATION, PREFIX_HEALTH);
@@ -57,10 +59,23 @@ public class EditCommandParser implements Parser<EditCommand> {
         parseTraitsForEdit(argMultimap.getAllValues(PREFIX_TRAIT)).ifPresent(editCatDescriptor::setTraits);
 
         if (!editCatDescriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
+            throw new ParseException(UpdateCommand.MESSAGE_NOT_EDITED);
         }
 
-        return new EditCommand(index, editCatDescriptor);
+        // Try to parse preamble as a 1-based index; fall back to name if not a number.
+        try {
+            Index index = ParserUtil.parseIndex(preamble);
+            return new UpdateCommand(index, editCatDescriptor);
+        } catch (ParseException e) {
+            // Not a valid index — treat as cat name
+        }
+
+        try {
+            Name name = ParserUtil.parseName(preamble);
+            return new UpdateCommand(name, editCatDescriptor);
+        } catch (ParseException e) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), e);
+        }
     }
 
     /**
