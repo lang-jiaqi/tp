@@ -16,8 +16,8 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.UpdateCommand;
 import seedu.address.logic.commands.UpdateCommand.EditCatDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.cat.Trait;
 import seedu.address.model.cat.Name;
+import seedu.address.model.cat.Trait;
 
 /**
  * Parses input arguments and creates a new UpdateCommand object
@@ -51,19 +51,22 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
             try {
                 index = ParserUtil.parseIndex(preamble);
             } catch (ParseException pe) {
-                throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), pe);
+                throw new ParseException(
+                        String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), pe);
             }
         } else {
             try {
                 index = ParserUtil.parseIndex(preamble);
             } catch (ParseException pe) {
                 if (preamble.matches("-?\\d+")) {
-                    throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), pe);
+                    throw new ParseException(
+                            String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), pe);
                 }
                 try {
                     targetName = ParserUtil.parseName(preamble);
                 } catch (ParseException ne) {
-                    throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), ne);
+                    throw new ParseException(
+                            String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE), ne);
                 }
             }
         }
