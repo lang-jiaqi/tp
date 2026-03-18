@@ -53,22 +53,23 @@ Type a command in the command box and press **Enter** to execute it.
 
 ### Command Summary
 
-| Command                   | Format | Example |
-|---------------------------|---|---|
-| **Add** a cat             | `add n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]` | `add n/Bowie t/Orange l/Utown h/Vaccinated` |
-| **List** all contacts     | `list` | `list` |
-| **Update** a contact      | `update INDEX n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]` | `update 1 n/Brown ` or `update Brown n/Bigguy t/Purple` |
-| **Find** contacts by name | `find KEYWORD [MORE_KEYWORDS]` | `find John` |
-| **Delete** a contact      | `delete INDEX` | `delete 3` |
-| **Clear** all contacts    | `clear` | `clear` |
-| **Help**                  | `help` | `help` |
-| **Exit**                  | `exit` | `exit` |
+| Command                    | Format                                                                  | Example                                             |
+|----------------------------|-------------------------------------------------------------------------|-----------------------------------------------------|
+| **Add** a cat              | `add n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]`      | `add n/Bowie t/Orange l/Utown h/Vaccinated`         |
+| **List** all cat profiles  | `list`                                                                  | `list`                                              |
+| **Update** a cat profile   | `update INDEX n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]` | `update 1 n/Brown ` or `update Brown n/Bigguy t/Purple` |
+| **Find** cats by name      | `find CAT_NAME`                                                         | `find Snowy`                                        |
+| Find cats by traits        | `findtrait TRAIT [MORE_TRAITS]…`                                        | `findtrait white` or `findtrait white small`        |
+| **Delete** a cat profile   | `delete INDEX`                                                          | `delete 3`                                          |
+| **Clear** all cat profiles | `clear`                                                                 | `clear`                                             |
+| **Help**                   | `help`                                                                  | `help`                                              |
+| **Exit**                   | `exit`                                                                  | `exit`                                              |
 
 ### Notes
 - Parameters in `UPPER_CASE` are supplied by the user (e.g. `n/NAME` → `n/Snowy`).
-- Items in `{curly braces}` are optional.
+- Items in `[square brackets]` are optional.
 - Items followed by `…` can be used multiple times or omitted entirely.
-  <br>e.g. `[t/TAG]…` can be used as `t/white`, `t/white t/small` etc.
+  <br>e.g. `[t/TRAIT]…` can be used as `t/white`, `t/white t/small` etc.
 - Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will be ignored.
   <br>e.g. if the command specifies `help 123`, it will be interpreted as `help`.
 
