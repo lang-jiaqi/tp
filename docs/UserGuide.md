@@ -2,7 +2,7 @@
 layout: page
 title: User Guide
 ---
-![banner](../docs/images/CatPals_banner.png)
+![banner](images/CatPals_banner.png)
 This project is a **brownfield** software engineering project developed by a team of five,
 based on [AddressBook Level 3 (AB3)](https://se-education.org/addressbook-level3/),
 a sample desktop application provided by CS2103T course team, AY2526 Sem2.
