@@ -55,10 +55,11 @@ Type a command in the command box and press **Enter** to execute it.
 
 | Command                           | Format                                                                      | Examples                                    |
 |-----------------------------------|-----------------------------------------------------------------------------|---------------------------------------------|
-| **Add** a cat                     | `n/[NAME] t/[TRAIT]… l/[LOCATION] {h/[HEALTH_STATUS]}`                       | `add n/Bowie t/Orange l/Utown h/Vaccinated` |
+| **Add** a cat                     | `n/[NAME] t/[TRAIT]… l/[LOCATION] {h/[HEALTH_STATUS]}`                      | `add n/Bowie t/Orange l/Utown h/Vaccinated` |
 | **Delete** a cat by name or index | `delete [CAT_NAME]`or `delete [CAT_NUMBER]`                                 | `delete Snowy` or `delete 3`                |
 | **Edit** a cat by name or index   | `Update [CAT_NAME] [UPDATED_STATUS]` or `Update [CAT_NUMBER] [UPDATED_STATUS]` | `Update Snowy l/utown` or `Update 3 l/PGPR` |
 | **Find** a cat name               | `find KEYWORD`                                                              | `find Snowy`                                |
+| **Findtrait** a cat by trait(s)   | `find [CAT_TRAIT]...`                                                       | `findtrait white small`                     |
 | **Clear** all cats                | `clear`                                                                     | `clear`                                     |
 | **List** all cats                 | `list`                                                                      | `list`                                      |
 | **Help**                          | `help`                                                                      | `help`                                      |
