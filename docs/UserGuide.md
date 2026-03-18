@@ -37,10 +37,12 @@ For the detailed documentation of this project, see the **[Cat Pals Website](htt
 5. Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
    Some example commands you can try:
 
-   * `list` : Lists all cats.
-   * `add n/Bowie t/Orange l/Utown h/Vaccinated` : Adds a cat named `Bowie` to the CatPals.
-   * `delete 1` or `delete Bowie`: Deletes the 1st cat (Bowie) shown in the current list.
-   * `find Bowie`: Searches for a cat named `Bowie`.
+   * `list` : Lists all contacts.
+
+   * `add n/Bowie t/Orange l/Utown h/Vaccinated` : Adds a cat named `Bowie` to the cat notebook.
+
+   * `delete 3` : Deletes the 3rd contact shown in the current list.
+
    * `clear` : Deletes all contacts.
    * `exit` : Exits the app.
 6. Refer to the [Features](#features) below for details of each command.
@@ -73,20 +75,24 @@ Shows a message explaining how to access the help page.
 
 Format: `help`
 
-### Adding a person: `add`
 
-Adds a person to the address book.
+### Adding a cat: `add`
 
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…`
+Adds a cat profile to the cat notebook.
+
+Format: `add n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-A person can have any number of tags (including 0)
+A cat can have up to 3 traits (no duplicates). Health status is optional and defaults to `Unknown` if not provided.
 </div>
 
-Examples:
+* `n/NAME`, `t/TRAIT`, and `l/LOCATION` are required.
+* `h/HEALTH_STATUS` is optional.
+* You can specify up to 3 `t/TRAIT` prefixes, but duplicate traits are not allowed.
 
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
+Examples:
+* `add n/Bowie t/Orange l/Utown h/Vaccinated`
+* `add n/Whiskers t/Fluffy t/Playful l/Science`
 
 ### Listing all persons : `list`
 
