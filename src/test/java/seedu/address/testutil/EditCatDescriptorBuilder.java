@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
+import seedu.address.logic.commands.UpdateCommand.EditCatDescriptor;
 import seedu.address.model.cat.Cat;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;

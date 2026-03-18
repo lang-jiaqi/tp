@@ -8,7 +8,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_TRAIT;
 import java.util.List;
 
 import seedu.address.logic.commands.AddCommand;
-import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
+import seedu.address.logic.commands.UpdateCommand.EditCatDescriptor;
 import seedu.address.model.cat.Cat;
 import seedu.address.model.cat.Trait;
 

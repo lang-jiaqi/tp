@@ -26,20 +26,20 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
-import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.EditCommand.EditCatDescriptor;
+import seedu.address.logic.commands.UpdateCommand;
+import seedu.address.logic.commands.UpdateCommand.EditCatDescriptor;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
 import seedu.address.testutil.EditCatDescriptorBuilder;
 
-public class EditCommandParserTest {
+public class UpdateCommandParserTest {
 
     private static final String TRAIT_EMPTY = " " + PREFIX_TRAIT;
 
     private static final String MESSAGE_INVALID_FORMAT =
-            String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE);
+            String.format(MESSAGE_INVALID_COMMAND_FORMAT, UpdateCommand.MESSAGE_USAGE);
 
-    private EditCommandParser parser = new EditCommandParser();
+    private UpdateCommandParser parser = new UpdateCommandParser();
 
     @Test
     public void parse_missingParts_failure() {
@@ -47,7 +47,7 @@ public class EditCommandParserTest {
         assertParseFailure(parser, VALID_NAME_AMY, MESSAGE_INVALID_FORMAT);
 
         // no field specified
-        assertParseFailure(parser, "1", EditCommand.MESSAGE_NOT_EDITED);
+        assertParseFailure(parser, "1", UpdateCommand.MESSAGE_NOT_EDITED);
 
         // no index and no field specified
         assertParseFailure(parser, "", MESSAGE_INVALID_FORMAT);
@@ -83,7 +83,7 @@ public class EditCommandParserTest {
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withName(VALID_NAME_AMY)
                 .withTraits(VALID_TRAIT_FLUFFY, VALID_TRAIT_ORANGE).withLocation(VALID_LOCATION_AMY)
                 .withHealth(VALID_HEALTH_AMY).build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        UpdateCommand expectedCommand = new UpdateCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -94,7 +94,7 @@ public class EditCommandParserTest {
         String userInput = targetIndex.getOneBased() + LOCATION_DESC_AMY;
 
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withLocation(VALID_LOCATION_AMY).build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        UpdateCommand expectedCommand = new UpdateCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
@@ -105,19 +105,19 @@ public class EditCommandParserTest {
         Index targetIndex = INDEX_THIRD_PERSON;
         String userInput = targetIndex.getOneBased() + NAME_DESC_AMY;
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withName(VALID_NAME_AMY).build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        UpdateCommand expectedCommand = new UpdateCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // location
         userInput = targetIndex.getOneBased() + LOCATION_DESC_AMY;
         descriptor = new EditCatDescriptorBuilder().withLocation(VALID_LOCATION_AMY).build();
-        expectedCommand = new EditCommand(targetIndex, descriptor);
+        expectedCommand = new UpdateCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // traits
         userInput = targetIndex.getOneBased() + TRAIT_DESC_ORANGE;
         descriptor = new EditCatDescriptorBuilder().withTraits(VALID_TRAIT_ORANGE).build();
-        expectedCommand = new EditCommand(targetIndex, descriptor);
+        expectedCommand = new UpdateCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 
@@ -136,7 +136,7 @@ public class EditCommandParserTest {
         String userInput = targetIndex.getOneBased() + TRAIT_EMPTY;
 
         EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withTraits().build();
-        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor);
+        UpdateCommand expectedCommand = new UpdateCommand(targetIndex, descriptor);
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }

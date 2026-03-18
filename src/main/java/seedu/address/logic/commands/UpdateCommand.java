@@ -28,7 +28,7 @@ import seedu.address.model.cat.Trait;
 /**
  * Edits the details of an existing cat in the cat notebook.
  */
-public class EditCommand extends Command {
+public class UpdateCommand extends Command {
 
     public static final String COMMAND_WORD = "edit";
 
@@ -55,7 +55,7 @@ public class EditCommand extends Command {
      * @param index             of the cat in the filtered cat list to edit
      * @param editCatDescriptor details to edit the cat with
      */
-    public EditCommand(Index index, EditCatDescriptor editCatDescriptor) {
+    public UpdateCommand(Index index, EditCatDescriptor editCatDescriptor) {
         requireNonNull(index);
         requireNonNull(editCatDescriptor);
 
@@ -106,13 +106,13 @@ public class EditCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof EditCommand)) {
+        if (!(other instanceof UpdateCommand)) {
             return false;
         }
 
-        EditCommand otherEditCommand = (EditCommand) other;
-        return index.equals(otherEditCommand.index)
-                && editCatDescriptor.equals(otherEditCommand.editCatDescriptor);
+        UpdateCommand otherUpdateCommand = (UpdateCommand) other;
+        return index.equals(otherUpdateCommand.index)
+                && editCatDescriptor.equals(otherUpdateCommand.editCatDescriptor);
     }
 
     @Override
