@@ -7,10 +7,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -33,6 +32,11 @@ import seedu.address.model.cat.Cat;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final String UPDATE_CONFIRMATION_HEADER =
+            "Are you sure you want to update this cat entry to: ";
+    private static final String DELETE_CONFIRMATION_HEADER =
+            "Are you sure you want to delete this cat entry: ";
+    private static final String CONFIRMATION_HINT = "\n\nPress Enter to confirm, Esc to cancel.";
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -177,10 +181,6 @@ public class MainWindow extends UiPart<Stage> {
         return catListPanel;
     }
 
-    private static final String UPDATE_CONFIRMATION_HEADER =
-            "Are you sure you want to update this cat entry to: ";
-    private static final String UPDATE_CONFIRMATION_HINT = "\n\nPress Enter to confirm, Esc to cancel.";
-
     /**
      * Executes the command and returns the result.
      *
@@ -230,7 +230,7 @@ public class MainWindow extends UiPart<Stage> {
      */
     private boolean showUpdateConfirmationDialog(Cat updatedEntry) {
         String content = UPDATE_CONFIRMATION_HEADER + Messages.format(updatedEntry) + "?"
-                + UPDATE_CONFIRMATION_HINT;
+                + CONFIRMATION_HINT;
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(primaryStage);
         alert.setTitle("Confirm Update");
