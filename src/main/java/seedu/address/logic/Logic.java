@@ -58,6 +58,13 @@ public interface Logic {
     Optional<Cat> getDeletePreview(Command command) throws CommandException;
 
     /**
+     * Returns the count of cat entries that would be cleared, if the given command is a ClearCommand.
+     * @param command The parsed command.
+     * @return Optional containing the number of entries to be cleared, or empty if not a ClearCommand.
+     */
+    Optional<Integer> getClearPreview(Command command);
+
+    /**
      * Returns the AddressBook.
      *
      * @see seedu.address.model.Model#getAddressBook()

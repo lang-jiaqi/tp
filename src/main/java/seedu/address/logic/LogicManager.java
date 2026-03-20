@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteCommand;
@@ -88,6 +89,14 @@ public class LogicManager implements Logic {
         }
         DeleteCommand deleteCommand = (DeleteCommand) command;
         return Optional.of(deleteCommand.getCatToDeletePreview(model));
+    }
+
+    @Override
+    public Optional<Integer> getClearPreview(Command command) {
+        if (!(command instanceof ClearCommand)) {
+            return Optional.empty();
+        }
+        return Optional.of(model.getAddressBook().getCatList().size());
     }
 
     @Override

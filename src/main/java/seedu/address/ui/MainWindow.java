@@ -18,6 +18,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Logic;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteCommand;
@@ -37,6 +38,9 @@ public class MainWindow extends UiPart<Stage> {
             "Are you sure you want to update this cat entry to: ";
     private static final String DELETE_CONFIRMATION_HEADER =
             "Are you sure you want to delete this cat entry: ";
+    private static final String CLEAR_CONFIRMATION_HEADER =
+            "Are you sure you want to clear all cat entries? ";
+    private static final String CLEAR_CONFIRMATION_ENTRIES = "(%d entries will be removed)";
     private static final String CONFIRMATION_HINT = "\n\nPress Enter to confirm, Esc to cancel.";
 
     private final Logger logger = LogsCenter.getLogger(getClass());
@@ -213,6 +217,17 @@ public class MainWindow extends UiPart<Stage> {
                 }
             }
 
+            // Show confirmation dialog for clear commands
+            if (command instanceof ClearCommand) {
+                Optional<Integer> entryCount = logic.getClearPreview(command);
+                if (entryCount.isPresent()) {
+                    boolean confirmed = showClearConfirmationDialog(entryCount.get());
+                    if (!confirmed) {
+                        return CommandResult.cancelled();
+                    }
+                }
+            }
+
             CommandResult commandResult = logic.executeCommand(command);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
@@ -290,6 +305,51 @@ public class MainWindow extends UiPart<Stage> {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initOwner(primaryStage);
         alert.setTitle("Confirm Delete");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
+
+        // Hide OK and Cancel buttons - user presses Enter/Esc instead
+        alert.setOnShown(event -> {
+            var okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+            var cancelButton = alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (okButton != null) {
+                okButton.setVisible(false);
+            }
+            if (cancelButton != null) {
+                cancelButton.setVisible(false);
+            }
+        });
+
+        // Handle Enter = confirm, Esc = cancel
+        alert.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                alert.setResult(ButtonType.OK);
+                e.consume();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                alert.setResult(ButtonType.CANCEL);
+                e.consume();
+            }
+        });
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Shows a confirmation dialog for clear commands.
+     * Enter confirms, Esc cancels. No buttons - user presses keys.
+     *
+     * @param entryCount the number of cat entries that would be cleared
+     * @return true if the user confirmed, false if cancelled
+     */
+    private boolean showClearConfirmationDialog(int entryCount) {
+        String content = CLEAR_CONFIRMATION_HEADER
+                + String.format(CLEAR_CONFIRMATION_ENTRIES, entryCount) + "?"
+                + CONFIRMATION_HINT;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Confirm Clear");
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
