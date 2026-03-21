@@ -3,13 +3,17 @@ package seedu.address.logic;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.UpdateCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -44,11 +48,19 @@ public class LogicManager implements Logic {
 
     @Override
     public CommandResult execute(String commandText) throws CommandException, ParseException {
-        logger.info("----------------[USER COMMAND][" + commandText + "]");
+        Command command = parseCommand(commandText);
+        return executeCommand(command);
+    }
 
-        CommandResult commandResult;
-        Command command = addressBookParser.parseCommand(commandText);
-        commandResult = command.execute(model);
+    @Override
+    public Command parseCommand(String commandText) throws ParseException {
+        logger.info("----------------[USER COMMAND][" + commandText + "]");
+        return addressBookParser.parseCommand(commandText);
+    }
+
+    @Override
+    public CommandResult executeCommand(Command command) throws CommandException {
+        CommandResult commandResult = command.execute(model);
 
         try {
             storage.saveAddressBook(model.getAddressBook());
@@ -59,6 +71,32 @@ public class LogicManager implements Logic {
         }
 
         return commandResult;
+    }
+
+    @Override
+    public Optional<Cat> getUpdatePreview(Command command) throws CommandException {
+        if (!(command instanceof UpdateCommand)) {
+            return Optional.empty();
+        }
+        UpdateCommand updateCommand = (UpdateCommand) command;
+        return Optional.of(updateCommand.getEditedCatPreview(model));
+    }
+
+    @Override
+    public Optional<Cat> getDeletePreview(Command command) throws CommandException {
+        if (!(command instanceof DeleteCommand)) {
+            return Optional.empty();
+        }
+        DeleteCommand deleteCommand = (DeleteCommand) command;
+        return Optional.of(deleteCommand.getCatToDeletePreview(model));
+    }
+
+    @Override
+    public Optional<Integer> getClearPreview(Command command) {
+        if (!(command instanceof ClearCommand)) {
+            return Optional.empty();
+        }
+        return Optional.of(model.getAddressBook().getCatList().size());
     }
 
     @Override

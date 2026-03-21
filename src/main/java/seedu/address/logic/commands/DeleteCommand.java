@@ -72,6 +72,31 @@ public class DeleteCommand extends Command {
         }
     }
 
+    /**
+     * Returns a preview of the cat that would be deleted, without actually deleting.
+     * Used for confirmation dialogs before executing the delete.
+     *
+     * @param model the current model state
+     * @return the cat that would be deleted
+     * @throws CommandException if the target cat cannot be found
+     */
+    public Cat getCatToDeletePreview(Model model) throws CommandException {
+        requireNonNull(model);
+        List<Cat> lastShownList = model.getFilteredCatList();
+
+        if (targetIndex != null) {
+            if (targetIndex.getZeroBased() >= lastShownList.size()) {
+                throw new CommandException(Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX);
+            }
+            return lastShownList.get(targetIndex.getZeroBased());
+        } else {
+            return lastShownList.stream()
+                    .filter(cat -> cat.getName().fullName.equals(targetName.fullName))
+                    .findFirst()
+                    .orElseThrow(() -> new CommandException(String.format(MESSAGE_CAT_NOT_FOUND, targetName.fullName)));
+        }
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

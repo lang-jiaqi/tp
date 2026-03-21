@@ -110,6 +110,39 @@ public class UpdateCommand extends Command {
     }
 
     /**
+     * Returns a preview of the cat that would result from this update, without applying the change.
+     * Used for confirmation dialogs before executing the update.
+     *
+     * @param model the current model state
+     * @return the cat that would result from applying this update
+     * @throws CommandException if the target cat cannot be found or the update would create a duplicate
+     */
+    public Cat getEditedCatPreview(Model model) throws CommandException {
+        requireNonNull(model);
+        List<Cat> lastShownList = model.getFilteredCatList();
+
+        Cat catToEdit;
+        if (index != null) {
+            if (index.getZeroBased() >= lastShownList.size()) {
+                throw new CommandException(Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX);
+            }
+            catToEdit = lastShownList.get(index.getZeroBased());
+        } else {
+            catToEdit = model.getAddressBook().getCatList().stream()
+                    .filter(cat -> cat.getName().fullName.equalsIgnoreCase(targetName.fullName))
+                    .findFirst()
+                    .orElseThrow(() -> new CommandException(MESSAGE_INVALID_CAT_NAME));
+        }
+        Cat editedCat = createEditedCat(catToEdit, editCatDescriptor);
+
+        if (!catToEdit.isSameCat(editedCat) && model.hasCat(editedCat)) {
+            throw new CommandException(MESSAGE_DUPLICATE_CAT);
+        }
+
+        return editedCat;
+    }
+
+    /**
      * Creates and returns a {@code Cat} with the details of {@code catToEdit}
      * edited with {@code editCatDescriptor}.
      */

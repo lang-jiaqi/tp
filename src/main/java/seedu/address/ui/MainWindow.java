@@ -1,11 +1,15 @@
 package seedu.address.ui;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -13,9 +17,15 @@ import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Logic;
+import seedu.address.logic.Messages;
+import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.UpdateCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.cat.Cat;
 
 /**
  * The Main Window. Provides the basic application layout containing
@@ -24,6 +34,14 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final String UPDATE_CONFIRMATION_HEADER =
+            "Are you sure you want to update this cat entry to: ";
+    private static final String DELETE_CONFIRMATION_HEADER =
+            "Are you sure you want to delete this cat entry: ";
+    private static final String CLEAR_CONFIRMATION_HEADER =
+            "Are you sure you want to clear all cat entries? ";
+    private static final String CLEAR_CONFIRMATION_ENTRIES = "(%d entries will be removed)";
+    private static final String CONFIRMATION_HINT = "\n\nPress Enter to confirm, Esc to cancel.";
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -175,7 +193,42 @@ public class MainWindow extends UiPart<Stage> {
      */
     private CommandResult executeCommand(String commandText) throws CommandException, ParseException {
         try {
-            CommandResult commandResult = logic.execute(commandText);
+            Command command = logic.parseCommand(commandText);
+
+            // Show confirmation dialog for update commands
+            if (command instanceof UpdateCommand) {
+                Optional<Cat> preview = logic.getUpdatePreview(command);
+                if (preview.isPresent()) {
+                    boolean confirmed = showUpdateConfirmationDialog(preview.get());
+                    if (!confirmed) {
+                        return CommandResult.cancelled();
+                    }
+                }
+            }
+
+            // Show confirmation dialog for delete commands
+            if (command instanceof DeleteCommand) {
+                Optional<Cat> preview = logic.getDeletePreview(command);
+                if (preview.isPresent()) {
+                    boolean confirmed = showDeleteConfirmationDialog(preview.get());
+                    if (!confirmed) {
+                        return CommandResult.cancelled();
+                    }
+                }
+            }
+
+            // Show confirmation dialog for clear commands
+            if (command instanceof ClearCommand) {
+                Optional<Integer> entryCount = logic.getClearPreview(command);
+                if (entryCount.isPresent()) {
+                    boolean confirmed = showClearConfirmationDialog(entryCount.get());
+                    if (!confirmed) {
+                        return CommandResult.cancelled();
+                    }
+                }
+            }
+
+            CommandResult commandResult = logic.executeCommand(command);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
 
@@ -193,5 +246,138 @@ public class MainWindow extends UiPart<Stage> {
             resultDisplay.setFeedbackToUser(e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Shows a confirmation dialog for update commands.
+     * Enter confirms, Esc cancels. No buttons - user presses keys.
+     *
+     * @param updatedEntry the cat entry that would result from the update
+     * @return true if the user confirmed, false if cancelled
+     */
+    private boolean showUpdateConfirmationDialog(Cat updatedEntry) {
+        String content = UPDATE_CONFIRMATION_HEADER + Messages.format(updatedEntry) + "?"
+                + CONFIRMATION_HINT;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Confirm Update");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
+
+        // Hide OK and Cancel buttons - user presses Enter/Esc instead
+        alert.setOnShown(event -> {
+            var okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+            var cancelButton = alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (okButton != null) {
+                okButton.setVisible(false);
+            }
+            if (cancelButton != null) {
+                cancelButton.setVisible(false);
+            }
+        });
+
+        // Handle Enter = confirm, Esc = cancel
+        alert.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                alert.setResult(ButtonType.OK);
+                e.consume();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                alert.setResult(ButtonType.CANCEL);
+                e.consume();
+            }
+        });
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Shows a confirmation dialog for delete commands.
+     * Enter confirms, Esc cancels. No buttons - user presses keys.
+     *
+     * @param catToDelete the cat entry that would be deleted
+     * @return true if the user confirmed, false if cancelled
+     */
+    private boolean showDeleteConfirmationDialog(Cat catToDelete) {
+        String content = DELETE_CONFIRMATION_HEADER + Messages.format(catToDelete) + "?"
+                + CONFIRMATION_HINT;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Confirm Delete");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
+
+        // Hide OK and Cancel buttons - user presses Enter/Esc instead
+        alert.setOnShown(event -> {
+            var okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+            var cancelButton = alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (okButton != null) {
+                okButton.setVisible(false);
+            }
+            if (cancelButton != null) {
+                cancelButton.setVisible(false);
+            }
+        });
+
+        // Handle Enter = confirm, Esc = cancel
+        alert.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                alert.setResult(ButtonType.OK);
+                e.consume();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                alert.setResult(ButtonType.CANCEL);
+                e.consume();
+            }
+        });
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Shows a confirmation dialog for clear commands.
+     * Enter confirms, Esc cancels. No buttons - user presses keys.
+     *
+     * @param entryCount the number of cat entries that would be cleared
+     * @return true if the user confirmed, false if cancelled
+     */
+    private boolean showClearConfirmationDialog(int entryCount) {
+        String content = CLEAR_CONFIRMATION_HEADER
+                + String.format(CLEAR_CONFIRMATION_ENTRIES, entryCount) + "?"
+                + CONFIRMATION_HINT;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Confirm Clear");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
+
+        // Hide OK and Cancel buttons - user presses Enter/Esc instead
+        alert.setOnShown(event -> {
+            var okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+            var cancelButton = alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (okButton != null) {
+                okButton.setVisible(false);
+            }
+            if (cancelButton != null) {
+                cancelButton.setVisible(false);
+            }
+        });
+
+        // Handle Enter = confirm, Esc = cancel
+        alert.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                alert.setResult(ButtonType.OK);
+                e.consume();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                alert.setResult(ButtonType.CANCEL);
+                e.consume();
+            }
+        });
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 }
