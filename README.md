@@ -58,8 +58,7 @@ Type a command in the command box and press **Enter** to execute it.
 | **Add** a cat             | `add n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]`                   | `add n/Bowie t/Orange l/Utown h/Vaccinated`             |
 | **List** all contacts     | `list`                                                                               | `list`                                                  |
 | **Update** a contact      | `update INDEX(or NAME) n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]` | `update 1 n/Brown ` or `update Brown n/Bigguy t/Purple` |
-| **Find** contacts by name | `find KEYWORD [MORE_KEYWORDS]`                                                       | `find John`                                             |
-| Find cats by trait         | `findtrait TRAIT [MORE_TRAITS]…`                                                   | `findtrait Orange` or `findtrait White Striped`          |
+| **Find** cats | `find n/CAT_NAME` or `find l/LOCATION` or `find t/TRAIT` or `find h/HEALTH_STATUS`    | `find n/Mochi` or `find t/Striped` or `find l/COM3` or `find h/Sick` |
 | **Delete** a contact      | `delete INDEX(or NAME)`                                                              | `delete 3` or `delete Brown`                            |
 | **Clear** all contacts    | `clear`                                                                              | `clear`                                                 |
 | **Help**                  | `help`                                                                               | `help`                                                  |
