@@ -278,20 +278,24 @@ Format: `list`
 
 Updates an existing cat in the app.
 
-Format: `update INDEX [n/NAME] [t/TRAIT]… [l/LOCATION] [h/HEALTH_STATUS]`
-or
-`update CURRENT_NAME [n/NAME] [t/TRAIT]… [l/LOCATION] [h/HEALTH_STATUS]`
+**Format:** `update INDEX [n/NAME] [t/TRAIT]… [l/LOCATION] [h/HEALTH_STATUS]` or `update CURRENT_NAME [n/NAME] [t/TRAIT]… [l/LOCATION] [h/HEALTH_STATUS]`
+
+| Parameter      | Prefix | Description                                                                 |
+|----------------|--------|-----------------------------------------------------------------------------|
+| Name           | n/     | Updates the cat's name                                                      |
+| Trait(s)       | t/     | Updates the cat's traits (up to 3, no duplicates). Use `t/` alone to clear all traits |
+| Location       | l/     | Updates the cat's location                                                  |
+| Health Status  | h/     | Updates the cat's health status                                              |
 
 * Updates the cat at the specified `INDEX` or `CURRENT_NAME`. The index refers to the index number shown in the displayed cat list. The index **must be a positive integer** 1, 2, 3, …
 * At least one field must be provided.
 * Existing values will be updated to the input values; fields not specified are kept unchanged.
-* You can remove all traits by typing `t/` without specifying any value after it.
 * To change a cat’s photo, use the `attach` command instead.
 
-Examples:
+**Examples:**
 
-* `update 1 n/Brownie t/Brown` Updates the name and trait of the 1st cat.
-* `update Bronwie n/Brownie t/Brown` Updates the name of the cat with current name `Bronwie` to `Brownie`.
+* `update 1 n/Brownie t/Brown` — Updates the name and trait of the 1st cat.
+* `update Bronwie n/Brownie t/Brown` — Updates the name of the cat with current name `Bronwie` to `Brownie`.
 
 ### Locating cats by name, location, traits or health status : `find`
 
