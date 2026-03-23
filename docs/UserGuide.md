@@ -25,6 +25,7 @@ title: User Guide
     * [Updating a cat profile : `update`](#updating-a-cat-profile--update)
     * [Locating cats by name, location, traits or health status : `find`](#locating-cats-by-name-location-traits-or-health-status--find)
     * [Deleting a cat : `delete`](#deleting-a-cat--delete)
+    * [Exporting the cat list : `export`](#exporting-the-cat-list--export)
     * [Clearing all entries : `clear`](#clearing-all-entries--clear)
     * [Exiting the program : `exit`](#exiting-the-program--exit)
     * [Saving the data](#saving-the-data)
@@ -346,6 +347,21 @@ Examples:
 * `find Betsy` followed by `delete 1` deletes the 1st cat in the results of the `find` command.
 * `delete Brownie` deletes the cat with the specific name "Brownie".
 
+### Exporting the cat list : `export`
+
+Exports the currently displayed cat list to `export.html` in your CatPals folder. Open it in any browser to view a formatted list with cat photos.
+
+Format: `export`
+
+* Exports whatever is currently shown — use `find` first to export a filtered subset, or `list` to export everything.
+* The file is saved as `export.html` in the same folder as `catpals.jar`.
+* Images are embedded using the same paths stored in the app, so they appear correctly as long as the `images/` folder is in the same location.
+
+Examples:
+
+* `list` followed by `export` — exports all cats.
+* `find l/Utown` followed by `export` — exports only cats located at Utown.
+
 ### Clearing all entries : `clear`
 
 Clears all entries from the app.
@@ -401,6 +417,7 @@ _Details coming soon ..._
 | **Delete** a cat by name or index | `delete [CAT_NAME]` or `delete [CAT_NUMBER]`                                       | `delete Snowy` or `delete 3`                                         |
 | **Update** a cat by name or index | `update NAME/INDEX [n/NAME] [t/TRAIT] [l/LOCATION] [h/HEALTH]`                     | `update Snowy l/utown` or `update 3 l/PGPR`                          |
 | **Find** cats                     | `find n/CAT_NAME` or `find l/LOCATION` or `find t/TRAIT` or `find h/HEALTH_STATUS` | `find n/Mochi` or `find t/Striped` or `find l/COM3` or `find h/Sick` |
+| **Export** the cat list to HTML   | `export`                                                                           | `export`                                                             |
 | **Clear** all cats                | `clear`                                                                            | `clear`                                                              |
 | **List** all cats                 | `list`                                                                             | `list`                                                               |
 | **Help**                          | `help`                                                                             | `help`                                                               |
