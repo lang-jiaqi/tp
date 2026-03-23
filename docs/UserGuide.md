@@ -394,6 +394,7 @@ Format: `undo`
   | [`export`](#exporting-the-cat-list--export)                             | No action is reversed. `export` is a system-level command.                                                 |
   | [`clear`](#clearing-all-entries--clear)                                 | No action is reversed. `clear` is a system-level command.                                                  |
   | [`undo`](#undo-the-previous-action--undo)                               | Nothing happens. `undo` cannot be applied consecutively.                                                   |
+
 >You can navigate to a feature's introduction by clicking its corresponding command snippet
 
 * `undo` can only reverse the most recently executed command. It cannot be applied consecutively to step back through multiple actions.
