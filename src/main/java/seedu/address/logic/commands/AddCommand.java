@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_HEALTH;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_IMAGE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TRAIT;
@@ -24,12 +25,14 @@ public class AddCommand extends Command {
             + PREFIX_NAME + "NAME "
             + PREFIX_TRAIT + "TRAIT "
             + PREFIX_LOCATION + "LOCATION "
-            + "[" + PREFIX_HEALTH + "HEALTH_STATUS]\n"
+            + "[" + PREFIX_HEALTH + "HEALTH_STATUS] "
+            + "[" + PREFIX_IMAGE + "IMAGE_PATH]\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "Bowie "
             + PREFIX_TRAIT + "Orange "
             + PREFIX_LOCATION + "Utown "
-            + PREFIX_HEALTH + "Vaccinated";
+            + PREFIX_HEALTH + "Vaccinated "
+            + PREFIX_IMAGE + "images/bowie.png";
 
     public static final String MESSAGE_SUCCESS = "New cat profile successfully added: %1$s.";
     public static final String MESSAGE_DUPLICATE_CAT = "The cat name already exists!";

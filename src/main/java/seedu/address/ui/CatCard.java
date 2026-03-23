@@ -1,9 +1,12 @@
 package seedu.address.ui;
 
+import java.io.File;
 import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -40,6 +43,8 @@ public class CatCard extends UiPart<Region> {
     private Label health;
     @FXML
     private FlowPane traits;
+    @FXML
+    private ImageView catImage;
 
     /**
      * Creates a {@code CatCard} with the given {@code Cat} and index to display.
@@ -68,6 +73,13 @@ public class CatCard extends UiPart<Region> {
             }
 
             traits.getChildren().add(new Label(traitName));
+        }
+
+        if (cat.getImage().hasImage()) {
+            File imageFile = new File(cat.getImage().value);
+            if (imageFile.exists()) {
+                catImage.setImage(new Image(imageFile.toURI().toString()));
+            }
         }
     }
 }

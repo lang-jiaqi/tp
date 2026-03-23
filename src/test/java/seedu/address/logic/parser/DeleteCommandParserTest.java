@@ -27,6 +27,7 @@ public class DeleteCommandParserTest {
 
     @Test
     public void parse_invalidArgs_throwsParseException() {
+        // AI-generated: use "!" as it is invalid for both index and name parsing
         assertParseFailure(parser, "!", String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
     }
 }

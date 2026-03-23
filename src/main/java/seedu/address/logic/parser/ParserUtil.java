@@ -9,6 +9,7 @@ import java.util.List;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.cat.CatImage;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
@@ -110,6 +111,17 @@ public class ParserUtil {
             throw new ParseException(Location.MESSAGE_TOO_LONG);
         }
         return new Location(trimmedLocation);
+    }
+
+    /**
+     * Parses a {@code String imagePath} into a {@code CatImage}.
+     * Leading and trailing whitespaces will be trimmed.
+     * An empty string results in a no-image {@code CatImage}.
+     * AI-generated.
+     */
+    public static CatImage parseImage(String imagePath) {
+        requireNonNull(imagePath);
+        return new CatImage(imagePath.trim());
     }
 
     /**

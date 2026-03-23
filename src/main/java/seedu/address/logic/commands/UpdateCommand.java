@@ -154,7 +154,7 @@ public class UpdateCommand extends Command {
         Location updatedLocation = editCatDescriptor.getLocation().orElse(catToEdit.getLocation());
         Health updatedHealth = editCatDescriptor.getHealth().orElse(catToEdit.getHealth());
 
-        return new Cat(updatedName, updatedTraits, updatedLocation, updatedHealth);
+        return new Cat(updatedName, updatedTraits, updatedLocation, updatedHealth, catToEdit.getImage());
     }
 
     @Override

@@ -10,5 +10,6 @@ public class CliSyntax {
     public static final Prefix PREFIX_TRAIT = new Prefix("t/");
     public static final Prefix PREFIX_LOCATION = new Prefix("l/");
     public static final Prefix PREFIX_HEALTH = new Prefix("h/");
+    public static final Prefix PREFIX_IMAGE = new Prefix("i/");
 
 }

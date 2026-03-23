@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.parser.CliSyntax.PREFIX_HEALTH;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_IMAGE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TRAIT;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.cat.Cat;
+import seedu.address.model.cat.CatImage;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
@@ -28,7 +30,8 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_TRAIT, PREFIX_LOCATION, PREFIX_HEALTH);
+                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_TRAIT, PREFIX_LOCATION, PREFIX_HEALTH,
+                        PREFIX_IMAGE);
 
         // Check required fields are present first (before preamble check)
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_LOCATION)) {
@@ -63,7 +66,12 @@ public class AddCommandParser implements Parser<AddCommand> {
             health = new Health(Health.DEFAULT_VALUE);
         }
 
-        Cat cat = new Cat(name, traits, location, health);
+        // Image is optional; defaults to no image
+        CatImage image = argMultimap.getValue(PREFIX_IMAGE).isPresent()
+                ? ParserUtil.parseImage(argMultimap.getValue(PREFIX_IMAGE).get())
+                : new CatImage(CatImage.DEFAULT_VALUE);
+
+        Cat cat = new Cat(name, traits, location, health, image);
         return new AddCommand(cat);
     }
 

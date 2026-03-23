@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.cat.Cat;
+import seedu.address.model.cat.CatImage;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
@@ -25,6 +26,7 @@ class JsonAdaptedCat {
     private final List<JsonAdaptedTrait> traits = new ArrayList<>();
     private final String location;
     private final String health;
+    private final String image;
 
     /**
      * Constructs a {@code JsonAdaptedCat} with the given cat details.
@@ -33,13 +35,15 @@ class JsonAdaptedCat {
     public JsonAdaptedCat(@JsonProperty("name") String name,
             @JsonProperty("traits") List<JsonAdaptedTrait> traits,
             @JsonProperty("location") String location,
-            @JsonProperty("health") String health) {
+            @JsonProperty("health") String health,
+            @JsonProperty("image") String image) {
         this.name = name;
         if (traits != null) {
             this.traits.addAll(traits);
         }
         this.location = location;
         this.health = health;
+        this.image = image;
     }
 
     /**
@@ -52,6 +56,7 @@ class JsonAdaptedCat {
                 .collect(Collectors.toList()));
         location = source.getLocation().value;
         health = source.getHealth().value;
+        image = source.getImage().value;
     }
 
     /**
@@ -86,7 +91,9 @@ class JsonAdaptedCat {
                 ? new Health(Health.DEFAULT_VALUE)
                 : new Health(health);
 
-        return new Cat(modelName, catTraits, modelLocation, modelHealth);
+        final CatImage modelImage = (image == null) ? new CatImage(CatImage.DEFAULT_VALUE) : new CatImage(image);
+
+        return new Cat(modelName, catTraits, modelLocation, modelHealth, modelImage);
     }
 
 }

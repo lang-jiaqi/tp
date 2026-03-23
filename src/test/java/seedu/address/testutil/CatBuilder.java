@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import seedu.address.model.cat.Cat;
+import seedu.address.model.cat.CatImage;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
@@ -24,6 +25,7 @@ public class CatBuilder {
     private List<Trait> traits;
     private Location location;
     private Health health;
+    private CatImage image;
 
     /**
      * Creates a {@code CatBuilder} with the default details.
@@ -33,6 +35,7 @@ public class CatBuilder {
         traits = SampleDataUtil.getTraitList(DEFAULT_TRAIT);
         location = new Location(DEFAULT_LOCATION);
         health = new Health(DEFAULT_HEALTH);
+        image = new CatImage(CatImage.DEFAULT_VALUE);
     }
 
     /**
@@ -43,6 +46,7 @@ public class CatBuilder {
         traits = new ArrayList<>(catToCopy.getTraits());
         location = catToCopy.getLocation();
         health = catToCopy.getHealth();
+        image = catToCopy.getImage();
     }
 
     /**
@@ -77,8 +81,17 @@ public class CatBuilder {
         return this;
     }
 
+    /**
+     * Sets the {@code CatImage} of the {@code Cat} that we are building.
+     * AI-generated.
+     */
+    public CatBuilder withImage(String imagePath) {
+        this.image = new CatImage(imagePath);
+        return this;
+    }
+
     public Cat build() {
-        return new Cat(name, traits, location, health);
+        return new Cat(name, traits, location, health, image);
     }
 
 }
