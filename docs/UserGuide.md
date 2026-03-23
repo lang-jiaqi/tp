@@ -27,6 +27,7 @@ title: User Guide
     * [Deleting a cat : `delete`](#deleting-a-cat--delete)
     * [Exporting the cat list : `export`](#exporting-the-cat-list--export)
     * [Clearing all entries : `clear`](#clearing-all-entries--clear)
+    * [Undo the previous action : `undo`](#undo-the-previous-action--undo)
     * [Exiting the program : `exit`](#exiting-the-program--exit)
     * [Saving the data](#saving-the-data)
     * [Editing the data file](#editing-the-data-file)
@@ -372,6 +373,36 @@ Clears all entries from the app.
 
 Format: `clear`
 
+
+### Undo the previous action : `undo`
+
+Allows users to reverse the most recently performed action within the application, restoring the system to its prior state.
+
+Format: `undo`
+
+* The effect of `undo` varies depending on the most recently executed command:
+
+  | Recent Command                                                          | Effect of `undo`                                                                                           |
+  |-------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+   | [`help`](#viewing-help--help)                                           | No action is reversed. `help` does not modify any data.                                                    |
+  | [`add`](#adding-a-cat-add)                                              | Removes the cat that was most recently added to the cat list.                                              |
+    | [`attach`](#attaching-a-cat-photo-attach)                               | Detaches the photo that was most recently attached to the cat entry and delete the photo in the directory. |
+    | [`list`](#listing-all-cats-list)                                        | No action is reversed. `list` does not modify any data.                                                    |          |
+    | [`update`](#updating-a-cat-profile--update)                             | Reverts the most recently updated cat entry to its previous details.                                       |
+    | [`find`](#locating-cats-by-name-location-traits-or-health-status--find) | No action is reversed. `find` does not modify any data.                                                    |
+    | [`delete`](#deleting-a-cat--delete)                                     | Restores the most recently deleted cat entry back to the cat list.                                         |
+    | [`export`](#exporting-the-cat-list--export)                             | No action is reversed. `export` is a system-level command.                                                 |
+    | [`clear`](#clearing-all-entries--clear)                                 | No action is reversed. `clear` is a system-level command.                                                  |
+    | [`undo`](#undo-the-previous-action--undo)                               | Nothing happens. `undo` cannot be applied consecutively.                                                   |
+>You can navigate to a feature's introduction by clicking its corresponding command snippet
+
+* `undo` can only reverse the most recently executed command. It cannot be applied consecutively to step back through multiple actions.
+* `undo` only applies to commands that modify a single entry within the app, specifically `add`, `delete`, `attach`, and `update`.
+* Commands that only display or filter data — such as `help`, `list`, and `find` — are not affected by `undo` as they do not modify any data.
+* System-level commands — such as `export` and `clear` — are not reversible with `undo`. For `export`, the generated file in the CatPals folder will remain even after calling `undo`. For `clear`, all deleted entries are permanently removed and cannot be restored.
+* Calling `undo` immediately after another `undo` has no effect.
+* If no command has been executed yet in the current session, calling `undo` will have no effect.
+
 ### Exiting the program : `exit`
 
 Exits the program.
@@ -426,3 +457,4 @@ _Details coming soon ..._
 | **List** all cats                 | `list`                                                                             | `list`                                                               |
 | **Help**                          | `help`                                                                             | `help`                                                               |
 | **Exit**                          | `exit`                                                                             | `exit`                                                               |
+| **Undo**                          | `undo`                                                                             | `undo`                                                               |
