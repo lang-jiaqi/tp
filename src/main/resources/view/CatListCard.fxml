@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,6 +14,7 @@
   <GridPane HBox.hgrow="ALWAYS">
     <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10" prefWidth="150" />
+      <ColumnConstraints hgrow="NEVER" minWidth="90" prefWidth="90" maxWidth="90" />
     </columnConstraints>
     <VBox alignment="CENTER_LEFT" minHeight="105" GridPane.columnIndex="0">
       <padding>
@@ -31,5 +33,11 @@
       <Label fx:id="catLocation" styleClass="cell_small_label" />
       <Label fx:id="health" styleClass="cell_small_label" />
     </VBox>
+    <ImageView fx:id="catImage" fitWidth="80" fitHeight="80" preserveRatio="true"
+               GridPane.columnIndex="1" GridPane.valignment="CENTER">
+      <GridPane.margin>
+        <Insets top="5" right="5" bottom="5" left="5" />
+      </GridPane.margin>
+    </ImageView>
   </GridPane>
 </HBox>

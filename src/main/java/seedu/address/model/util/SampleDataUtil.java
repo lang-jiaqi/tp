@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.cat.Cat;
+import seedu.address.model.cat.CatImage;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
@@ -23,17 +24,17 @@ public class SampleDataUtil {
     public static Cat[] getSampleCats() {
         return new Cat[] {
             new Cat(new Name("Bowie"), getTraitList("Orange"), new Location("Utown"),
-                new Health("Vaccinated")),
+                new Health("Vaccinated"), new CatImage(CatImage.DEFAULT_VALUE)),
             new Cat(new Name("Mochi"), getTraitList("White", "Fluffy"), new Location("Science"),
-                new Health("Unknown")),
+                new Health("Unknown"), new CatImage(CatImage.DEFAULT_VALUE)),
             new Cat(new Name("Luna"), getTraitList("Black"), new Location("PGP"),
-                new Health("Vaccinated")),
+                new Health("Vaccinated"), new CatImage(CatImage.DEFAULT_VALUE)),
             new Cat(new Name("Kiki"), getTraitList("Tabby", "short tail"), new Location("SDE"),
-                new Health("Healthy")),
+                new Health("Healthy"), new CatImage(CatImage.DEFAULT_VALUE)),
             new Cat(new Name("Pipi"), getTraitList("Calico"), new Location("Biz"),
-                new Health("Unknown")),
+                new Health("Unknown"), new CatImage(CatImage.DEFAULT_VALUE)),
             new Cat(new Name("Simba"), getTraitList("Brown"), new Location("FASS"),
-                new Health("Unknown"))
+                new Health("Unknown"), new CatImage(CatImage.DEFAULT_VALUE))
         };
     }
 

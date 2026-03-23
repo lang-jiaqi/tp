@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.cat.Cat;
+import seedu.address.model.cat.CatImage;
 import seedu.address.model.cat.Health;
 import seedu.address.model.cat.Location;
 import seedu.address.model.cat.Name;
@@ -63,7 +64,7 @@ public class AddCommandParser implements Parser<AddCommand> {
             health = new Health(Health.DEFAULT_VALUE);
         }
 
-        Cat cat = new Cat(name, traits, location, health);
+        Cat cat = new Cat(name, traits, location, health, new CatImage(CatImage.DEFAULT_VALUE));
         return new AddCommand(cat);
     }
 

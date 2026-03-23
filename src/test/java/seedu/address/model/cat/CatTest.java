@@ -85,7 +85,8 @@ public class CatTest {
         String expected = Cat.class.getCanonicalName() + "{name=" + BOWIE.getName()
                 + ", traits=" + BOWIE.getTraits()
                 + ", location=" + BOWIE.getLocation()
-                + ", health=" + BOWIE.getHealth() + "}";
+                + ", health=" + BOWIE.getHealth()
+                + ", image=" + BOWIE.getImage() + "}";
         assertEquals(expected, BOWIE.toString());
     }
 }

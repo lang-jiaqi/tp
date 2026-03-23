@@ -36,14 +36,14 @@ public class JsonAdaptedCatTest {
     @Test
     public void toModelType_invalidName_throwsIllegalValueException() {
         JsonAdaptedCat cat =
-                new JsonAdaptedCat(INVALID_NAME, VALID_TRAITS, VALID_LOCATION, VALID_HEALTH);
+                new JsonAdaptedCat(INVALID_NAME, VALID_TRAITS, VALID_LOCATION, VALID_HEALTH, null);
         String expectedMessage = Name.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, cat::toModelType);
     }
 
     @Test
     public void toModelType_nullName_throwsIllegalValueException() {
-        JsonAdaptedCat cat = new JsonAdaptedCat(null, VALID_TRAITS, VALID_LOCATION, VALID_HEALTH);
+        JsonAdaptedCat cat = new JsonAdaptedCat(null, VALID_TRAITS, VALID_LOCATION, VALID_HEALTH, null);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName());
         assertThrows(IllegalValueException.class, expectedMessage, cat::toModelType);
     }
@@ -51,14 +51,14 @@ public class JsonAdaptedCatTest {
     @Test
     public void toModelType_invalidLocation_throwsIllegalValueException() {
         JsonAdaptedCat cat =
-                new JsonAdaptedCat(VALID_NAME, VALID_TRAITS, INVALID_LOCATION, VALID_HEALTH);
+                new JsonAdaptedCat(VALID_NAME, VALID_TRAITS, INVALID_LOCATION, VALID_HEALTH, null);
         String expectedMessage = Location.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, cat::toModelType);
     }
 
     @Test
     public void toModelType_nullLocation_throwsIllegalValueException() {
-        JsonAdaptedCat cat = new JsonAdaptedCat(VALID_NAME, VALID_TRAITS, null, VALID_HEALTH);
+        JsonAdaptedCat cat = new JsonAdaptedCat(VALID_NAME, VALID_TRAITS, null, VALID_HEALTH, null);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Location.class.getSimpleName());
         assertThrows(IllegalValueException.class, expectedMessage, cat::toModelType);
     }
@@ -68,7 +68,7 @@ public class JsonAdaptedCatTest {
         List<JsonAdaptedTrait> invalidTraits = new ArrayList<>(VALID_TRAITS);
         invalidTraits.add(new JsonAdaptedTrait(INVALID_TRAIT));
         JsonAdaptedCat cat =
-                new JsonAdaptedCat(VALID_NAME, invalidTraits, VALID_LOCATION, VALID_HEALTH);
+                new JsonAdaptedCat(VALID_NAME, invalidTraits, VALID_LOCATION, VALID_HEALTH, null);
         assertThrows(IllegalValueException.class, cat::toModelType);
     }
 

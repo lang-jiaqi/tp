@@ -33,7 +33,7 @@ public class DeleteCommandParser implements Parser<DeleteCommand> {
             // Not a valid index — fall through to name parsing
         }
 
-        // Try to parse as a cat name
+        // AI-generated: try to parse as a cat name
         if (!Name.isValidName(trimmed)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
         }

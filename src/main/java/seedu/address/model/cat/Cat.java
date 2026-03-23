@@ -22,6 +22,7 @@ public class Cat {
     private final List<Trait> traits = new ArrayList<>();
     private final Location location;
     private final Health health;
+    private final CatImage image;
 
     /**
      * Every field must be present and not null.
@@ -30,13 +31,15 @@ public class Cat {
      * @param traits   the cat's traits.
      * @param location the cat's location.
      * @param health   the cat's health status.
+     * @param image    the cat's image file path.
      */
-    public Cat(Name name, List<Trait> traits, Location location, Health health) {
-        requireAllNonNull(name, traits, location, health);
+    public Cat(Name name, List<Trait> traits, Location location, Health health, CatImage image) {
+        requireAllNonNull(name, traits, location, health, image);
         this.name = name;
         this.traits.addAll(traits);
         this.location = location;
         this.health = health;
+        this.image = image;
     }
 
     /**
@@ -66,6 +69,14 @@ public class Cat {
      */
     public Health getHealth() {
         return health;
+    }
+
+    /**
+     * Returns the cat's image.
+     * AI-generated.
+     */
+    public CatImage getImage() {
+        return image;
     }
 
     /**
@@ -100,12 +111,13 @@ public class Cat {
         return name.equals(otherCat.name)
                 && traits.equals(otherCat.traits)
                 && location.equals(otherCat.location)
-                && health.equals(otherCat.health);
+                && health.equals(otherCat.health)
+                && image.equals(otherCat.image);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, traits, location, health);
+        return Objects.hash(name, traits, location, health, image);
     }
 
     @Override
@@ -115,6 +127,7 @@ public class Cat {
                 .add("traits", traits)
                 .add("location", location)
                 .add("health", health)
+                .add("image", image)
                 .toString();
     }
 

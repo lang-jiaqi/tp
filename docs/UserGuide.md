@@ -20,6 +20,7 @@ title: User Guide
   * [Features](#features)
     * [Viewing help : `help`](#viewing-help--help)
     * [Adding a cat: `add`](#adding-a-cat-add)
+    * [Attaching a cat photo: `attach`](#attaching-a-cat-photo-attach)
     * [Listing all cats: `list`](#listing-all-cats-list)
     * [Updating a cat profile : `update`](#updating-a-cat-profile--update)
     * [Locating cats by name, location, traits or health status : `find`](#locating-cats-by-name-location-traits-or-health-status--find)
@@ -120,24 +121,27 @@ Before starting, your computer needs a specific version of **Java** (think of it
 
 **Step 2: Download the App and prepare CatPals folder**
 1. Download the latest `.jar` file from [here](https://github.com/AY2526S2-CS2103T-T16-3/tp/releases/tag/branch-release1.0).
-2.  **Create a new folder** on your Desktop or in your Documents and name it `CatPals`or any other name you prefer.
+2.  **Create a new empty folder** on your Desktop or in your Documents and name it `CatPals`or any other name you prefer.
 3.  **Move** the downloaded file into this new folder.
 
 ---
 
-**Step 3: Open the Terminal in Your Folder**
-Instead of clicking an icon, we need to tell the computer to "look" inside your `CatPals` folder using text.
- 
-**For Windows Users:**
-1.  Open your folder where the jar file is located.
-2.  Click the **Address Bar** at the top of the window (the long white bar that shows the folder path).
-3.  Delete everything in that bar, type `cmd`, and press **Enter**.
-4.  A black window will pop up that is already "inside" your folder.
+**Step 3: Open a Terminal and Navigate to Your CatPals Folder**
 
-**For Mac Users:**
-1.  Find your `CatPals` folder icon.
-2.  **Right-click** (or Control-click) the folder icon.
-3.  Select **New Terminal at Folder** from the menu.
+Open a terminal on your computer, then navigate to the folder containing `catpals.jar` using the `cd` command.
+
+* **Windows:** Press `Win + R`, type `cmd`, and press **Enter**.
+* **Mac/Linux:** Press `Command + Space`, type `Terminal`, and press **Enter**.
+
+Then run:
+
+```
+cd path/to/CatPals
+```
+
+Replace `path/to/CatPals` with the actual path to your folder. For example:
+* Windows: `cd C:\Users\YourName\Desktop\CatPals`
+* Mac/Linux: `cd ~/Desktop/CatPals`
 
 ---
 
@@ -196,6 +200,7 @@ Format: `add n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]`
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A cat can have up to 3 traits (no duplicates). Health status is optional and defaults to `Unknown` if not provided.
+To attach a photo after adding, use the `attach` command.
 </div>
 
 * `n/NAME`, `t/TRAIT`, and `l/LOCATION` are required.
@@ -207,6 +212,61 @@ Examples:
 * `add n/Bowie t/Orange l/Utown h/Vaccinated`
 * `add n/Whiskers t/Fluffy t/Playful l/Science`
 
+### Attaching a cat photo: `attach`
+
+CatPals can display a photo on each cat's card. Photos are loaded from image files stored on your computer.
+
+**Folder setup**
+
+Your `CatPals` folder must be structured as follows:
+
+```
+CatPals/
+├── catpals.jar
+├── data/
+│   └── addressbook.json
+└── images/
+    ├── bowie.png
+    └── whiskers.jpg
+```
+
+1. Inside your `CatPals` folder (the same folder that contains `catpals.jar`), create a subfolder named **`images`**.
+2. Copy your cat photos into the `images` folder.
+
+**Naming your image files**
+
+* Use simple filenames with no spaces, e.g. `bowie.png`, `snowy cat.jpg` → prefer `snowy_cat.jpg`.
+* Supported formats: `.png`, `.jpg`, `.jpeg`.
+* Filenames are **case-sensitive** on Linux/macOS (e.g. `Bowie.png` ≠ `bowie.png`).
+
+**Option 1 — Auto-detection (recommended)**
+
+Name the image file exactly after the cat (same capitalisation as the name in CatPals), place it in the `images/` folder, and CatPals will pick it up automatically — no command needed.
+
+| Cat name in CatPals | File to place in `images/` |
+|---------------------|---------------------------|
+| `Bowie`             | `Bowie.png` or `bowie.png` |
+| `Snowy`             | `Snowy.jpg` or `snowy.jpg` |
+
+CatPals tries the original capitalisation first, then lowercase, for `.png`, `.jpg`, and `.jpeg`.
+
+**Option 2 — Manual path with `attach` (for custom filenames)**
+
+Use the `attach` command to explicitly set any image path for a cat:
+
+Format: `attach INDEX IMAGE_PATH` or `attach CAT_NAME IMAGE_PATH`
+
+```
+attach 1 images/my_cat_photo.png
+attach Bowie images/my_cat_photo.png
+```
+
+<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+CatPals must be launched from the terminal inside your `CatPals` folder (i.e. using `java -jar catpals.jar`) for relative image paths to work correctly. Double-clicking the `.jar` file may cause images not to load.
+</div>
+
+If the image file cannot be found at the given path, the cat's card will simply show no photo — the rest of the data is unaffected.
+
 ### Listing all cats: `list`
 
 Shows a list of all cats in the app.
@@ -217,19 +277,20 @@ Format: `list`
 
 Updates an existing cat in the app.
 
-Format:`update INDEX n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]`
+Format: `update INDEX [n/NAME] [t/TRAIT]… [l/LOCATION] [h/HEALTH_STATUS]`
 or
-`update CURRENT_NAME n/NAME t/TRAIT [t/MORE_TRAITS]… l/LOCATION [h/HEALTH_STATUS]`
+`update CURRENT_NAME [n/NAME] [t/TRAIT]… [l/LOCATION] [h/HEALTH_STATUS]`
 
-* Updates the cat at the specified `INDEX` or `CURRENT_NAME`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …
-* Existing values will be updated to the input values.
-* You can remove all the person’s tags by typing `t/` without
-  specifying any tags after it.
+* Updates the cat at the specified `INDEX` or `CURRENT_NAME`. The index refers to the index number shown in the displayed cat list. The index **must be a positive integer** 1, 2, 3, …
+* At least one field must be provided.
+* Existing values will be updated to the input values; fields not specified are kept unchanged.
+* You can remove all traits by typing `t/` without specifying any value after it.
+* To change a cat’s photo, use the `attach` command instead.
 
 Examples:
 
-* `update 1 n/Brownie t/Brown` Updates the name and trait of the 1st cat to be `Brownie` and `Brown` respectively.
-* `update Bronwie n/Brownie t/Brown` Updates the name of the cat with current name `Bronwie` to be `Brownie` and its trait to be `Brown`.
+* `update 1 n/Brownie t/Brown` Updates the name and trait of the 1st cat.
+* `update Bronwie n/Brownie t/Brown` Updates the name of the cat with current name `Bronwie` to `Brownie`.
 
 ### Locating cats by name, location, traits or health status : `find`
 
@@ -333,13 +394,14 @@ _Details coming soon ..._
 ## Command summary
 
 
-| Command                           | Format                                                                             | Examples                                    |
-| --------------------------------- |------------------------------------------------------------------------------------| ------------------------------------------- |
-| **Add** a cat                     | `n/[NAME] t/[TRAIT]... l/[LOCATION] {h/[HEALTH_STATUS]}`                           | `add n/Bowie t/Orange l/Utown h/Vaccinated` |
-| **Delete** a cat by name or index | `delete [CAT_NAME]`or `delete [CAT_NUMBER]`                                        | `delete Snowy` or `delete 3`                |
-| **Edit** a cat by name or index   | `Update [CAT_NAME] [UPDATED_STATUS]` or `Update [CAT_NUMBER] [UPDATED_STATUS]`     | `Update Snowy l/utown` or `Update 3 l/PGPR` |
-| **Find** cats | `find n/CAT_NAME` or `find l/LOCATION` or `find t/TRAIT` or `find h/HEALTH_STATUS` | `find n/Mochi` or `find t/Striped` or `find l/COM3` or `find h/Sick` |
-| **Clear** all cats                | `clear`                                                                            | `clear`                                     |
-| **List** all cats                 | `list`                                                                             | `list`                                      |
-| **Help**                          | `help`                                                                             | `help`                                      |
-| **Exit**                          | `exit`                                                                             | `exit`                                      |
+| Command                           | Format                                                                             | Examples                                                             |
+|-----------------------------------|------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| **Add** a cat                     | `add n/NAME t/TRAIT... l/LOCATION [h/HEALTH_STATUS]`                               | `add n/Bowie t/Orange l/Utown h/Vaccinated`                          |
+| **Attach** a photo to a cat       | `attach INDEX IMAGE_PATH` or `attach CAT_NAME IMAGE_PATH`                          | `attach 1 images/bowie.png` or `attach Bowie images/bowie.png`       |
+| **Delete** a cat by name or index | `delete [CAT_NAME]` or `delete [CAT_NUMBER]`                                       | `delete Snowy` or `delete 3`                                         |
+| **Update** a cat by name or index | `update NAME/INDEX [n/NAME] [t/TRAIT] [l/LOCATION] [h/HEALTH]`                     | `update Snowy l/utown` or `update 3 l/PGPR`                          |
+| **Find** cats                     | `find n/CAT_NAME` or `find l/LOCATION` or `find t/TRAIT` or `find h/HEALTH_STATUS` | `find n/Mochi` or `find t/Striped` or `find l/COM3` or `find h/Sick` |
+| **Clear** all cats                | `clear`                                                                            | `clear`                                                              |
+| **List** all cats                 | `list`                                                                             | `list`                                                               |
+| **Help**                          | `help`                                                                             | `help`                                                               |
+| **Exit**                          | `exit`                                                                             | `exit`                                                               |
