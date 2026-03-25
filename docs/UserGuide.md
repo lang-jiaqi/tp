@@ -148,13 +148,17 @@ Replace `path/to/CatPals` with the actual path to your folder. For example:
 ---
 
 **Step 4: Run the Application**
+
 Now that the terminal window is open, simply type the following command exactly as it appears and press **Enter**:
 
 `java -jar catpals.jar`
 
-> **Note:** If the file you downloaded has a different name (like `catpals-v1.2.jar`), make sure you type that exact name after the `-jar` part!
+<div markdown="block" class="alert alert-info"> : **Note:**
+If the file you downloaded has a different name (like `catpals-v1.2.jar`), make sure you type that exact name after the `-jar` part!
+</div>
 
 **Step 5: Start Using CatPals!**
+
 If the app runs successfully, you should see a window pop up with a list of cats and a command box at the bottom. You can start typing commands to manage your cat profiles. For example, try typing `help` and pressing Enter to see the help message.
 
 Some example commands you can try:
@@ -328,13 +332,14 @@ Format: `find n/CAT_NAME`, `find l/LOCATION`, `find t/TRAIT`, or `find h/HEALTH_
   Matches any cat that is marked as either Friendly OR Playful.
 * **Finding names with multiple keywords:**`find n/Alex n/Li`
   Matches cats named Alex as well as cats with the last name Li (e.g., Jet Li).
-* **Combining categories:** `find n/Snowy t/Fluffy`
-  Matches any cat that has the name Snowy OR is tagged as Fluffy.
-* **Searching by partial location:**`find l/Arts`
-  Matches cats at Arts Canteen, Arts Plaza, etc.
+* **Combining categories:** `find l/COM3 t/Fluffy`
+  Matches any cat that is in COM3 AND is tagged as Fluffy.
 
->[!IMPORTANT]
-> Ensure there is no space between the prefix (like n/) and your search word. For example, use n/Snowy, not n/ Snowy.
+
+<div markdown="block" class="alert alert-warning">:exclamation: **Caution:**
+Ensure there is an identifier flag before each keyword if multiple are used. For example, use t/friendly t/white, 
+not t/friendly white.
+</div>  
 
 ### Deleting a cat : `delete`
 

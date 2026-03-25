@@ -6,7 +6,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TRAIT;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -29,36 +28,52 @@ public class FindCommandParser implements Parser<FindCommand> {
      * @throws ParseException if the user input does not conform the expected format
      */
     public FindCommand parse(String args) throws ParseException {
+        assert args != null : "args passed to parser should never be null";
         logger.info("Parsing FindCommand with arguments: " + args);
 
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_LOCATION, PREFIX_TRAIT, PREFIX_HEALTH);
 
-        // Validation and keyword extraction
-        if (!argMultimap.getPreamble().isEmpty()) {
-            // Reject any input with preamble (non-prefix text)
-            logger.warning("Parsing failed: Preamble found without prefixes in input: " + args);
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        // Validation logic
+        if (!argMultimap.getPreamble().isEmpty() || !isAnyPrefixPresent(argMultimap)) {
+            logger.warning("Parsing failed: Missing prefixes or invalid preamble.");
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         }
 
-        if (isAnyPrefixPresent(argMultimap)) {
-            // Prefixes present - parse them
-            List<String> nameKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_NAME);
-            List<String> locationKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_LOCATION);
-            List<String> traitKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_TRAIT);
-            List<String> healthKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_HEALTH);
+        checkForMultipleKeywords(argMultimap);
 
-            logger.fine(String.format("Parsed keywords - Names: %d, Locations: %d, Traits: %d, Health: %d",
-                    nameKeywords.size(), locationKeywords.size(), traitKeywords.size(), healthKeywords.size()));
+        // Extracting keywords - requiring individual flags for each keyword
+        List<String> nameKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_NAME);
+        List<String> locationKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_LOCATION);
+        List<String> traitKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_TRAIT);
+        List<String> healthKeywords = getKeywordsFromPrefix(argMultimap, PREFIX_HEALTH);
 
-            return new FindCommand(new CatContainsKeywordsPredicate(
-                    nameKeywords, locationKeywords, traitKeywords, healthKeywords));
-        } else {
-            // No prefixes and no preamble - invalid (empty input or whitespace only)
-            logger.warning("Parsing failed: No prefixes in input: " + args);
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        // Post-parsing assertions to ensure logic integrity
+        assert nameKeywords != null : "Keyword list should be empty, not null";
+        assert locationKeywords != null : "Keyword list should be empty, not null";
+
+        logger.fine("Successfully parsed FindCommand with specific flags.");
+
+        return new FindCommand(new CatContainsKeywordsPredicate(
+                nameKeywords, locationKeywords, traitKeywords, healthKeywords));
+    }
+
+    /**
+     * Checks if any prefix contains multiple words (separated by spaces).
+     * @throws ParseException if a prefix contains more than one word.
+     */
+    private void checkForMultipleKeywords(ArgumentMultimap argMultimap) throws ParseException {
+        Prefix[] prefixes = {PREFIX_NAME, PREFIX_LOCATION, PREFIX_TRAIT, PREFIX_HEALTH};
+
+        for (Prefix prefix : prefixes) {
+            List<String> values = argMultimap.getAllValues(prefix);
+            for (String value : values) {
+                if (value.trim().contains(" ")) {
+                    logger.warning("User provided multiple keywords for a single flag: " + prefix + value);
+                    throw new ParseException("Each keyword must be preceded by its identifier flag "
+                            + "(e.g., t/friendly t/calico).");
+                }
+            }
         }
     }
 
@@ -73,11 +88,14 @@ public class FindCommandParser implements Parser<FindCommand> {
 
     /**
      * Extracts keywords from the multimap for a specific prefix.
-     * Splits values by whitespace to allow multiple keywords per flag (e.g., t/friendly calico).
+     * Splits values by identifiers to allow multiple keywords per command (e.g., t/friendly t/calico).
      */
     private List<String> getKeywordsFromPrefix(ArgumentMultimap argMultimap, Prefix prefix) {
+        assert argMultimap != null : "ArgumentMultimap cannot be null";
+        assert prefix != null : "Prefix cannot be null";
+
         return argMultimap.getAllValues(prefix).stream()
-                .flatMap(val -> Arrays.stream(val.split("\\s+")))
+                .map(String::trim)
                 .filter(val -> !val.isEmpty())
                 .toList();
     }
