@@ -66,6 +66,7 @@ public class UpdateCommand extends Command {
         this.index = index;
         this.targetName = null;
         this.editCatDescriptor = new EditCatDescriptor(editCatDescriptor);
+        assertUsesExactlyOneTarget();
     }
 
     /**
@@ -79,6 +80,12 @@ public class UpdateCommand extends Command {
         this.index = null;
         this.targetName = targetName;
         this.editCatDescriptor = new EditCatDescriptor(editCatDescriptor);
+        assertUsesExactlyOneTarget();
+    }
+
+    /** Command must target exactly one cat: by displayed index or by name (mutually exclusive). */
+    private void assertUsesExactlyOneTarget() {
+        assert index != null ^ targetName != null : "UpdateCommand requires exactly one of index or target name";
     }
 
     @Override
@@ -103,9 +110,11 @@ public class UpdateCommand extends Command {
         if (!catToEdit.isSameCat(editedCat) && model.hasCat(editedCat)) {
             throw new CommandException(MESSAGE_DUPLICATE_CAT);
         }
+        assert catToEdit.isSameCat(editedCat) || !model.hasCat(editedCat) : "Model must allow replacing target with edited cat";
 
         model.setCat(catToEdit, editedCat);
         model.updateFilteredCatList(PREDICATE_SHOW_ALL_CATS);
+        assert model.hasCat(editedCat) : "Model must contain the updated cat after setCat";
         return new CommandResult(String.format(MESSAGE_EDIT_CAT_SUCCESS, Messages.format(editedCat)));
     }
 
@@ -138,6 +147,7 @@ public class UpdateCommand extends Command {
         if (!catToEdit.isSameCat(editedCat) && model.hasCat(editedCat)) {
             throw new CommandException(MESSAGE_DUPLICATE_CAT);
         }
+        assert catToEdit.isSameCat(editedCat) || !model.hasCat(editedCat) : "Preview would introduce a duplicate cat";
 
         return editedCat;
     }
@@ -148,6 +158,7 @@ public class UpdateCommand extends Command {
      */
     private static Cat createEditedCat(Cat catToEdit, EditCatDescriptor editCatDescriptor) {
         assert catToEdit != null;
+        assert editCatDescriptor != null;
 
         Name updatedName = editCatDescriptor.getName().orElse(catToEdit.getName());
         List<Trait> updatedTraits = editCatDescriptor.getTraits().orElse(catToEdit.getTraits());
