@@ -110,7 +110,8 @@ public class UpdateCommand extends Command {
         if (!catToEdit.isSameCat(editedCat) && model.hasCat(editedCat)) {
             throw new CommandException(MESSAGE_DUPLICATE_CAT);
         }
-        assert catToEdit.isSameCat(editedCat) || !model.hasCat(editedCat) : "Model must allow replacing target with edited cat";
+        assert catToEdit.isSameCat(editedCat) || !model.hasCat(editedCat)
+                : "Model must allow replacing target with edited cat";
 
         model.setCat(catToEdit, editedCat);
         model.updateFilteredCatList(PREDICATE_SHOW_ALL_CATS);
