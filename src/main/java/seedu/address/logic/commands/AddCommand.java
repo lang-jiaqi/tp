@@ -56,6 +56,7 @@ public class AddCommand extends Command {
         }
 
         model.addCat(toAdd);
+        assert model.hasCat(toAdd) : "Cat should exist in model after successful add";
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 

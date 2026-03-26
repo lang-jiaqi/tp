@@ -45,6 +45,7 @@ public class UniqueCatList implements Iterable<Cat> {
             throw new DuplicateCatException();
         }
         internalList.add(toAdd);
+        assert contains(toAdd) : "Cat should be present in list immediately after add";
     }
 
     /**
@@ -76,6 +77,7 @@ public class UniqueCatList implements Iterable<Cat> {
         if (!internalList.remove(toRemove)) {
             throw new CatNotFoundException();
         }
+        assert !contains(toRemove) : "Cat should not be present in list after removal";
     }
 
     public void setCats(UniqueCatList replacement) {
