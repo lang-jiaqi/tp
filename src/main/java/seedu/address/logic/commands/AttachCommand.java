@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class AttachCommand extends Command {
 
     public static final String MESSAGE_ATTACH_SUCCESS = "Image attached to cat: %1$s";
     public static final String MESSAGE_CAT_NOT_FOUND = "No cat with the name '%1$s' found.";
+    public static final String MESSAGE_FILE_NOT_FOUND = "Image file not found: %1$s";
 
     private final Index index;
     private final Name targetName;
@@ -62,6 +64,11 @@ public class AttachCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
+
+        if (!new File(image.value).exists()) {
+            throw new CommandException(String.format(MESSAGE_FILE_NOT_FOUND, image.value));
+        }
+
         List<Cat> lastShownList = model.getFilteredCatList();
 
         Cat catToEdit;
