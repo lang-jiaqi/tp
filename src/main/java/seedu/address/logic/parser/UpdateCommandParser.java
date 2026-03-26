@@ -90,6 +90,7 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
             throw new ParseException(UpdateCommand.MESSAGE_NOT_EDITED);
         }
 
+        assert index != null ^ targetName != null : "Update parse result must specify index xor name";
         return (index != null)
                 ? new UpdateCommand(index, editCatDescriptor)
                 : new UpdateCommand(targetName, editCatDescriptor);
