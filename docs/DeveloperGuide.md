@@ -1,9 +1,9 @@
 ---
-layout: page
-title: Developer Guide
+span
 ---
 * Table of Contents
   <!-- TOC -->
+
   * [**Acknowledgements**](#acknowledgements)
   * [**Setting up, getting started**](#setting-up-getting-started)
   * [**Design**](#design)
@@ -14,6 +14,7 @@ title: Developer Guide
     * [Storage component](#storage-component)
     * [Common classes](#common-classes)
   * [**Implementation**](#implementation)
+    * [Export feature](#export-feature)
     * [\[Proposed\] Undo/redo feature](#proposed-undoredo-feature)
       * [Proposed Implementation](#proposed-implementation)
       * [Design considerations:](#design-considerations)
@@ -35,6 +36,7 @@ title: Developer Guide
     * [Launch and shutdown](#launch-and-shutdown)
     * [Deleting a person](#deleting-a-person)
     * [Saving data](#saving-data)
+
 <!-- TOC -->
 
 ---
@@ -192,6 +194,28 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Export feature
+
+The export feature allows users to export the currently displayed cat list to an HTML file (`export.html`). It is implemented via `ExportCommand`, which extends `Command`.
+
+Unlike most commands, `ExportCommand` does not require a dedicated parser class — `AddressBookParser` instantiates it directly since the `export` command takes no arguments.
+
+The following sequence diagram shows how an export operation is carried out:
+
+![ExportSequenceDiagram](images/ExportSequenceDiagram.png)
+
+The `export` command works as follows:
+
+1. `LogicManager` receives the command string `"export"` and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` directly creates an `ExportCommand` with no intermediate parser.
+3. `LogicManager` calls `ExportCommand#execute(model)`.
+4. `ExportCommand` retrieves the currently filtered cat list via `Model#getFilteredCatList()`. This respects any active `find` filters — only the cats currently shown in the UI are exported.
+5. An HTML string is built for each cat and written to `export.html` in the application's working directory.
+6. A `CommandResult` is returned indicating how many cats were exported.
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** `export` is not undoable — it does not modify address book data, so executing `export` clears any previously saved undo state.
+</div>
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
@@ -315,38 +339,39 @@ Provides fast, CLI-optimized access to information of stray cats living in NUS c
 Priorities:
 MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority   | As a …                            | I want to …                                                                                                  | So that I can…                                                                         |
-|------------|-----------------------------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
-| `* * * * ` | regular feeder                    | search a cat by name/alias in the CLI                                                                        | identify it quickly on the spot                                                        |
-| `* * * *`  | volunteer                         | update a cat’s key status fields (e.g., sterilised/ear-tipped, friendliness, usual area)                     | our data stays accurate for small-team coordination                                    |
-| `* * * *`  | volunteer                         | add cat entries                                                                                              | keep the record of a newly-found stray cat                                             |
-| `* * * *`  | user                              | delete a cat profile                                                                                         | remove duplicate entries or data errors to keep the database clean                     |
-| `* * *`    | frequent user                     | use short-hand flags (e.g., -n for name, -t for territory)                                                   | type faster                                                                            |
-| `* * *`    | volunteer                         | add and search by multiple identifiers (alias, coat color, landmark)                                         | still find a cat when I don’t know its name                                            |
+
+| Priority   | As a …                            | I want to …                                                                                                 | So that I can…                                                                        |
+| ---------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `* * * * ` | regular feeder                     | search a cat by name/alias in the CLI                                                                        | identify it quickly on the spot                                                        |
+| `* * * *`  | volunteer                          | update a cat’s key status fields (e.g., sterilised/ear-tipped, friendliness, usual area)                    | our data stays accurate for small-team coordination                                    |
+| `* * * *`  | volunteer                          | add cat entries                                                                                              | keep the record of a newly-found stray cat                                             |
+| `* * * *`  | user                               | delete a cat profile                                                                                         | remove duplicate entries or data errors to keep the database clean                     |
+| `* * *`    | frequent user                      | use short-hand flags (e.g., -n for name, -t for territory)                                                   | type faster                                                                            |
+| `* * *`    | volunteer                          | add and search by multiple identifiers (alias, coat color, landmark)                                         | still find a cat when I don’t know its name                                           |
 | `* * *`    | volunteer updating a cat’s record | prompted by the CLI for confirmation before applying changes                                                 | not accidentally overwrite important information                                       |
-| `* * *`    | volunteer                         | export the list of cats data stored in this app                                                              | get a physical copy of the list                                                        |
-| `* * *`    | volunteer                         | undo or revert my last update                                                                                | be away from the risk where accidental edits permanently corrupt records               |
-| `* * *`    | volunteer                         | tag a cat with quick flags (e.g., “shy”, “approachable”, “avoid”)                                            | interact safely and consistently                                                       |
-| `* * *`    | user                              | see a quick profile of each cat on the main page                                                             | get an overview of all the cats without diving into details                            |
-| `* * *`    | new user                          | run a guided “first-time” CLI help command                                                                   | learn the workflow quickly                                                             |
-| `* * *`    | volunteer                         | filter cats by certain attributes                                                                            | get the information of a group of cats that share some similarities                    |
-| `* * *`    | volunteer                         | attach an image of the cat                                                                                   | see how the cat is looked like in the most directly way                                |
-| `* *`      | user                              | use a personal account and a corresponding key to login                                                      | be away from the issue that unauthorized users will have access to this system         |
-| `* *`      | user                              | attach a link that keeps an archive of the cat (videos, more pirctures) for each cat recorded in this system | more information of cats can be retrieved without taking up storage inside of this app |
-| `* *`      | commitee member                   | edit a cat’s profile to change their status to "adopted"                                                     | stop deploying resources for cats that are no longer on campus                         |
-| `* *`      | volunteer                         | mark a cat's entry grey to indicate that the cat has unfortunately died                                      | show respect and R.I.P to cats                                                         |
-| `* *`      | first time user                   | learn how to use this app with a tutorial provided when I first open it                                      | get myself familiar without exploring by myself                                        |
-| `*`        | volunteer                         | auto-identify a cat from a photo using on-device recognition                                                 | be free from typing names at all                                                       |
-| `*`        | volunteer                         | see a list of "Missing in Action" cat                                                                        | rescue them in time                                                                    |
-| `*`        | volunteer                         | use fuzzy search and typo tolerance                                                                          | find cats quickly even with imperfect spelling                                         |
-| `*`        | volunteer                         | “favorite” a set of cats                                                                                     | pull up my usual watchlist with one command                                            |
-| `*`        | volunteer                         | create a “needs follow-up” note (non-medical)                                                                | be in the situation where the next person knows what to check without guessing         |
-| `*`        | volunteer                         | maintain a “cat family tree / social graph” (friendships, rivalries, territories)                            | understand colony dynamics over time                                                   |
-| `*`        | volunteer                         | record structured medical observations (symptoms checklist + severity)                                       | get to the concerns consistently (not a diagnosis)                                     |
-| `*`        | volunteer                         | log medication administration (drug name, dosage, time, handler)                                             | track the treatment history and thus reduces mistakes                                  |
-| `*`        | volunteer                         | get “triage suggestions” based on symptoms                                                                   | know whether to monitor, isolate, or escalate (high-risk, needs careful disclaimers)   |
-| `*`        | volunteer                         | use arrow keys (or command history)                                                                          | quickly repeat a previous complex command without re-typing it entirely                |
-| `*`        | volunteer                         | keep track of where the cat is last seen (especially if out of its own territory)                            | track the cat in a more detailed way                                                   |
+| `* * *`    | volunteer                          | export the list of cats data stored in this app                                                              | get a physical copy of the list                                                        |
+| `* * *`    | volunteer                          | undo or revert my last update                                                                                | be away from the risk where accidental edits permanently corrupt records               |
+| `* * *`    | volunteer                          | tag a cat with quick flags (e.g., “shy”, “approachable”, “avoid”)                                      | interact safely and consistently                                                       |
+| `* * *`    | user                               | see a quick profile of each cat on the main page                                                             | get an overview of all the cats without diving into details                            |
+| `* * *`    | new user                           | run a guided “first-time” CLI help command                                                                 | learn the workflow quickly                                                             |
+| `* * *`    | volunteer                          | filter cats by certain attributes                                                                            | get the information of a group of cats that share some similarities                    |
+| `* * *`    | volunteer                          | attach an image of the cat                                                                                   | see how the cat is looked like in the most directly way                                |
+| `* *`      | user                               | use a personal account and a corresponding key to login                                                      | be away from the issue that unauthorized users will have access to this system         |
+| `* *`      | user                               | attach a link that keeps an archive of the cat (videos, more pirctures) for each cat recorded in this system | more information of cats can be retrieved without taking up storage inside of this app |
+| `* *`      | commitee member                    | edit a cat’s profile to change their status to "adopted"                                                    | stop deploying resources for cats that are no longer on campus                         |
+| `* *`      | volunteer                          | mark a cat's entry grey to indicate that the cat has unfortunately died                                      | show respect and R.I.P to cats                                                         |
+| `* *`      | first time user                    | learn how to use this app with a tutorial provided when I first open it                                      | get myself familiar without exploring by myself                                        |
+| `*`        | volunteer                          | auto-identify a cat from a photo using on-device recognition                                                 | be free from typing names at all                                                       |
+| `*`        | volunteer                          | see a list of "Missing in Action" cat                                                                        | rescue them in time                                                                    |
+| `*`        | volunteer                          | use fuzzy search and typo tolerance                                                                          | find cats quickly even with imperfect spelling                                         |
+| `*`        | volunteer                          | “favorite” a set of cats                                                                                   | pull up my usual watchlist with one command                                            |
+| `*`        | volunteer                          | create a “needs follow-up” note (non-medical)                                                              | be in the situation where the next person knows what to check without guessing         |
+| `*`        | volunteer                          | maintain a “cat family tree / social graph” (friendships, rivalries, territories)                          | understand colony dynamics over time                                                   |
+| `*`        | volunteer                          | record structured medical observations (symptoms checklist + severity)                                       | get to the concerns consistently (not a diagnosis)                                     |
+| `*`        | volunteer                          | log medication administration (drug name, dosage, time, handler)                                             | track the treatment history and thus reduces mistakes                                  |
+| `*`        | volunteer                          | get “triage suggestions” based on symptoms                                                                 | know whether to monitor, isolate, or escalate (high-risk, needs careful disclaimers)   |
+| `*`        | volunteer                          | use arrow keys (or command history)                                                                          | quickly repeat a previous complex command without re-typing it entirely                |
+| `*`        | volunteer                          | keep track of where the cat is last seen (especially if out of its own territory)                            | track the cat in a more detailed way                                                   |
 
 *{More to be added}*
 
@@ -358,53 +383,53 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
 **MSS**
 
-1.  User requests to add a cat
-2.  CatPals adds the cat
+1. User requests to add a cat
+2. CatPals adds the cat
 
-    Use case ends.
+   Use case ends.
 
 **Extensions**
 
 * 1a. The provided name is blank.
-    * 1a1. CatPals shows an error message: "Name must not be blank!".
-      Use case ends.
 
+  * 1a1. CatPals shows an error message: "Name must not be blank!".
+    Use case ends.
 * 1b. The name length exceeds 30 characters.
-    * 1b1. CatPals shows an error message: "Name must be no longer than 30 chars!".
-      Use case ends.
 
+  * 1b1. CatPals shows an error message: "Name must be no longer than 30 chars!".
+    Use case ends.
 * 1c. The name contains symbols.
-    * 1c1. CatPals shows an error message: "The name must not contain symbols!".
-      Use case ends.
 
+  * 1c1. CatPals shows an error message: "The name must not contain symbols!".
+    Use case ends.
 * 1d. A cat with the same name already exists in CatPals.
-    * 1d1. CatPals shows an error message: "The cat name already exists!".
-      Use case ends.
 
+  * 1d1. CatPals shows an error message: "The cat name already exists!".
+    Use case ends.
 * 1e. The trait field is blank.
-    * 1e1. CatPals shows an error message: "Your Add command is incomplete. Please enter again.".
-      Use case ends.
 
+  * 1e1. CatPals shows an error message: "Your Add command is incomplete. Please enter again.".
+    Use case ends.
 * 1f. The user inputs more than 3 traits.
-    * 1f1. CatPals shows an error message: "You added more than 3 traits to the cat. Please only add up to 3 traits.".
-      Use case ends.
 
+  * 1f1. CatPals shows an error message: "You added more than 3 traits to the cat. Please only add up to 3 traits.".
+    Use case ends.
 * 1g. The user inputs duplicate traits.
-    * 1g1. CatPals shows an error message: "You cannot add duplicate traits!".
-      Use case ends.
 
+  * 1g1. CatPals shows an error message: "You cannot add duplicate traits!".
+    Use case ends.
 * 1h. The location field is blank.
-    * 1h1. CatPals shows an error message: "Location must not be blank!".
-      Use case ends.
 
+  * 1h1. CatPals shows an error message: "Location must not be blank!".
+    Use case ends.
 * 1i. The location length exceeds 50 characters.
-    * 1i1. CatPals shows an error message: "Location must be no longer than 50 chars!".
-      Use case ends.
 
+  * 1i1. CatPals shows an error message: "Location must be no longer than 50 chars!".
+    Use case ends.
 * 1j. The user inputs duplicate locations.
-    * 1j1. CatPals shows an error message: "You cannot add duplicate locations!".
-      Use case ends.
 
+  * 1j1. CatPals shows an error message: "You cannot add duplicate locations!".
+    Use case ends.
 
 **Use case 2 (U2): Delete a cat**
 
@@ -422,26 +447,25 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * 2a. The list is empty.
 
   Use case ends.
-
 * 3a. The user requests to delete by name.
-    * 3a1. The name is blank.
-        * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
-          Use case ends.
-    * 3a2. The name contains symbols.
-        * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
-          Use case ends.
-    * 3a3. The name does not match any cat in CatPals.
-        * 3a3a. CatPals shows an error message: "The input name does not match any cat in CatPal. Is there a typo?".
-          Use case ends.
 
+  * 3a1. The name is blank.
+    * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+      Use case ends.
+  * 3a2. The name contains symbols.
+    * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
+      Use case ends.
+  * 3a3. The name does not match any cat in CatPals.
+    * 3a3a. CatPals shows an error message: "The input name does not match any cat in CatPal. Is there a typo?".
+      Use case ends.
 * 3b. The user requests to delete by number (index).
-    * 3b1. The number is blank.
-        * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
-          Use case ends.
-    * 3b2. The number is out of range (invalid index).
-        * 3b2a. CatPals shows an error message: "The input number is out of range. Please try again.".
-          Use case resumes at step 2.
 
+  * 3b1. The number is blank.
+    * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+      Use case ends.
+  * 3b2. The number is out of range (invalid index).
+    * 3b2a. CatPals shows an error message: "The input number is out of range. Please try again.".
+      Use case resumes at step 2.
 
 **Use case 3 (U3): Search for a cat using its name**
 
@@ -458,25 +482,21 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * 2a. The list is empty.
 
   Use case ends.
-
 * 3a. The name is missing for the find command.
 
-    * 3a1. CatPals shows an error message: "Name is missing for this find command.".
+  * 3a1. CatPals shows an error message: "Name is missing for this find command.".
 
-      Use case ends.
-
+    Use case ends.
 * 3b. The name contains symbols.
 
-    * 3b1. CatPals shows an error message: "The name must not contain symbols".
+  * 3b1. CatPals shows an error message: "The name must not contain symbols".
 
-      Use case ends.
-
+    Use case ends.
 * 3c. There is no profile with a matching name.
 
-    * 3c1. CatPals shows an error message: "There is no such profile in my records! Is there a typo?".
+  * 3c1. CatPals shows an error message: "There is no such profile in my records! Is there a typo?".
 
-      Use case ends.
-
+    Use case ends.
 
 **Use case 4 (U4): Help command**
 
@@ -491,10 +511,9 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
 * 1a. The help command is typed incorrectly.
 
-    * 1a1. CatPals shows an error message: "No such command found!".
+  * 1a1. CatPals shows an error message: "No such command found!".
 
-      Use case ends.
-
+    Use case ends.
 
 **Use case 5 (U5): Update cat status**
 
@@ -512,34 +531,33 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * 2a. The list is empty.
 
   Use case ends.
-
 * 3a. The user requests to update by name.
-    * 3a1. The name is blank.
-        * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
-          Use case ends.
-    * 3a2. The name contains symbols.
-        * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
-          Use case ends.
-    * 3a3. The name does not match any cat in CatPals.
-        * 3a3a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat’s name is spelled correctly.".
-          Use case ends.
 
+  * 3a1. The name is blank.
+    * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+      Use case ends.
+  * 3a2. The name contains symbols.
+    * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
+      Use case ends.
+  * 3a3. The name does not match any cat in CatPals.
+    * 3a3a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat’s name is spelled correctly.".
+      Use case ends.
 * 3b. The user requests to update by index.
-    * 3b1. The index is blank.
-        * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
-          Use case ends.
-    * 3b2. The index is out of range (invalid index).
-        * 3b2a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat number is in the range!".
-          Use case resumes at step 2.
 
+  * 3b1. The index is blank.
+    * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+      Use case ends.
+  * 3b2. The index is out of range (invalid index).
+    * 3b2a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat number is in the range!".
+      Use case resumes at step 2.
 * 3c. The updated status data is invalid.
-    * 3c1. The user inputs more than 3 traits.
-        * 3c1a. CatPals shows an error message: "You added more than 3 traits to the cat. Please only add up to 3 traits.".
-          Use case ends.
-    * 3c2. The user inputs duplicate traits or locations.
-        * 3c2a. CatPals shows an error message: "You cannot add duplicate [traits/locations]!".
-          Use case ends.
 
+  * 3c1. The user inputs more than 3 traits.
+    * 3c1a. CatPals shows an error message: "You added more than 3 traits to the cat. Please only add up to 3 traits.".
+      Use case ends.
+  * 3c2. The user inputs duplicate traits or locations.
+    * 3c2a. CatPals shows an error message: "You cannot add duplicate [traits/locations]!".
+      Use case ends.
 
 **Use case 6 (U6): Undo last action**
 
@@ -555,16 +573,14 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
 * 1a. There is no previous command to undo.
 
-    * 1a1. CatPals shows an error message: "No more commands to undo!".
+  * 1a1. CatPals shows an error message: "No more commands to undo!".
 
-      Use case ends.
-
+    Use case ends.
 * 1b. The last command was a "Find" or "List" command (no state change).
 
-    * 1b1. CatPals shows an error message: "Last command did not change data; nothing to undo.".
+  * 1b1. CatPals shows an error message: "Last command did not change data; nothing to undo.".
 
-      Use case ends.
-
+    Use case ends.
 
 **Use case 7 (U7): Attach an image to a cat profile**
 
@@ -578,11 +594,11 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
    Use case ends.
 
 **Extensions**
-* 4a. The provided file path is invalid or the file is not an image.
-    * 4a1. CatPals shows an error message: "Invalid file path or unsupported file type. Please provide a valid image file.".
-    * 4a2. CatPals prompts the user to provide the file path again.
-      Use case resumes at step 3.
 
+* 4a. The provided file path is invalid or the file is not an image.
+  * 4a1. CatPals shows an error message: "Invalid file path or unsupported file type. Please provide a valid image file.".
+  * 4a2. CatPals prompts the user to provide the file path again.
+    Use case resumes at step 3.
 
 **Use case 8 (U8): Export cat data**
 
@@ -599,11 +615,11 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
    Use case ends.
 
 **Extensions**
-* 6a. The provided file path is invalid or not writable.
-    * 6a1. CatPals shows an error message: "Invalid file path or insufficient permissions. Please provide a valid file path.".
-    * 6a2. CatPals prompts the user to provide the file path again.
-      Use case resumes at step 5.
 
+* 6a. The provided file path is invalid or not writable.
+  * 6a1. CatPals shows an error message: "Invalid file path or insufficient permissions. Please provide a valid file path.".
+  * 6a2. CatPals prompts the user to provide the file path again.
+    Use case resumes at step 5.
 
 **Use case 9 (U9): Filter cats by traits**
 
@@ -618,40 +634,47 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
    Use case ends.
 
 **Extensions**
-* 4a. The user inputs invalid traits (e.g., more than 3 traits, duplicate traits).
-    * 4a1. CatPals shows an error message: "Invalid traits input. Please provide up to 3 unique traits.".
-    * 4a2. CatPals prompts the user to input the traits again.
-      Use case resumes at step 2.
-* 4b. No cats match the specified traits.
-    * 4b1. CatPals shows a message: "No cats found with the specified traits."
-      Use case ends.
 
+* 4a. The user inputs invalid traits (e.g., more than 3 traits, duplicate traits).
+  * 4a1. CatPals shows an error message: "Invalid traits input. Please provide up to 3 unique traits.".
+  * 4a2. CatPals prompts the user to input the traits again.
+    Use case resumes at step 2.
+* 4b. No cats match the specified traits.
+  * 4b1. CatPals shows a message: "No cats found with the specified traits."
+    Use case ends.
 
 ## Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
 2. Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
 3. A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+
 ### Compatibility
+
 - Should work on any mainstream OS (Windows, macOS, Linux) as long as Java `17` or above is installed.
 
 ### Performance
+
 - Should be able to hold up to 1000 cat records without noticeable sluggishness in performance for typical usage.
 - Response time for adding, deleting, or editing a record should be under 1 second.
 - Search results should be displayed within 0.5 seconds of input.
 
 ### Usability
+
 - A user with above average typing speed for regular English text should be able to accomplish most tasks faster using commands than using the mouse.
 - A new user should be able to complete their first cat record entry within 5 minutes.
 
 ### Reliability
+
 - Data should be automatically saved after each operation without requiring manual saving.
 - Data should be fully recoverable after an unexpected application crash.
 
 ### Maintainability
+
 - Adding new fields should not require significant code refactoring.
 
 ### Portability
+
 - Should support exporting data in CSV or JSON format for backup or migration purposes.
 
 *{More to be added}*
