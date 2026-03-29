@@ -8,11 +8,13 @@ package UI <<Rectangle>>{
 Class "<<interface>>\nUi" as Ui
 Class "{abstract}\nUiPart" as UiPart
 Class UiManager
+Class SplashScreen
 Class MainWindow
 Class HelpWindow
 Class ResultDisplay
-Class PersonListPanel
-Class PersonCard
+Class CatListPanel
+Class CatSidebarCard
+Class CatDetailPanel
 Class StatusBarFooter
 Class CommandBox
 }
@@ -29,29 +31,33 @@ Class HiddenOutside #FFFFFF
 HiddenOutside ..> Ui
 
 UiManager .left.|> Ui
+UiManager ..> SplashScreen
 UiManager -down-> "1" MainWindow
-MainWindow *-down->  "1" CommandBox
+MainWindow ..> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
-MainWindow *-down-> "1" PersonListPanel
-MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
+MainWindow *-down-> "1" CatListPanel
+MainWindow *-down-> "1" CatDetailPanel
+MainWindow ..> "1" StatusBarFooter
+MainWindow *-down-> "0..1" HelpWindow
 
-PersonListPanel -down-> "*" PersonCard
+CatListPanel -down-> "*" CatSidebarCard
 
 MainWindow -left-|> UiPart
 
 ResultDisplay --|> UiPart
 CommandBox --|> UiPart
-PersonListPanel --|> UiPart
-PersonCard --|> UiPart
+CatListPanel --|> UiPart
+CatSidebarCard --|> UiPart
+CatDetailPanel --|> UiPart
 StatusBarFooter --|> UiPart
 HelpWindow --|> UiPart
 
-PersonCard ..> Model
+CatSidebarCard ..> Model
+CatDetailPanel ..> Model
 UiManager -right-> Logic
 MainWindow -left-> Logic
 
-PersonListPanel -[hidden]left- HelpWindow
+CatListPanel -[hidden]left- HelpWindow
 HelpWindow -[hidden]left- CommandBox
 CommandBox -[hidden]left- ResultDisplay
 ResultDisplay -[hidden]left- StatusBarFooter
