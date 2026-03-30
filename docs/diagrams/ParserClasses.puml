@@ -35,4 +35,13 @@ XYZCommandParser ..> ParserUtil
 ParserUtil .down.> Prefix
 ArgumentTokenizer .down.> Prefix
 XYZCommand -up-|> Command
+
+note right of XYZCommandParser
+  XYZCommandParser =
+  AddCommandParser,
+  AttachCommandParser,
+  DeleteCommandParser,
+  FindCommandParser,
+  UpdateCommandParser
+end note
 @enduml

@@ -194,6 +194,72 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Add feature
+
+The `add` command allows users to add a new cat profile to the cat notebook. It is implemented via `AddCommand`, which extends `Command`, and `AddCommandParser`, which parses the user's input.
+
+**Format:** `add n/NAME t/TRAIT l/LOCATION [h/HEALTH_STATUS]`
+* `n/NAME`, `t/TRAIT`, and `l/LOCATION` are required.
+* `h/HEALTH_STATUS` is optional.
+* You can specify up to 3 `t/TRAIT` prefixes, but duplicate traits are not allowed.
+
+![AddSequenceDiagram](images/AddSequenceDiagram.png)
+
+The `add` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` identifies the `add` keyword and creates an `AddCommandParser`, which parses the remaining arguments (name, trait, location, and optional health status) into a `Cat` object wrapped in an `AddCommand`.
+3. `LogicManager` calls `AddCommand#execute(model)`.
+4. `AddCommand` checks for duplicates via `Model#hasCat(cat)`. If a cat with the same name already exists, a `CommandException` is thrown.
+5. If no duplicate is found, `Model#addCat(cat)` is called to persist the new cat.
+6. A `CommandResult` is returned with a success message.
+
+
+### Attach feature
+
+The `attach` command allows users to attach an image to an existing cat profile, identified by index or name. It is implemented via `AttachCommand`, which extends `Command`, and `AttachCommandParser`, which parses the user's input.
+
+**Format:** `attach INDEX IMAGE_PATH` or `attach CAT_NAME IMAGE_PATH`
+
+![AttachSequenceDiagram](images/AttachSequenceDiagram.png)
+
+The `attach` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` identifies the `attach` keyword and creates an `AttachCommandParser`, which parses the target (index or name) and the image file path into an `AttachCommand`.
+3. `LogicManager` calls `AttachCommand#execute(model)`.
+4. `AttachCommand` first verifies that the specified image file exists on disk. If not, a `CommandException` is thrown.
+5. The target cat is resolved:
+   - If an index was given, the cat is retrieved from the filtered list via `Model#getFilteredCatList()`. An out-of-bounds index throws a `CommandException`.
+   - If a name was given, the cat is searched case-insensitively across the full cat list via `Model#getAddressBook()`. A missing name throws a `CommandException`.
+6. A new `Cat` object is constructed with the updated image, and `Model#setCat(catToEdit, updatedCat)` is called.
+7. A `CommandResult` is returned with a success message.
+
+
+### Delete feature
+
+The `delete` command allows users to remove an existing cat profile from the cat notebook, identified by index or name. It is implemented via `DeleteCommand`, which extends `Command`, and `DeleteCommandParser`, which parses the user's input.
+
+**Format:** `delete INDEX` or `delete CAT_NAME`
+
+The `delete` command works as follows:
+
+![DeleteSequenceDiagram](images/DeleteSequenceDiagram.png)
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` identifies the `delete` keyword and creates a `DeleteCommandParser`, which attempts to parse the argument as an index first. If that fails, it treats the argument as a cat name (case-sensitive).
+3. `LogicManager` calls `DeleteCommand#execute(model)`.
+4. `DeleteCommand` retrieves the current filtered cat list via `Model#getFilteredCatList()`.
+5. The target cat is resolved:
+   - If an index was given, the cat at that position is retrieved. An out-of-bounds index throws a `CommandException`.
+   - If a name was given, the cat is located by exact name match. If no match is found, a `CommandException` is thrown.
+6. `Model#deleteCat(cat)` is called to remove the cat from the address book.
+7. A `CommandResult` is returned with a success message.
+
+### Update feature
+
+### Find feature
+
 ### Export feature
 
 The export feature allows users to export the currently displayed cat list to an HTML file (`export.html`). It is implemented via `ExportCommand`, which extends `Command`.
@@ -216,9 +282,11 @@ The `export` command works as follows:
 <div markdown="span" class="alert alert-info">:information_source: **Note:** `export` is not undoable — it does not modify address book data, so executing `export` clears any previously saved undo state.
 </div>
 
-### \[Proposed\] Undo/redo feature
+### Clear feature 
 
-#### Proposed Implementation
+### List feature
+
+### Undo/redo feature
 
 The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
 
