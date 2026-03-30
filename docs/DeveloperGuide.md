@@ -1,5 +1,6 @@
 ---
-span
+layout: page
+title: Developer Guide
 ---
 * Table of Contents
   <!-- TOC -->
