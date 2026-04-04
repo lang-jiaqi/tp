@@ -64,6 +64,16 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_update_caseInsensitive() throws Exception {
+        Cat cat = new CatBuilder().build();
+        EditCatDescriptor descriptor = new EditCatDescriptorBuilder(cat).build();
+        String args = INDEX_FIRST_PERSON.getOneBased() + " " + CatUtil.getEditCatDescriptorDetails(descriptor);
+        UpdateCommand expected = new UpdateCommand(INDEX_FIRST_PERSON, descriptor);
+        assertEquals(expected, parser.parseCommand("UPDATE " + args));
+        assertEquals(expected, parser.parseCommand("UpDaTe " + args));
+    }
+
+    @Test
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
