@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.UpdateCommand;
@@ -23,6 +25,7 @@ import seedu.address.model.cat.Trait;
  * Parses input arguments and creates a new UpdateCommand object
  */
 public class UpdateCommandParser implements Parser<UpdateCommand> {
+    private static final Pattern UPDATE_PREFIX_PATTERN = Pattern.compile("(?i)(^|\\s)([ntlh])/");
 
     /**
      * Parses the given {@code String} of arguments in the context of the UpdateCommand
@@ -31,8 +34,9 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
      */
     public UpdateCommand parse(String args) throws ParseException {
         requireNonNull(args);
+        String normalizedArgs = normalizeUpdatePrefixes(args);
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_TRAIT, PREFIX_LOCATION, PREFIX_HEALTH);
+                ArgumentTokenizer.tokenize(normalizedArgs, PREFIX_NAME, PREFIX_TRAIT, PREFIX_LOCATION, PREFIX_HEALTH);
 
         String preamble = argMultimap.getPreamble().trim();
         if (preamble.isEmpty()) {
@@ -109,6 +113,20 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
         }
         Collection<String> traitList = traits.size() == 1 && traits.contains("") ? Collections.emptyList() : traits;
         return Optional.of(ParserUtil.parseTraits(traitList));
+    }
+
+    /**
+     * Normalizes update field prefixes to lowercase so n/t/l/h are case-insensitive.
+     */
+    private String normalizeUpdatePrefixes(String args) {
+        Matcher matcher = UPDATE_PREFIX_PATTERN.matcher(args);
+        StringBuffer normalized = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(normalized, Matcher.quoteReplacement(
+                    matcher.group(1) + matcher.group(2).toLowerCase() + "/"));
+        }
+        matcher.appendTail(normalized);
+        return normalized.toString();
     }
 
 }

@@ -89,6 +89,20 @@ public class UpdateCommandParserTest {
     }
 
     @Test
+    public void parse_allFieldsSpecifiedUppercasePrefixes_success() {
+        Index targetIndex = INDEX_SECOND_PERSON;
+        String userInput = targetIndex.getOneBased() + " T/" + VALID_TRAIT_FLUFFY + " T/" + VALID_TRAIT_ORANGE
+                + " L/" + VALID_LOCATION_AMY + " N/" + VALID_NAME_AMY + " H/" + VALID_HEALTH_AMY;
+
+        EditCatDescriptor descriptor = new EditCatDescriptorBuilder().withName(VALID_NAME_AMY)
+                .withTraits(VALID_TRAIT_FLUFFY, VALID_TRAIT_ORANGE).withLocation(VALID_LOCATION_AMY)
+                .withHealth(VALID_HEALTH_AMY).build();
+        UpdateCommand expectedCommand = new UpdateCommand(targetIndex, descriptor);
+
+        assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
     public void parse_someFieldsSpecified_success() {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + LOCATION_DESC_AMY;
