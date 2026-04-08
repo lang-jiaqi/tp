@@ -42,7 +42,8 @@ public class MainWindow extends UiPart<Stage> {
     private static final String DELETE_CONFIRMATION_HEADER =
             "Are you sure you want to delete this cat entry: ";
     private static final String CLEAR_CONFIRMATION_HEADER =
-            "Are you sure you want to clear all cat entries? Note that this is a system-level operation and it CANNOT be undone!";
+            "Are you sure you want to clear all cat entries? "
+                    + "Note that this is a system-level operation and it CANNOT be undone!";
     private static final String CLEAR_CONFIRMATION_ENTRIES = "(%d entries will be removed)";
     private static final String UNDO_CONFIRMATION_HEADER =
             "Are you sure you want to undo the previous action?";
