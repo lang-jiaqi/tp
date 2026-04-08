@@ -24,6 +24,7 @@ import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.ExportCommand;
 import seedu.address.logic.commands.UndoCommand;
 import seedu.address.logic.commands.UpdateCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -45,6 +46,7 @@ public class MainWindow extends UiPart<Stage> {
             "Are you sure you want to clear all cat entries? "
                     + "Note that this is a system-level operation and it CANNOT be undone!";
     private static final String CLEAR_CONFIRMATION_ENTRIES = "(%d entries will be removed)";
+    private static final String EXPORT_OVERWRITE_HEADER = "%s already exists. Overwrite it?";
     private static final String UNDO_CONFIRMATION_HEADER =
             "Are you sure you want to undo the previous action?";
     private static final String CONFIRMATION_HINT = "\n\nPress Enter to confirm, Esc to cancel.";
@@ -237,6 +239,17 @@ public class MainWindow extends UiPart<Stage> {
                 }
             }
 
+            // Show confirmation dialog when export would overwrite an existing file
+            if (command instanceof ExportCommand exportCommand) {
+                if (exportCommand.getOutputPath().toFile().exists()) {
+                    boolean confirmed = showExportOverwriteConfirmationDialog(
+                            exportCommand.getOutputPath().getFileName().toString());
+                    if (!confirmed) {
+                        return CommandResult.cancelled();
+                    }
+                }
+            }
+
             // Show confirmation dialog for clear commands
             if (command instanceof ClearCommand) {
                 Optional<Integer> entryCount = logic.getClearPreview(command);
@@ -395,6 +408,52 @@ public class MainWindow extends UiPart<Stage> {
         alert.setTitle("Confirm Clear");
         alert.setHeaderText(null);
         alert.setContentText(content);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinWidth(420);
+        alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
+
+        // Hide OK and Cancel buttons - user presses Enter/Esc instead
+        alert.setOnShown(event -> {
+            var okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+            var cancelButton = alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (okButton != null) {
+                okButton.setVisible(false);
+            }
+            if (cancelButton != null) {
+                cancelButton.setVisible(false);
+            }
+        });
+
+        // Handle Enter = confirm, Esc = cancel
+        alert.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                alert.setResult(ButtonType.OK);
+                e.consume();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                alert.setResult(ButtonType.CANCEL);
+                e.consume();
+            }
+        });
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Shows a confirmation dialog when an export would overwrite an existing file.
+     * Enter confirms, Esc cancels. No buttons - user presses keys.
+     *
+     * @param filename the name of the file that would be overwritten
+     * @return true if the user confirmed, false if cancelled
+     */
+    private boolean showExportOverwriteConfirmationDialog(String filename) {
+        String content = String.format(EXPORT_OVERWRITE_HEADER, filename) + CONFIRMATION_HINT;
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle("Confirm Overwrite");
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.setResizable(true);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.getDialogPane().setMinWidth(420);
         alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");

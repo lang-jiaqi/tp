@@ -27,10 +27,37 @@ public class ExportCommand extends Command {
             + ": Exports the currently displayed cat list to export.html in the CatPals folder.\n"
             + "Example: " + COMMAND_WORD;
 
-    public static final String MESSAGE_SUCCESS = "Exported %1$d cat(s) to export.html";
-    public static final String MESSAGE_FAILURE = "Failed to write export.html: %1$s";
+    public static final String MESSAGE_SUCCESS = "Exported %1$d cat(s) to %2$s";
+    public static final String MESSAGE_FAILURE = "Failed to write %1$s: %2$s";
 
-    private static final Path OUTPUT_PATH = Paths.get("export.html");
+    private final String filename;
+    private final String title;
+    private final Path outputPath;
+
+    /**
+     * Creates an ExportCommand with the default filename "export".
+     */
+    public ExportCommand() {
+        this("export", "Cat List");
+    }
+
+    /**
+     * Creates an ExportCommand that writes to {@code filename}.html.
+     */
+    public ExportCommand(String filename, String title) {
+        this.filename = filename;
+        this.title = title;
+        this.outputPath = Paths.get(filename + ".html");
+
+    }
+
+    public Path getOutputPath() {
+        return outputPath;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
@@ -39,12 +66,12 @@ public class ExportCommand extends Command {
 
         String html = buildHtml(cats);
         try {
-            Files.writeString(OUTPUT_PATH, html);
+            Files.writeString(outputPath, html);
         } catch (IOException e) {
-            throw new CommandException(String.format(MESSAGE_FAILURE, e.getMessage()));
+            throw new CommandException(String.format(MESSAGE_FAILURE, outputPath.getFileName(), e.getMessage()));
         }
 
-        return new CommandResult(String.format(MESSAGE_SUCCESS, cats.size()));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, cats.size(), outputPath.getFileName()));
     }
 
     /**
@@ -57,7 +84,7 @@ public class ExportCommand extends Command {
           .append("<html lang=\"en\">\n")
           .append("<head>\n")
           .append("  <meta charset=\"UTF-8\">\n")
-          .append("  <title>CatPals Export</title>\n")
+          .append("  <title>").append(escapeHtml(title)).append("</title>\n")
           .append("  <style>\n")
           .append("    body { font-family: sans-serif; padding: 20px; }\n")
           .append("    h1 { color: #333; }\n")
@@ -75,7 +102,7 @@ public class ExportCommand extends Command {
           .append("  </style>\n")
           .append("</head>\n")
           .append("<body>\n")
-          .append("  <h1>CatPals Export</h1>\n")
+          .append("  <h1>").append(escapeHtml(title)).append("</h1>\n")
           .append("  <p>").append(cats.size()).append(" cat(s) listed.</p>\n");
 
         for (int i = 0; i < cats.size(); i++) {

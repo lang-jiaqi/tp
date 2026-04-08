@@ -443,18 +443,22 @@ Before the cat is removed, CatPals will show a confirmation dialog. Press **Ente
 
 ### Exporting the cat list : `export`
 
-Exports the currently displayed cat list to `export.html` in your CatPals folder. Open it in any browser to view a formatted list with cat photos.
+Exports the currently displayed cat list to an HTML file. Open it in any browser to view a formatted list with cat photos.
 
-Format: `export`
+Format: `export [FILENAME]`
 
+* `FILENAME` is optional. If omitted, the file is saved as `export.html` with the heading "Cat List".
+* If a filename is provided, spaces are automatically converted to hyphens (e.g., `utown cats` → `utown-cats.html`), and the heading of the HTML file matches the filename you typed.
+* The file is saved in the same folder as `catpals.jar`.
+* Filenames must not contain any of these characters: `\ / : * ? " < > |`
 * Exports whatever is currently shown. Use `find` first to export a filtered subset, or `list` to export everything.
-* The file is saved as `export.html` in the same folder as `catpals.jar`.
 * Images are embedded using the same paths stored in the app, so they appear correctly as long as the `images/` folder is in the same location.
 
 Examples:
 
-* `list` followed by `export` — exports all cats.
-* `find l/Utown` followed by `export` — exports only cats located at Utown.
+* `list` followed by `export` — exports all cats to `export.html`.
+* `find l/Utown` followed by `export utown cats` — exports only cats at Utown to `utown-cats.html`.
+* `export semester 1` — exports the current list to `semester-1.html` with the heading "semester 1".
 
 <p align="center">
   <img src="images/feature_export.png" alt="feature_export" width="70%">
@@ -574,7 +578,7 @@ _Details coming soon ..._
 | **Delete** a cat by name or index | `delete CAT_NAME` or `delete CAT_NUMBER`                                       | `delete Snowy` or `delete 3`                                         |
 | **Update** a cat by name or index | `update NAME/INDEX [n/NAME] [t/TRAIT] [l/LOCATION] [h/HEALTH]`                 | `update Snowy l/utown` or `update 3 l/PGPR`                          |
 | **Find** cats                     | `find n/NAME` or `find l/LOCATION` or `find t/TRAIT` or `find h/HEALTH_STATUS` | `find n/Mochi` or `find t/Striped` or `find l/COM3` or `find h/Sick` |
-| **Export** the cat list to HTML   | `export`                                                                       | `export`                                                             |
+| **Export** the cat list to HTML   | `export [FILENAME]`                                                            | `export` or `export utown cats`                                      |
 | **Clear** all cats                | `clear`                                                                        | `clear`                                                              |
 | **List** all cats                 | `list`                                                                         | `list`                                                               |
 | **Help**                          | `help`                                                                         | `help`                                                               |
