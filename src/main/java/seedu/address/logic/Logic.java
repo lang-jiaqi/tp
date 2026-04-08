@@ -65,6 +65,14 @@ public interface Logic {
     Optional<Integer> getClearPreview(Command command);
 
     /**
+     * Returns true if there is a saved undo state that can be restored.
+     * Used by the UI to decide whether to show an undo confirmation dialog.
+     *
+     * @return true if the most recent undoable command can be reversed
+     */
+    boolean canUndo();
+
+    /**
      * Returns the AddressBook.
      *
      * @see seedu.address.model.Model#getAddressBook()

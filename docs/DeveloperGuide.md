@@ -324,7 +324,7 @@ than attempting to perform the undo.
 
 </div>
 
-The following sequence diagram shows how an undo operation goes through the `Logic` component:
+The following sequence diagram shows how an undo operation goes through the `UI` and `Logic` components. Before the undo is executed, `MainWindow` calls `Logic#canUndo()` to check whether there is a saved state to restore. If there is, a confirmation dialog is shown. The undo is only carried out if the user confirms.
 
 ![UndoSequenceDiagram](images/UndoSequenceDiagram-Logic.png)
 

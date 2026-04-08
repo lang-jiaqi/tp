@@ -3,7 +3,6 @@ package seedu.address.model.cat;
 import java.util.List;
 import java.util.function.Predicate;
 
-import seedu.address.commons.util.StringUtil;
 
 /**
  * Tests if a cat matches search keywords by name, location, trait, and health.
@@ -35,17 +34,17 @@ public class CatContainsKeywordsPredicate implements Predicate<Cat> {
     @Override
     public boolean test(Cat cat) {
         boolean matchesName = nameKeywords.isEmpty() || nameKeywords.stream()
-                .anyMatch(keyword -> StringUtil.containsWordIgnoreCase(cat.getName().fullName, keyword));
+                .anyMatch(keyword -> cat.getName().fullName.toLowerCase().contains(keyword.toLowerCase()));
 
         boolean matchesLocation = locationKeywords.isEmpty() || locationKeywords.stream()
-                .anyMatch(keyword -> StringUtil.containsWordIgnoreCase(cat.getLocation().value, keyword));
+                .anyMatch(keyword -> cat.getLocation().value.toLowerCase().contains(keyword.toLowerCase()));
 
         boolean matchesTraits = traitKeywords.isEmpty() || traitKeywords.stream()
                 .anyMatch(keyword -> cat.getTraits().stream()
-                        .anyMatch(trait -> StringUtil.containsWordIgnoreCase(trait.traitName, keyword)));
+                        .anyMatch(trait -> trait.traitName.toLowerCase().contains(keyword.toLowerCase())));
 
         boolean matchesHealth = healthKeywords.isEmpty() || healthKeywords.stream()
-                .anyMatch(keyword -> StringUtil.containsWordIgnoreCase(cat.getHealth().value, keyword));
+                .anyMatch(keyword -> cat.getHealth().value.toLowerCase().contains(keyword.toLowerCase()));
 
         // Returns true only if the cat matches ALL specified criteria (AND logic)
         return matchesName && matchesLocation && matchesTraits && matchesHealth;

@@ -24,6 +24,7 @@ import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.UndoCommand;
 import seedu.address.logic.commands.ExportCommand;
 import seedu.address.logic.commands.UpdateCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -45,6 +46,8 @@ public class MainWindow extends UiPart<Stage> {
             "Are you sure you want to clear all cat entries? ";
     private static final String CLEAR_CONFIRMATION_ENTRIES = "(%d entries will be removed)";
     private static final String EXPORT_OVERWRITE_HEADER = "%s already exists. Overwrite it?";
+    private static final String UNDO_CONFIRMATION_HEADER =
+            "Are you sure you want to undo the previous action?";
     private static final String CONFIRMATION_HINT = "\n\nPress Enter to confirm, Esc to cancel.";
 
     private final Logger logger = LogsCenter.getLogger(getClass());
@@ -257,6 +260,12 @@ public class MainWindow extends UiPart<Stage> {
                 }
             }
 
+            // Show confirmation dialog for undo commands
+            if (command instanceof UndoCommand && logic.canUndo()
+                    && !showUndoConfirmationDialog()) {
+                return CommandResult.cancelled();
+            }
+
             CommandResult commandResult = logic.executeCommand(command);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
@@ -372,6 +381,17 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
+     * Shows a confirmation dialog for undo commands.
+     * Enter confirms, Esc cancels. No buttons — user presses keys.
+     *
+     * @return true if the user confirmed, false if cancelled
+     */
+    private boolean showUndoConfirmationDialog() {
+        return showConfirmationDialog("Confirm Undo",
+                UNDO_CONFIRMATION_HEADER + CONFIRMATION_HINT);
+    }
+
+    /**
      * Shows a confirmation dialog for clear commands.
      * Enter confirms, Esc cancels. No buttons - user presses keys.
      *
@@ -462,5 +482,67 @@ public class MainWindow extends UiPart<Stage> {
 
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Creates and shows a styled confirmation dialog with the given title and content.
+     * The dialog uses Enter to confirm and Esc to cancel, with default buttons hidden.
+     *
+     * @param title the dialog window title
+     * @param content the message displayed in the dialog body
+     * @return true if the user pressed Enter to confirm, false if cancelled
+     */
+    private boolean showConfirmationDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(primaryStage);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.setResizable(true);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinWidth(420);
+        alert.getDialogPane().getStylesheets().add("view/DarkTheme.css");
+
+        hideDialogButtons(alert);
+        addEnterEscHandler(alert);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Hides the default OK and Cancel buttons on the given alert dialog.
+     *
+     * @param alert the alert whose buttons should be hidden
+     */
+    private void hideDialogButtons(Alert alert) {
+        alert.setOnShown(event -> {
+            var okButton = alert.getDialogPane().lookupButton(ButtonType.OK);
+            var cancelButton = alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (okButton != null) {
+                okButton.setVisible(false);
+            }
+            if (cancelButton != null) {
+                cancelButton.setVisible(false);
+            }
+        });
+    }
+
+    /**
+     * Registers a key event filter on the given alert so that Enter confirms
+     * and Escape cancels the dialog.
+     *
+     * @param alert the alert to attach key handlers to
+     */
+    private void addEnterEscHandler(Alert alert) {
+        alert.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                alert.setResult(ButtonType.OK);
+                e.consume();
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                alert.setResult(ButtonType.CANCEL);
+                e.consume();
+            }
+        });
     }
 }

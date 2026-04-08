@@ -125,6 +125,11 @@ public class LogicManager implements Logic {
     }
 
     @Override
+    public boolean canUndo() {
+        return model.canUndo();
+    }
+
+    @Override
     public ReadOnlyAddressBook getAddressBook() {
         return model.getAddressBook();
     }

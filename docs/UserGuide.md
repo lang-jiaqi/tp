@@ -493,6 +493,7 @@ Format: `undo`
 | [`undo`](#undo-the-previous-action--undo) again | No effect |
 
 **Rules:** Only **one** level of undo is supported. Exported files stay on disk even if you `undo` another command afterward.
+>There will be a confirmation window for `undo` command. Please press 'enter' to confirm or `esc` to cancel.
 
 ### Exiting the program : `exit`
 
