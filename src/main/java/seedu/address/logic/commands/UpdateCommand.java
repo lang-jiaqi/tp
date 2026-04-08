@@ -35,6 +35,7 @@ public class UpdateCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Updates the details of the cat identified "
             + "by its name or index number in the displayed cat list. "
             + "Existing values will be overwritten by the input values.\n"
+            + "Warning: Using " + PREFIX_TRAIT + " replaces all existing traits; include existing traits if you want to retain them.\n"
             + "Parameters: CAT_NAME [" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_TRAIT + "TRAIT]... "
             + "[" + PREFIX_LOCATION + "LOCATION] "
