@@ -287,6 +287,24 @@ The `export` command works as follows:
 
 ### List feature
 
+The `list` command shows all cats in the address book. It is implemented via `ListCommand`, which extends `Command`, and requires no dedicated parser class.
+
+Unlike most no-argument commands, `list` rejects extra parameters instead of silently ignoring them. The check is performed in `AddressBookParser`: if the `arguments` string (everything after the command word) is non-empty after trimming, a `ParseException` is thrown with `ListCommand.MESSAGE_EXTRA_ARGS`, which reads:
+
+```
+list does not take extra parameters.
+Did you just mean: list
+```
+
+**Implementation flow:**
+
+1. User types e.g. `list foo` and presses Enter.
+2. `AddressBookParser#parseCommand()` splits the input into `commandWord = "list"` and `arguments = " foo"`.
+3. `arguments.trim()` is non-empty, so a `ParseException` is thrown with `ListCommand.MESSAGE_EXTRA_ARGS`.
+4. The error message is displayed to the user; no state change occurs.
+
+If the user types exactly `list` (no arguments), `arguments` is an empty string, the check passes, and `ListCommand` is returned and executed normally.
+
 ### Undo/redo feature
 
 The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
