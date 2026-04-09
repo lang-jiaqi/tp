@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:se-education.org)",
-      "Bash(./gradlew test:*)"
-    ]
-  }
-}
