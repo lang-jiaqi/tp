@@ -62,7 +62,6 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
 * This project is based on the [AddressBook Level-3](https://se-education.org/addressbook-level3/) application.
 * Class names were renamed from AB3 defaults to CatPals-related names with the help of [Cursor](https://www.cursor.com/) to improve development efficiency(to help us focus on functional code development)
 
@@ -92,7 +91,7 @@ Given below is a quick overview of main components and how they interact with ea
 
 **Main components of the architecture**
 
-**`Main`** (consisting of classes [`Main`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
+**`Main`** (consisting of classes [`Main`](https://github.com/AY2526S2-CS2103T-T16-3/tp/blob/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2526S2-CS2103T-T16-3/tp/blob/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
 
 * At app launch, it initializes the other components in the correct sequence, and connects them up with each other.
 * At shut down, it shuts down the other components and invokes cleanup methods where necessary.
@@ -131,7 +130,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 The UI consists of a `MainWindow` that is made up of parts e.g. `CommandBox`, `ResultDisplay`, `CatListPanel`, `CatDetailPanel`, `StatusBarFooter` etc. All these, including the `MainWindow`, inherit from the abstract `UiPart` class which captures the commonalities between classes that represent parts of the visible GUI. A `SplashScreen` is also shown on startup before the `MainWindow` is initialised; it does not extend `UiPart`.
 
-The `UI` component uses the JavaFx UI framework. The layout of these UI parts are defined in matching `.fxml` files that are in the `src/main/resources/view` folder. For example, the layout of the [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java) is specified in [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml)
+The `UI` component uses the JavaFx UI framework. The layout of these UI parts are defined in matching `.fxml` files that are in the `src/main/resources/view` folder. For example, the layout of the [`MainWindow`](https://github.com/AY2526S2-CS2103T-T16-3/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java) is specified in [`MainWindow.fxml`](https://github.com/AY2526S2-CS2103T-T16-3/tp/blob/master/src/main/resources/view/MainWindow.fxml)
 
 The sequence diagram below illustrates how the UI handles a user command:
 
@@ -234,23 +233,30 @@ The `add` command works as follows:
 
 ### Attach feature
 
-The `attach` command allows users to attach an image to an existing cat profile, identified by index or name. It is implemented via `AttachCommand`, which extends `Command`, and `AttachCommandParser`, which parses the user's input.
+The `attach` command allows users to attach an image to an existing cat profile, or reset a previously attached image back to auto-detection. It is identified by index or name. It is implemented via `AttachCommand`, which extends `Command`, and `AttachCommandParser`, which parses the user's input.
 
-**Format:** `attach INDEX IMAGE_PATH` or `attach CAT_NAME IMAGE_PATH`
+**Format:**
+- `attach INDEX IMAGE_PATH` or `attach CAT_NAME IMAGE_PATH` — attach an image
+- `attach INDEX --reset` or `attach CAT_NAME --reset` — clear the explicit image path and fall back to auto-detection
 
-![AttachSequenceDiagram](images/AttachSequenceDiagram.png)
+`AttachCommandParser` splits on the **last space** to separate the identifier from the image path or `--reset` flag. This allows cat names with spaces (e.g. `Snowy White`) to be used as identifiers.
+
+<img src="images/AttachSequenceDiagram.png" width="600" />
 
 The `attach` command works as follows:
 
 1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
-2. `AddressBookParser` identifies the `attach` keyword and creates an `AttachCommandParser`, which parses the target (index or name) and the image file path into an `AttachCommand`.
+2. `AddressBookParser` identifies the `attach` keyword and creates an `AttachCommandParser`, which splits the arguments on the last space. If the last token is `--reset`, a reset `AttachCommand` is created (no image path). Otherwise, the last token is parsed as an image path.
 3. `LogicManager` calls `AttachCommand#execute(model)`.
-4. `AttachCommand` first verifies that the specified image file exists on disk. If not, a `CommandException` is thrown.
+4. If this is **not** a reset, `AttachCommand` verifies that the image file exists on disk. If not, a `CommandException` is thrown.
 5. The target cat is resolved:
    - If an index was given, the cat is retrieved from the filtered list via `Model#getFilteredCatList()`. An out-of-bounds index throws a `CommandException`.
    - If a name was given, the cat is searched case-insensitively across the full cat list via `Model#getAddressBook()`. A missing name throws a `CommandException`.
-6. A new `Cat` object is constructed with the updated image, and `Model#setCat(catToEdit, updatedCat)` is called.
-7. A `CommandResult` is returned with a success message.
+6. A new `Cat` object is constructed with the updated image path (or an empty `CatImage` for reset), and `Model#setCat(catToEdit, updatedCat)` is called.
+7. A `CommandResult` is returned with a success message (`MESSAGE_ATTACH_SUCCESS` or `MESSAGE_RESET_SUCCESS`).
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** After a reset, CatPals falls back to auto-detection — it looks for a file named after the cat (e.g. `images/Bowie.png`) in the `images/` folder. Both `attach` and `attach --reset` are undoable.
+</div>
 
 
 ### Delete feature
@@ -330,9 +336,12 @@ The `find` command works as follows:
 
 ### Export feature
 
-The export feature allows users to export the currently displayed cat list to an HTML file (`export.html`). It is implemented via `ExportCommand`, which extends `Command`.
+The export feature allows users to export the currently displayed cat list to an HTML file. It is implemented via `ExportCommand`, which extends `Command`, and `ExportCommandParser`, which parses the optional title/filename argument.
 
-Unlike most commands, `ExportCommand` does not require a dedicated parser class — `AddressBookParser` instantiates it directly since the `export` command takes no arguments.
+**Format:** `export [TITLE]`
+* If `TITLE` is omitted, the file is saved as `export.html` with the heading "Cat List".
+* If `TITLE` is provided (e.g. `export Utown Cats`), spaces are replaced with hyphens for the filename (`utown-cats.html`), and the original text is used as the page heading (`Utown Cats`).
+* `TITLE` must not contain any of the characters `\ / : * ? " < > |`; otherwise a `ParseException` is thrown.
 
 The following sequence diagram shows how an export operation is carried out:
 
@@ -340,12 +349,12 @@ The following sequence diagram shows how an export operation is carried out:
 
 The `export` command works as follows:
 
-1. `LogicManager` receives the command string `"export"` and delegates parsing to `AddressBookParser`.
-2. `AddressBookParser` directly creates an `ExportCommand` with no intermediate parser.
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` identifies the `export` keyword and creates an `ExportCommandParser`, which trims the remaining arguments. If empty, a default `ExportCommand` is returned. Otherwise, spaces are replaced with hyphens to form the filename and the original trimmed text becomes the page title; invalid filename characters cause a `ParseException`.
 3. `LogicManager` calls `ExportCommand#execute(model)`.
 4. `ExportCommand` retrieves the currently filtered cat list via `Model#getFilteredCatList()`. This respects any active `find` filters — only the cats currently shown in the UI are exported.
-5. An HTML string is built for each cat and written to `export.html` in the application's working directory.
-6. A `CommandResult` is returned indicating how many cats were exported.
+5. An HTML string is built for each cat and written to `<filename>.html` in the application's working directory.
+6. A `CommandResult` is returned indicating how many cats were exported and the output filename.
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:** `export` is not undoable — it does not modify address book data. As a read-only command, it leaves the undo state untouched, so a previous undoable command can still be undone after exporting.
 </div>
@@ -546,7 +555,7 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 | `* * *`    | volunteer                          | filter cats by certain attributes                                                                            | get the information of a group of cats that share some similarities                    |
 | `* * *`    | volunteer                          | attach an image of the cat                                                                                   | see how the cat is looked like in the most directly way                                |
 | `* *`      | user                               | use a personal account and a corresponding key to login                                                      | be away from the issue that unauthorized users will have access to this system         |
-| `* *`      | user                               | attach a link that keeps an archive of the cat (videos, more pirctures) for each cat recorded in this system | more information of cats can be retrieved without taking up storage inside of this app |
+| `* *`      | user                               | attach a link that keeps an archive of the cat (videos, more pictures) for each cat recorded in this system | more information of cats can be retrieved without taking up storage inside of this app |
 | `* *`      | commitee member                    | edit a cat’s profile to change their status to "adopted"                                                    | stop deploying resources for cats that are no longer on campus                         |
 | `* *`      | volunteer                          | mark a cat's entry grey to indicate that the cat has unfortunately died                                      | show respect and R.I.P to cats                                                         |
 | `* *`      | first time user                    | learn how to use this app with a tutorial provided when I first open it                                      | get myself familiar without exploring by myself                                        |
@@ -727,7 +736,7 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * 3a. The user requests to update by name.
 
   * 3a1. The name is blank.
-    * 3a1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+    * 3a1a. CatPals shows an error message: "The info to be updated must not be blank!".
       Use case ends.
   * 3a2. The name contains symbols.
     * 3a2a. CatPals shows an error message: "The name must not contain symbols!".
@@ -738,7 +747,7 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * 3b. The user requests to update by index.
 
   * 3b1. The index is blank.
-    * 3b1a. CatPals shows an error message: "The info to be deleted must not be blank!".
+    * 3b1a. CatPals shows an error message: "The info to be updated must not be blank!".
       Use case ends.
   * 3b2. The index is out of range (invalid index).
     * 3b2a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat number is in the range!".
@@ -802,22 +811,20 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
 **MSS**
 
-1. User requests to export cat data
-2. CatPals prompts the user to choose a file format (CSV or JSON)
-3. User selects a file format
-4. CatPals prompts the user to provide a file path for the export
-5. User provides the file path
-6. CatPals validates the file path and exports the cat data in the chosen format
-7. CatPals shows a success message confirming the export
+1. User requests to export the currently displayed cat list, optionally providing a title (e.g. `export Utown Cats`)
+2. CatPals exports the cats to an HTML file named after the title (e.g. `utown-cats.html`), using the title as the page heading
+3. CatPals shows a success message indicating how many cats were exported and the output filename
 
    Use case ends.
 
 **Extensions**
 
-* 6a. The provided file path is invalid or not writable.
-  * 6a1. CatPals shows an error message: "Invalid file path or insufficient permissions. Please provide a valid file path.".
-  * 6a2. CatPals prompts the user to provide the file path again.
-    Use case resumes at step 5.
+* 1a. No title is provided (user types just `export`).
+  * 1a1. CatPals exports to `export.html` with the default heading "Cat List".
+    Use case ends.
+* 1b. The title contains invalid filename characters (e.g. `\ / : * ? " < > |`).
+  * 1b1. CatPals shows an error message listing the disallowed characters.
+    Use case ends.
 
 **Use case 9 (U9): Filter cats by traits**
 
@@ -844,7 +851,7 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 ## Non-Functional Requirements
 
 1. Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
-2. Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
+2. Should be able to hold up to 1000 cats without a noticeable sluggishness in performance for typical usage.
 3. A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
 
 ### Compatibility
@@ -893,8 +900,8 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 * **Sequence Diagram**: A UML diagram showing how objects interact with each other in a specific time-ordered sequence of method calls
 * **Activity diagram**: A UML diagram showing the flow of control through a process, including decision points and parallel actions
 * **Class diagram**: A UML diagram showing the structure of classes, their attributes, methods, and relationships (e.g., inheritance, association)
-* **MSS**: Main Success Scenario.  Scenario)The primary, happy-path flow of a use case, describing what happens when everything goes as expected with no errors or exceptions
-* **PlantUML**: A that generates UML diagrams from plain text descriptions. The .puml files in this project define all architectural diagrams
+* **MSS**: Main Success Scenario. The primary, happy-path flow of a use case, describing what happens when everything goes as expected with no errors or exceptions
+* **PlantUML**: A tool that generates UML diagrams from plain text descriptions. The .puml files in this project define all architectural diagrams
 * **Lifeline (in sequence diagrams)**: The vertical dashed line in a sequence diagram representing an object's existence over time. It ends with a destroy marker (X) when the object is no longer needed
 
 ---

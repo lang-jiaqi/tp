@@ -49,29 +49,11 @@ deactivate AddressBookParser
 LogicManager -> AttachCommand : execute(m)
 activate AttachCommand
 
-note right of AttachCommand : Check if image file exists.\nThrow CommandException if not found.
+AttachCommand -> Model : getFilteredCatList()
+activate Model
 
-alt index != null
-
-    AttachCommand -> Model : getFilteredCatList()
-    activate Model
-
-    Model --> AttachCommand : lastShownList
-    deactivate Model
-
-    note right of AttachCommand : Get cat from lastShownList\nby index. Throw\nCommandException if\nindex out of bounds.
-
-else targetName != null
-
-    AttachCommand -> Model : getAddressBook()
-    activate Model
-
-    Model --> AttachCommand : addressBook
-    deactivate Model
-
-    note right of AttachCommand : Search cat by name in\naddressBook.getCatList().\nThrow CommandException\nif not found.
-
-end
+Model --> AttachCommand : lastShownList
+deactivate Model
 
 AttachCommand -> Model : setCat(catToEdit, updatedCat)
 activate Model
@@ -89,6 +71,6 @@ deactivate CommandResult
 AttachCommand --> LogicManager : r
 deactivate AttachCommand
 
-[<--LogicManager
+[<-- LogicManager
 deactivate LogicManager
 @enduml
