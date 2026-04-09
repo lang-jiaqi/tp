@@ -74,9 +74,9 @@ public class FindCommandTest {
     }
 
     @Test
-    public void execute_multipleKeywords_multipleCatsFound() {
+    public void execute_multipleKeywords_oneCatFound() {
         String expectedMessage = String.format(MESSAGE_CATS_LISTED_OVERVIEW, 1);
-        // Search for name "Mochi" with traits "White" or "Fluffy"
+        // Search for name "Mochi" with trait "White"
         CatContainsKeywordsPredicate predicate = new CatContainsKeywordsPredicate(
                 List.of("Mochi"), Collections.emptyList(),
                 List.of("White"), Collections.emptyList());

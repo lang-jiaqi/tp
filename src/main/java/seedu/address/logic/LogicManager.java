@@ -77,7 +77,7 @@ public class LogicManager implements Logic {
      * {@code add}, {@code delete}, {@code update}, and {@code attach}.
      *
      * @param command the command about to be executed
-     * @return true if the command modifies a single cat entry and is undoable
+     * @return true if the command is one of the undoable command types
      */
     private boolean isUndoableCommand(Command command) {
         return command instanceof AddCommand

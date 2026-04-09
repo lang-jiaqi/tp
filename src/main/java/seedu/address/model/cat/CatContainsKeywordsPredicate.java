@@ -6,6 +6,8 @@ import java.util.function.Predicate;
 
 /**
  * Tests if a cat matches search keywords by name, location, trait, and health.
+ * Uses AND logic across categories: the cat must match all specified criteria.
+ * An empty keyword list for a category means no filter is applied for that category.
  */
 public class CatContainsKeywordsPredicate implements Predicate<Cat> {
     private final List<String> nameKeywords;

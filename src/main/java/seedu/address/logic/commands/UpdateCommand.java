@@ -70,7 +70,7 @@ public class UpdateCommand extends Command {
     }
 
     /**
-     * @param targetName        name of the cat in the address book to update
+     * @param targetName        name of the cat in the cat notebook to update
      * @param editCatDescriptor details to update the cat with
      */
     public UpdateCommand(Name targetName, EditCatDescriptor editCatDescriptor) {

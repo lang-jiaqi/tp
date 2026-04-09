@@ -6,12 +6,13 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 
 /**
- * Reverses the most recently executed command that modified the cat list.
+ * Reverses the most recently executed undoable command that modified the cat list.
  *
  * <p>Only the following commands are undoable: {@code add}, {@code delete}, {@code update},
  * and {@code attach}. Commands that only read data ({@code list}, {@code find}, {@code help})
- * or are system-level ({@code clear}, {@code export}) are not undoable. Calling {@code undo}
- * immediately after another {@code undo} has no effect.</p>
+ * or are system-level ({@code clear}, {@code export}) are not undoable. Read-only commands
+ * do not affect the undo state, so undo remains available across them. Attempting to undo
+ * when there is no saved state returns a "nothing to undo" message.</p>
  */
 public class UndoCommand extends Command {
 
@@ -22,8 +23,8 @@ public class UndoCommand extends Command {
 
     /**
      * Executes the undo command by restoring the address book to the state before the most recent
-     * undoable command. If there is no saved state (e.g. the last command was not undoable, or no
-     * command has been run yet), returns a message indicating nothing was undone.
+     * undoable command. If there is no saved state (e.g. no undoable command has been run yet, or
+     * the state was cleared by a clear command), returns a message indicating nothing was undone.
      *
      * @param model the {@code Model} which the command should operate on
      * @return a {@code CommandResult} with a success or "nothing to undo" message

@@ -101,9 +101,14 @@ public class UpdateCommandParser implements Parser<UpdateCommand> {
     }
 
     /**
-     * Parses {@code Collection<String> traits} into a {@code List<Trait>} if {@code traits} is non-empty.
-     * If {@code traits} contain only one element which is an empty string, it will be parsed into a
-     * {@code List<Trait>} containing zero traits.
+     * Parses {@code Collection<String> traits} into an {@code Optional<List<Trait>>}.
+     * Returns {@code Optional.empty()} if the input collection is empty (no {@code t/} prefix given).
+     * If the input contains only one element which is an empty string ({@code t/} with no value),
+     * returns an {@code Optional} containing an empty list, effectively clearing all traits.
+     *
+     * @param traits the collection of trait strings to parse
+     * @return an Optional containing the parsed trait list, or empty if no traits were specified
+     * @throws ParseException if any trait string is invalid
      */
     private Optional<List<Trait>> parseTraitsForEdit(Collection<String> traits) throws ParseException {
         assert traits != null;
