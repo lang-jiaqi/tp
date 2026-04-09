@@ -1,0 +1,51 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant "e:ExitCommand" as ExitCommand LOGIC_COLOR
+participant "r:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute("exit")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("exit")
+activate AddressBookParser
+
+create ExitCommand
+AddressBookParser -> ExitCommand
+activate ExitCommand
+
+ExitCommand --> AddressBookParser
+deactivate ExitCommand
+
+AddressBookParser --> LogicManager : e
+deactivate AddressBookParser
+
+LogicManager -> ExitCommand : execute(m)
+activate ExitCommand
+
+note right of ExitCommand : No model mutation.
+
+create CommandResult
+ExitCommand -> CommandResult : new(..., showHelp=false, exit=true)
+activate CommandResult
+
+CommandResult --> ExitCommand
+deactivate CommandResult
+
+ExitCommand --> LogicManager : r
+deactivate ExitCommand
+
+note right of LogicManager : Application exits when\nCommandResult#isExit()
+
+[<--LogicManager
+deactivate LogicManager
+@enduml

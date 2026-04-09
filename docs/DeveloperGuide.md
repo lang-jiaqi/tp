@@ -259,7 +259,58 @@ The `delete` command works as follows:
 
 ### Update feature
 
+The `update` command allows users to change an existing cat’s name, traits, location, or health status. The cat is identified either by **index** (position in the **currently displayed** list) or by **name** (matched against the full cat list). It is implemented via `UpdateCommand`, which extends `Command`, and `UpdateCommandParser`, which parses the user’s input.
+
+**Format:** `update CAT_NAME [n/NAME] [t/TRAIT]... [l/LOCATION] [h/HEALTH_STATUS]` **or** `update INDEX [n/NAME] [t/TRAIT]... [l/LOCATION] [h/HEALTH_STATUS]`
+
+* At least one of `n/`, `t/`, `l/`, or `h/` must be present; otherwise a `ParseException` is thrown with `UpdateCommand.MESSAGE_NOT_EDITED`.
+* `n/`, `t/`, `l/`, and `h/` are **case-insensitive** for the `update` command only (e.g. `N/` and `n/` are treated the same). This is done in `UpdateCommandParser#normalizeUpdatePrefixes` before tokenization.
+* Duplicate `n/`, `l/`, or `h/` prefixes in one command are rejected via `ArgumentMultimap#verifyNoDuplicatePrefixesFor`.
+* Multiple `t/TRAIT` prefixes are allowed (subject to the usual cap of three traits and no duplicates within the parsed list).
+* Supplying `t/` **replaces** the cat’s entire trait list with the traits given in that command. To keep existing traits, the user must include them again alongside any new ones. A lone `t/` with no value clears all traits (parsed as an empty trait list).
+* If the target is specified by **name**, lookup is **case-insensitive** (`equalsIgnoreCase` on the full name). If no cat matches, a `CommandException` is thrown with `UpdateCommand.MESSAGE_INVALID_CAT_NAME`.
+* If the target is specified by **index**, it refers to the **filtered** list (`Model#getFilteredCatList()`). An out-of-bounds index results in `Messages.MESSAGE_INVALID_CAT_DISPLAYED_INDEX`.
+* After applying edits, if the updated cat would duplicate another cat’s identity (same name as a different entry), `Model#hasCat` causes a `CommandException` with `UpdateCommand.MESSAGE_DUPLICATE_CAT`.
+
+The following sequence diagram shows how an update operation is carried out:
+
+![UpdateSequenceDiagram](images/UpdateSequenceDiagram.png)
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `UpdateCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+</div>
+
+The `update` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` identifies the `update` keyword and creates an `UpdateCommandParser`, which normalizes prefix casing, tokenizes arguments, and parses the preamble as either an index or a valid `Name`, together with an `EditCatDescriptor` for the fields to change.
+3. `LogicManager` calls `UpdateCommand#execute(model)`.
+4. `UpdateCommand` resolves the cat to edit from the filtered list (by index) or from the address book’s full cat list (by name), then builds an updated `Cat` via `createEditedCat`, merging descriptor fields with the existing cat.
+5. Duplicate-name checks and `Model#setCat` are applied; the filtered list is reset to show all cats (`PREDICATE_SHOW_ALL_CATS`).
+6. A `CommandResult` is returned with a success message.
+
 ### Find feature
+
+The `find` command updates which cats are shown in the UI by applying a `CatContainsKeywordsPredicate` over the address book. It is implemented via `FindCommand` and `FindCommandParser`.
+
+**Format:** `find [n/NAME]... [l/LOCATION]... [t/TRAIT]... [h/HEALTH_STATUS]...` — at least one of `n/`, `l/`, `t/`, or `h/` must be present, and there must be **no preamble** (anything before the first prefix causes a parse error).
+
+* `FindCommandParser` normalizes `n/t/l/h` prefix casing (case-insensitive), then tokenizes and validates keywords (non-empty, single token per value).
+* `FindCommand#execute` calls `Model#updateFilteredCatList(predicate)` with a `CatContainsKeywordsPredicate`. If the filtered list is empty, `FindCommand.MESSAGE_NO_MATCH` is returned; otherwise an overview message is shown.
+
+The following sequence diagram shows how a find operation is carried out:
+
+![FindSequenceDiagram](images/FindSequenceDiagram.png)
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `FindCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+</div>
+
+The `find` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` identifies the `find` keyword and creates a `FindCommandParser`, which parses prefixed keywords into a `CatContainsKeywordsPredicate` wrapped in a `FindCommand`.
+3. `LogicManager` calls `FindCommand#execute(model)`.
+4. `FindCommand` updates the filtered cat list via `Model#updateFilteredCatList(predicate)`.
+5. A `CommandResult` is returned (either a “no match” message or a listed-cats overview).
 
 ### Export feature
 
@@ -304,6 +355,36 @@ Did you just mean: list
 4. The error message is displayed to the user; no state change occurs.
 
 If the user types exactly `list` (no arguments), `arguments` is an empty string, the check passes, and `ListCommand` is returned and executed normally.
+
+### Help feature
+
+The `help` command shows usage information by returning a `CommandResult` that signals the UI to open the help window. It is implemented via `HelpCommand`, which extends `Command`. There is no dedicated parser — `AddressBookParser` instantiates `HelpCommand` directly when the user types `help`.
+
+The following sequence diagram shows how the help command is handled:
+
+![HelpSequenceDiagram](images/HelpSequenceDiagram.png)
+
+The `help` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` creates a `HelpCommand` with no arguments.
+3. `LogicManager` calls `HelpCommand#execute(model)` (the model is not modified).
+4. A `CommandResult` is returned with `showHelp` set to true; the UI then opens the help window.
+
+### Exit feature
+
+The `exit` command shuts down the application. It is implemented via `ExitCommand`, which extends `Command`. There is no dedicated parser — `AddressBookParser` instantiates `ExitCommand` directly when the user types `exit`.
+
+The following sequence diagram shows how the exit command is handled:
+
+![ExitSequenceDiagram](images/ExitSequenceDiagram.png)
+
+The `exit` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` creates an `ExitCommand` with no arguments.
+3. `LogicManager` calls `ExitCommand#execute(model)` (the model is not modified).
+4. A `CommandResult` is returned with `exit` set to true; the UI then terminates the application.
 
 ### Undo/redo feature
 

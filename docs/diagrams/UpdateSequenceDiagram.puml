@@ -1,0 +1,126 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":UpdateCommandParser" as UpdateCommandParser LOGIC_COLOR
+participant "u:UpdateCommand" as UpdateCommand LOGIC_COLOR
+participant "r:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+end box
+
+box Storage STORAGE_COLOR_T1
+participant "s:Storage" as Storage STORAGE_COLOR
+end box
+
+[-> LogicManager : execute("update 1 l/PGPR")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("update 1 l/PGPR")
+activate AddressBookParser
+
+create UpdateCommandParser
+AddressBookParser -> UpdateCommandParser
+activate UpdateCommandParser
+
+UpdateCommandParser --> AddressBookParser
+deactivate UpdateCommandParser
+
+AddressBookParser -> UpdateCommandParser : parse("1 l/PGPR")
+activate UpdateCommandParser
+
+note right of UpdateCommandParser : Normalizes n/t/l/h prefix\ncasing, then tokenizes.
+
+create UpdateCommand
+UpdateCommandParser -> UpdateCommand
+activate UpdateCommand
+
+UpdateCommand --> UpdateCommandParser :
+deactivate UpdateCommand
+
+UpdateCommandParser --> AddressBookParser : u
+deactivate UpdateCommandParser
+'Hidden arrow to position the destroy marker below the end of the activation bar.
+UpdateCommandParser -[hidden]-> AddressBookParser
+destroy UpdateCommandParser
+
+AddressBookParser --> LogicManager : u
+deactivate AddressBookParser
+
+LogicManager -> Model : saveUndoState()
+activate Model
+
+Model --> LogicManager
+deactivate Model
+
+LogicManager -> UpdateCommand : execute(m)
+activate UpdateCommand
+
+alt index != null
+
+    UpdateCommand -> Model : getFilteredCatList()
+    activate Model
+
+    Model --> UpdateCommand : lastShownList
+    deactivate Model
+
+    note right of UpdateCommand : Get cat from lastShownList\nby index. Throw\nCommandException if\nindex out of bounds.
+
+else targetName != null
+
+    UpdateCommand -> Model : getAddressBook()
+    activate Model
+
+    Model --> UpdateCommand : addressBook
+    deactivate Model
+
+    note right of UpdateCommand : Find cat by name in\naddressBook.getCatList()\n(case-insensitive).\nThrow CommandException\nif not found.
+
+end
+
+note right of UpdateCommand : createEditedCat(...)\nmerges EditCatDescriptor\nwith existing cat.
+
+UpdateCommand -> Model : hasCat(editedCat)
+activate Model
+
+Model --> UpdateCommand
+deactivate Model
+
+note right of UpdateCommand : If duplicate identity,\nthrow CommandException.
+
+UpdateCommand -> Model : setCat(catToEdit, editedCat)
+activate Model
+
+Model --> UpdateCommand
+deactivate Model
+
+UpdateCommand -> Model : updateFilteredCatList(show all cats)
+activate Model
+
+Model --> UpdateCommand
+deactivate Model
+
+create CommandResult
+UpdateCommand -> CommandResult
+activate CommandResult
+
+CommandResult --> UpdateCommand
+deactivate CommandResult
+
+UpdateCommand --> LogicManager : r
+deactivate UpdateCommand
+
+LogicManager -> Storage : saveAddressBook(addressBook)
+activate Storage
+
+Storage --> LogicManager
+deactivate Storage
+
+[<--LogicManager
+deactivate LogicManager
+@enduml
