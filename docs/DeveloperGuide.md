@@ -3,8 +3,7 @@ layout: page
 title: Developer Guide
 ---
 * Table of Contents
-  <!-- TOC -->
-
+<!-- TOC -->
   * [**Acknowledgements**](#acknowledgements)
   * [**Setting up, getting started**](#setting-up-getting-started)
   * [**Design**](#design)
@@ -15,9 +14,17 @@ title: Developer Guide
     * [Storage component](#storage-component)
     * [Common classes](#common-classes)
   * [**Implementation**](#implementation)
+    * [Add feature](#add-feature)
+    * [Attach feature](#attach-feature)
+    * [Delete feature](#delete-feature)
+    * [Update feature](#update-feature)
+    * [Find feature](#find-feature)
     * [Export feature](#export-feature)
-    * [\[Proposed\] Undo/redo feature](#proposed-undoredo-feature)
-      * [Proposed Implementation](#proposed-implementation)
+    * [Clear feature](#clear-feature)
+    * [List feature](#list-feature)
+    * [Help feature](#help-feature)
+    * [Exit feature](#exit-feature)
+    * [Undo/redo feature](#undoredo-feature)
       * [Design considerations:](#design-considerations)
     * [\[Proposed\] Data archiving](#proposed-data-archiving)
   * [**Documentation, logging, testing, configuration, dev-ops**](#documentation-logging-testing-configuration-dev-ops)
@@ -25,7 +32,7 @@ title: Developer Guide
     * [Product scope](#product-scope)
     * [User stories](#user-stories)
     * [Use cases](#use-cases)
-  * [**Non-Functional Requirements**](#non-functional-requirements)
+  * [Non-Functional Requirements](#non-functional-requirements)
     * [Compatibility](#compatibility)
     * [Performance](#performance)
     * [Usability](#usability)
@@ -34,10 +41,21 @@ title: Developer Guide
     * [Portability](#portability)
     * [Glossary](#glossary)
   * [**Appendix: Instructions for manual testing**](#appendix-instructions-for-manual-testing)
-    * [Launch and shutdown](#launch-and-shutdown)
-    * [Deleting a person](#deleting-a-person)
-    * [Saving data](#saving-data)
-
+    * [Test setup](#test-setup)
+    * [Launch, shutdown, and UI state](#launch-shutdown-and-ui-state)
+    * [Command parsing and basic validation](#command-parsing-and-basic-validation)
+    * [Feature-level test cases](#feature-level-test-cases)
+      * [Add](#add)
+      * [Attach](#attach)
+      * [Update](#update)
+      * [Find and list interaction](#find-and-list-interaction)
+      * [Delete](#delete)
+      * [Export](#export)
+      * [Clear](#clear)
+      * [Help](#help)
+      * [Undo](#undo)
+    * [Data persistence and recovery tests](#data-persistence-and-recovery-tests)
+    * [Regression checklist (quick pass before release)](#regression-checklist-quick-pass-before-release)
 <!-- TOC -->
 
 ---
@@ -892,35 +910,240 @@ testers are expected to do more *exploratory* testing.
 
 </div>
 
-### Launch and shutdown
+### Test setup
+
+1. Download the latest `catpals.jar` into an empty folder.
+2. Ensure Java `17` or above is installed.
+3. Launch with `java -jar catpals.jar` from that folder.
+4. Ensure `data/addressbook.json` is created after first successful data-changing command.
+5. Keep a backup copy of `data/addressbook.json` before destructive tests (`clear`, malformed file tests).
+
+### Launch, shutdown, and UI state
 
 1. Initial launch
 
-   1. Download the jar file and copy into an empty folder
-   2. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be optimum.
-2. Saving window preferences
+   1. Run `java -jar catpals.jar`.
+   2. Expected: splash screen appears, then main window opens after pressing `Space`.
+   3. Expected: sample cat entries are shown on first run.
+2. Window preference persistence
 
-   1. Resize the window to an optimum size. Move the window to a different location. Close the window.
-   2. Re-launch the app by double-clicking the jar file.<br>
-      Expected: The most recent window size and location is retained.
-3. _{ more test cases … }_
+   1. Resize and reposition the app window.
+   2. Close and relaunch.
+   3. Expected: window size and position are restored.
+3. Keyboard navigation
 
-### Deleting a person
+   1. Use `Up` / `Down` arrows in command box.
+   2. Expected: selected cat changes and detail panel updates.
+4. Graceful exit
 
-1. Deleting a person while all persons are being shown
+   1. Run `exit`.
+   2. Expected: app closes without errors.
 
-   1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
-   2. Test case: `delete 1`<br>
-      Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message. Timestamp in the status bar is updated.
-   3. Test case: `delete 0`<br>
-      Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
-   4. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
-2. _{ more test cases … }_
+### Command parsing and basic validation
 
-### Saving data
+1. Unknown command
 
-1. Dealing with missing/corrupted data files
+   1. Test case: `foobar`
+   2. Expected: error indicating unknown command.
+2. Case-insensitive command words where supported
 
-   1. _{explain how to simulate a missing/corrupted file, and the expected behavior}_
-2. _{ more test cases … }_
+   1. Test cases: `FIND n/Bowie`, `HeLp`, `LiSt`.
+   2. Expected: command behavior matches lowercase equivalent.
+3. Extra parameters policy checks
+
+   1. Test case: `list extra`
+   2. Expected: explicit error that `list` does not take extra parameters.
+   3. Test cases: `help extra`, `clear extra`, `exit extra`
+   4. Expected: command still executes (extra text ignored).
+
+### Feature-level test cases
+
+#### Add
+
+1. Valid add
+
+   1. Test case: `add n/Brownie t/Friendly t/Orange l/Utown h/Healthy`
+   2. Expected: new cat appears in list with all fields.
+2. Required fields missing
+
+   1. Test case: `add n/Brownie l/Utown`
+   2. Expected: parse/usage error.
+3. Trait constraints
+
+   1. Test case: more than 3 traits.
+   2. Expected: validation error.
+   3. Test case: duplicate trait values.
+   4. Expected: validation error.
+4. Duplicate identity
+
+   1. Add a cat, then add another with same name.
+   2. Expected: duplicate-cat rejection.
+
+#### Attach
+
+1. Attach by index
+
+   1. Test case: `attach 1 images/bowie.png`
+   2. Expected: selected cat displays image (if path exists).
+2. Attach by name
+
+   1. Test case: `attach Bowie images/bowie.png`
+   2. Expected: matching cat gets image.
+3. Invalid path
+
+   1. Test case: `attach 1 images/does-not-exist.png`
+   2. Expected: command fails with invalid path/file message.
+4. Invalid target
+
+   1. Test case: `attach 999 images/bowie.png`
+   2. Expected: invalid index error.
+
+#### Update
+
+1. Update by index
+
+   1. Test case: `update 1 n/Snowy t/White l/COM3 h/Vaccinated`
+   2. Expected: cat fields update after confirmation.
+2. Update by current name
+
+   1. Test case: `update Snowy h/Healthy`
+   2. Expected: correct cat updated.
+3. No fields provided
+
+   1. Test case: `update 1`
+   2. Expected: error indicating at least one field required.
+4. Trait replacement semantics
+
+   1. Test case: `update 1 t/Shy`
+   2. Expected: existing traits are replaced by only `Shy`.
+5. Cancel path
+
+   1. Run valid `update`, then cancel at confirmation dialog.
+   2. Expected: no data change.
+
+#### Find and list interaction
+
+1. Single-field find
+
+   1. Test case: `find n/Bow`
+   2. Expected: only matching names remain in filtered list.
+2. Multi-field find
+
+   1. Test case: `find l/Utown t/Friendly`
+   2. Expected: results satisfy all specified field groups.
+3. No match behavior
+
+   1. Test case: `find n/NoSuchCat`
+   2. Expected: empty list and no-match message.
+4. Reset after filtering
+
+   1. Test case: run any `find`, then `list`.
+   2. Expected: full cat list is shown again.
+
+#### Delete
+
+1. Delete by filtered index
+
+   1. Run `find` to reduce list.
+   2. Test case: `delete 1`
+   3. Expected: first cat in filtered view is removed after confirmation.
+2. Delete by name
+
+   1. Test case: `delete Brownie`
+   2. Expected: cat with that name is removed after confirmation.
+3. Invalid index/name
+
+   1. Test cases: `delete 0`, `delete 999`, `delete NoSuchCat`
+   2. Expected: command fails without data change.
+4. Cancel path
+
+   1. Run valid delete, then cancel confirmation.
+   2. Expected: no deletion occurs.
+
+#### Export
+
+1. Default export
+
+   1. Test case: `export`
+   2. Expected: `export.html` is created in app folder.
+2. Custom filename
+
+   1. Test case: `export utown cats`
+   2. Expected: `utown-cats.html` is created.
+3. Filter-aware export
+
+   1. Run `find l/Utown`, then `export subset`.
+   2. Expected: exported file contains only currently displayed cats.
+4. Invalid filename characters
+
+   1. Test case: `export bad:name`
+   2. Expected: validation error; no file created.
+
+#### Clear
+
+1. Confirm clear
+
+   1. Test case: `clear`
+   2. Confirm dialog.
+   3. Expected: all cats removed.
+2. Cancel clear
+
+   1. Test case: `clear`, then cancel.
+   2. Expected: list remains unchanged.
+
+#### Help
+
+1. Open help UI
+
+   1. Test case: `help`
+   2. Expected: help window/panel is shown.
+
+#### Undo
+
+1. Undo supported commands
+
+   1. Perform `add`, then `undo`.
+   2. Expected: added cat is reverted.
+   3. Repeat for `delete`, `update`, and `attach`.
+2. Undo after non-undoable commands
+
+   1. Run `find` then `undo`.
+   2. Expected: `Nothing to undo.`
+   3. Run `export` then `undo`.
+   4. Expected: `Nothing to undo.`
+   5. Run `clear` then `undo`.
+   6. Expected: `Nothing to undo.` (clear is not undoable in current implementation).
+3. Repeated undo
+
+   1. Run one undoable command, then `undo` twice.
+   2. Expected: first succeeds, second reports nothing to undo.
+
+### Data persistence and recovery tests
+
+1. Persistence across restart
+
+   1. Add/update/delete at least one cat.
+   2. Close app and relaunch.
+   3. Expected: latest data state is preserved.
+2. Missing data file
+
+   1. Close app.
+   2. Rename `data/addressbook.json` to `addressbook.backup.json`.
+   3. Relaunch.
+   4. Expected: app starts with empty/sample fallback state (no crash), and recreates data file when data changes are made.
+3. Corrupted data file
+
+   1. Close app.
+   2. Edit `data/addressbook.json` and intentionally break JSON syntax.
+   3. Relaunch.
+   4. Expected: app handles read failure gracefully (error log/message) and starts without crashing.
+   5. Restore backup file and relaunch to continue normal testing.
+
+### Regression checklist (quick pass before release)
+
+1. `add`, `update`, `delete`, `attach` still work end-to-end.
+2. `find` + `list` interaction remains correct.
+3. `export` output file is generated and readable in browser.
+4. `clear` confirmation works and clears all entries.
+5. `undo` behavior matches current one-level design and command support.
+6. Data survives restart and window preferences persist.
