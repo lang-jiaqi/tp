@@ -334,7 +334,23 @@ The `export` command works as follows:
 <div markdown="span" class="alert alert-info">:information_source: **Note:** `export` is not undoable — it does not modify address book data, so executing `export` clears any previously saved undo state.
 </div>
 
-### Clear feature 
+### Clear feature
+
+The `clear` command removes all cats from the address book by replacing it with an empty `AddressBook`. It is implemented via `ClearCommand`, which extends `Command`. There is no dedicated parser — `AddressBookParser` instantiates `ClearCommand` directly when the user types `clear` (any extra text after the command word is not parsed and does not affect execution).
+
+The following sequence diagram shows how a clear operation is carried out:
+
+![ClearSequenceDiagram](images/ClearSequenceDiagram.png)
+
+The `clear` command works as follows:
+
+1. `LogicManager` receives the command string and delegates parsing to `AddressBookParser`.
+2. `AddressBookParser` creates a `ClearCommand`.
+3. Before execution, `LogicManager` clears any saved undo state via `Model#clearUndoState()` (since `clear` is not treated as an undoable single-cat command in the same way as `add` / `delete` / `update` / `attach`).
+4. `LogicManager` calls `ClearCommand#execute(model)`.
+5. `ClearCommand` calls `Model#setAddressBook(new AddressBook())`, removing all cat entries.
+6. A `CommandResult` is returned with a success message.
+7. `LogicManager` persists the empty address book via `Storage#saveAddressBook`.
 
 ### List feature
 
