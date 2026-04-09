@@ -119,8 +119,7 @@ public class ParserUtil {
     /**
      * Parses a {@code String imagePath} into a {@code CatImage}.
      * Leading and trailing whitespaces will be trimmed.
-     * An empty string results in a no-image {@code CatImage}.
-     * AI-generated.
+     * An empty or blank string results in a {@code CatImage} with no image path.
      */
     public static CatImage parseImage(String imagePath) {
         requireNonNull(imagePath);
@@ -131,6 +130,7 @@ public class ParserUtil {
      * Parses a {@code String health} into a {@code Health}.
      * Leading and trailing whitespaces will be trimmed.
      * If empty, returns the default health status.
+     * Unlike other parse methods, this does not perform validation on the input value.
      */
     public static Health parseHealth(String health) {
         requireNonNull(health);

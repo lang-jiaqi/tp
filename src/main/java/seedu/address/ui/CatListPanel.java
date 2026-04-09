@@ -24,7 +24,7 @@ public class CatListPanel extends UiPart<Region> {
     private ListView<Cat> catListView;
 
     /**
-     * Creates a {@code CatListPanel} with no selection callback.
+     * Creates a {@code CatListPanel} with no-op selection and empty-list callbacks.
      */
     public CatListPanel(ObservableList<Cat> catList) {
         this(catList, cat -> { }, () -> { });

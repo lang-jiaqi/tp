@@ -35,6 +35,8 @@ public class CommandBox extends UiPart<Region> {
 
     /**
      * Handles the Enter button pressed event.
+     * Executes the entered command text and clears the input field on success or failure.
+     * If the command is cancelled (e.g. via a confirmation dialog), the input text is preserved.
      */
     @FXML
     private void handleCommandEntered() {
@@ -98,6 +100,10 @@ public class CommandBox extends UiPart<Region> {
         /**
          * Executes the command and returns the result.
          *
+         * @param commandText the raw command text entered by the user
+         * @return the result of the command execution
+         * @throws CommandException if an error occurs during command execution
+         * @throws ParseException if the command text cannot be parsed
          * @see seedu.address.logic.Logic#execute(String)
          */
         CommandResult execute(String commandText) throws CommandException, ParseException;
