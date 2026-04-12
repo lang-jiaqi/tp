@@ -73,7 +73,6 @@ public class Cat {
 
     /**
      * Returns the cat's image.
-     * AI-generated.
      */
     public CatImage getImage() {
         return image;

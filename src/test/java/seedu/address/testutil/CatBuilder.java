@@ -83,7 +83,6 @@ public class CatBuilder {
 
     /**
      * Sets the {@code CatImage} of the {@code Cat} that we are building.
-     * AI-generated.
      */
     public CatBuilder withImage(String imagePath) {
         this.image = new CatImage(imagePath);

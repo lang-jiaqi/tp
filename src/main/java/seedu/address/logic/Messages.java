@@ -34,6 +34,7 @@ public class Messages {
 
     /**
      * Formats the {@code cat} for display to the user.
+     * The output format is: {@code Name; Traits: trait1 trait2 ...; Location: loc; Health: health}.
      */
     public static String format(Cat cat) {
         final StringBuilder builder = new StringBuilder();

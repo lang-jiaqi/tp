@@ -41,14 +41,14 @@ public class CatContainsKeywordsPredicateTest {
     @Test
     public void test_catDoesNotMatchKeywords_returnsFalse() {
         // 1. Keywords match some fields but not all (Since we use AND logic)
-        // Predicate requires Name "Mochi" AND Location "Clementi"
+        // Predicate requires Name "Mochi" AND Location "FOS"
         CatContainsKeywordsPredicate predicate = new CatContainsKeywordsPredicate(
                 Collections.singletonList("Mochi"),
                 Collections.singletonList("FOS"),
                 Collections.emptyList(),
                 Collections.emptyList());
 
-        // Person only has the correct name, but wrong location
+        // Cat only has the correct name, but wrong location
         assertFalse(predicate.test(new CatBuilder().withName("Mochi").withLocation("UTown").build()));
 
         // 2. Non-matching keywords
@@ -57,7 +57,7 @@ public class CatContainsKeywordsPredicateTest {
                 Collections.emptyList(), Collections.emptyList());
         assertFalse(predicate.test(new CatBuilder().withName("Mochi").build()));
 
-        // 3. Keywords match phone or email (Health), but searching for Name
+        // 3. Keywords match a trait value, but searching for Name
         predicate = new CatContainsKeywordsPredicate(
                 Collections.singletonList("Striped"), Collections.emptyList(),
                 Collections.emptyList(), Collections.emptyList());

@@ -6,7 +6,6 @@ import static java.util.Objects.requireNonNull;
  * Represents a Cat's image file path in the cat notebook.
  * Guarantees: immutable; value is not null.
  * An empty string means no image has been assigned.
- * AI-generated.
  */
 public class CatImage {
 
@@ -26,7 +25,6 @@ public class CatImage {
 
     /**
      * Returns true if an image path has been set.
-     * AI-generated.
      */
     public boolean hasImage() {
         return !value.isEmpty();

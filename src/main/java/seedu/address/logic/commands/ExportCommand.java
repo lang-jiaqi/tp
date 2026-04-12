@@ -17,7 +17,6 @@ import seedu.address.model.cat.Trait;
 
 /**
  * Exports the currently displayed cat list to an HTML file.
- * AI-generated.
  */
 public class ExportCommand extends Command {
 
@@ -76,7 +75,6 @@ public class ExportCommand extends Command {
 
     /**
      * Builds the full HTML string for the given list of cats.
-     * AI-generated.
      */
     private String buildHtml(List<Cat> cats) {
         StringBuilder sb = new StringBuilder();
@@ -116,7 +114,6 @@ public class ExportCommand extends Command {
 
     /**
      * Builds an HTML card for a single cat.
-     * AI-generated.
      */
     private String buildCatCard(int index, Cat cat) {
         StringBuilder sb = new StringBuilder();
@@ -157,7 +154,6 @@ public class ExportCommand extends Command {
 
     /**
      * Escapes special HTML characters to prevent injection.
-     * AI-generated.
      */
     private String escapeHtml(String text) {
         return text.replace("&", "&amp;")

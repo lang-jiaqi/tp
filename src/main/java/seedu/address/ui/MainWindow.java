@@ -38,6 +38,9 @@ import seedu.address.model.cat.Cat;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final double SIDEBAR_DIVIDER_POSITION = 0.35;
+    private static final int HEADER_FONT_LOAD_SIZE = 14;
+    private static final double LAYOUT_NUDGE_PX = 1;
     private static final String UPDATE_CONFIRMATION_HEADER =
             "Are you sure you want to update this cat entry to: ";
     private static final String DELETE_CONFIRMATION_HEADER =
@@ -108,7 +111,7 @@ public class MainWindow extends UiPart<Stage> {
      */
     void fillInnerParts() {
         Font momoFont = Font.loadFont(
-                getClass().getResourceAsStream("/view/MomoSignature-Regular.ttf"), 14);
+                getClass().getResourceAsStream("/view/MomoSignature-Regular.ttf"), HEADER_FONT_LOAD_SIZE);
         if (momoFont != null) {
             String family = momoFont.getFamily();
             Platform.runLater(() -> appHeaderLabel.setStyle(
@@ -152,12 +155,12 @@ public class MainWindow extends UiPart<Stage> {
         // This works around a JavaFX timing issue where the first layout after
         // switching from the splash screen leaves some components unsized.
         Platform.runLater(() -> {
-            primaryStage.setWidth(primaryStage.getWidth() + 1);
+            primaryStage.setWidth(primaryStage.getWidth() + LAYOUT_NUDGE_PX);
             Platform.runLater(() -> {
-                primaryStage.setWidth(primaryStage.getWidth() - 1);
+                primaryStage.setWidth(primaryStage.getWidth() - LAYOUT_NUDGE_PX);
                 // Re-anchor the divider so the sidebar keeps its width even
                 // when the cat list is empty and has no content to hold it.
-                mainSplitPane.setDividerPositions(0.35);
+                mainSplitPane.setDividerPositions(SIDEBAR_DIVIDER_POSITION);
             });
         });
 

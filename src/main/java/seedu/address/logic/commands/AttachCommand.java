@@ -17,7 +17,6 @@ import seedu.address.model.cat.Name;
 
 /**
  * Attaches an image to an existing cat identified by index or name.
- * AI-generated.
  */
 public class AttachCommand extends Command {
 
@@ -46,7 +45,6 @@ public class AttachCommand extends Command {
 
     /**
      * Creates an AttachCommand to attach {@code image} to the cat at {@code index}.
-     * AI-generated.
      */
     public AttachCommand(Index index, CatImage image) {
         requireNonNull(index);
@@ -59,7 +57,6 @@ public class AttachCommand extends Command {
 
     /**
      * Creates an AttachCommand to attach {@code image} to the cat with {@code targetName}.
-     * AI-generated.
      */
     public AttachCommand(Name targetName, CatImage image) {
         requireNonNull(targetName);

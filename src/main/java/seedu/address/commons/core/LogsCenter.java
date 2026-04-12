@@ -19,7 +19,8 @@ import java.util.logging.SimpleFormatter;
  */
 public class LogsCenter {
     private static final int MAX_FILE_COUNT = 5;
-    private static final int MAX_FILE_SIZE_IN_BYTES = (int) (Math.pow(2, 20) * 5); // 5MB
+    private static final int MAX_FILE_SIZE_MB = 5;
+    private static final int MAX_FILE_SIZE_IN_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
     private static final String LOG_FILE = "addressbook.log";
     private static final Logger logger; // logger for this class
     private static Logger baseLogger; // to be used as the parent of all other loggers created by this class.

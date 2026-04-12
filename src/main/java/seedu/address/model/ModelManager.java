@@ -121,7 +121,7 @@ public class ModelManager implements Model {
 
     /**
      * Returns an unmodifiable view of the list of {@code Cat} backed by the internal list of
-     * {@code versionedAddressBook}
+     * {@code addressBook}
      */
     @Override
     public ObservableList<Cat> getFilteredCatList() {

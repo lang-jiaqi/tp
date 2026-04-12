@@ -4,7 +4,6 @@ import java.io.File;
 
 /**
  * Utility class for resolving cat image files.
- * AI-generated.
  */
 public class CatImageUtil {
 
@@ -13,7 +12,6 @@ public class CatImageUtil {
      * Uses the explicit image path if set; otherwise tries to auto-detect a matching
      * file in the images/ folder by cat name (e.g. "Bowie" matches images/Bowie.png).
      * Returns null if no image file can be found.
-     * AI-generated.
      */
     public static File resolveImageFile(Cat cat) {
         // 1. Explicit path set — use it directly

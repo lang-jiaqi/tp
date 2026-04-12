@@ -1,7 +1,7 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_CATS_LISTED_OVERVIEW;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -9,8 +9,8 @@ import static seedu.address.logic.commands.FindCommand.MESSAGE_NO_MATCH;
 import static seedu.address.testutil.TypicalCats.MOCHI;
 import static seedu.address.testutil.TypicalCats.getTypicalAddressBook;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +21,8 @@ import seedu.address.model.cat.CatContainsKeywordsPredicate;
 
 public class FindCommandTest {
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-    private Model expectedModel = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private final Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private final Model expectedModel = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
     @Test
     public void equals() {
@@ -40,27 +40,24 @@ public class FindCommandTest {
         FindCommand findSecondCommand = new FindCommand(secondPredicate);
 
         // same object -> returns true
-        assertTrue(findFirstCommand.equals(findFirstCommand));
+        assertTrue(identity(findFirstCommand).equals(findFirstCommand));
 
         // same values -> returns true
         FindCommand findFirstCommandCopy = new FindCommand(firstPredicate);
-        assertTrue(findFirstCommand.equals(findFirstCommandCopy));
+        assertEquals(findFirstCommand, findFirstCommandCopy);
 
         // different types -> returns false
-        assertFalse(findFirstCommand.equals(1));
+        assertNotEquals(1, findFirstCommand);
 
         // null -> returns false
-        assertFalse(findFirstCommand.equals(null));
+        assertNotEquals(null, findFirstCommand);
 
         // different predicate values -> returns false
-        assertFalse(findFirstCommand.equals(findSecondCommand));
+        assertNotEquals(findSecondCommand, findFirstCommand);
     }
 
     @Test
     public void execute_noMatchingKeywords() {
-        // Expected message for 0 results
-        String expectedMessage = String.format(MESSAGE_NO_MATCH, 0);
-
         // Search for a name that definitely doesn't exist in TypicalCats
         CatContainsKeywordsPredicate predicate = new CatContainsKeywordsPredicate(
                 Collections.singletonList("NonExistentCatName"),
@@ -72,34 +69,39 @@ public class FindCommandTest {
         expectedModel.updateFilteredCatList(predicate);
 
         // assertCommandSuccess verifies the command returns the expected message
-        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertCommandSuccess(command, model, MESSAGE_NO_MATCH, expectedModel);
         assertEquals(Collections.emptyList(), model.getFilteredCatList());
     }
 
     @Test
-    public void execute_multipleKeywords_multipleCatsFound() {
+    public void execute_multipleKeywords_oneCatFound() {
         String expectedMessage = String.format(MESSAGE_CATS_LISTED_OVERVIEW, 1);
-        // Search for name "Mochi" with traits "White" or "Fluffy"
+        // Search for name "Mochi" with trait "White"
         CatContainsKeywordsPredicate predicate = new CatContainsKeywordsPredicate(
-                Arrays.asList("Mochi"), Collections.emptyList(),
-                Arrays.asList("White"), Collections.emptyList());
+                List.of("Mochi"), Collections.emptyList(),
+                List.of("White"), Collections.emptyList());
 
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredCatList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
-        assertEquals(Arrays.asList(MOCHI), model.getFilteredCatList());
+        assertEquals(List.of(MOCHI), model.getFilteredCatList());
     }
 
-    /**
-     * Parses {@code userInput} into a {@code CatContainsKeywordsPredicate} for name keywords.
-     */
-    private CatContainsKeywordsPredicate preparePredicate(String userInput) {
-        return new CatContainsKeywordsPredicate(
-                Arrays.asList(userInput.trim().split("\\s+")),
+    @Test
+    public void toStringMethod() {
+        CatContainsKeywordsPredicate predicate = new CatContainsKeywordsPredicate(
+                List.of("Mochi"),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                Collections.emptyList()
-        );
+                Collections.emptyList());
+        FindCommand findCommand = new FindCommand(predicate);
+
+        String expected = FindCommand.class.getCanonicalName() + "{predicate=" + predicate + "}";
+        assertEquals(expected, findCommand.toString());
+    }
+
+    private <T> T identity(T value) {
+        return value;
     }
 
 }

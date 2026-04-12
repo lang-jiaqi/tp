@@ -92,9 +92,9 @@ public interface Model {
     void saveUndoState();
 
     /**
-     * Clears the saved undo snapshot. Should be called after executing any command that is not undoable
-     * (e.g. list, find, help, clear, export, undo itself), so that a subsequent {@code undo}
-     * will have no effect.
+     * Clears the saved undo snapshot. Should be called after executing a destructive non-reversible
+     * command (e.g. clear), so that a subsequent {@code undo} will have no effect.
+     * Read-only commands leave the undo state untouched.
      */
     void clearUndoState();
 

@@ -71,8 +71,8 @@ public class AddressBook implements ReadOnlyAddressBook {
      * Adds a cat to the address book.
      * The cat must not already exist in the address book.
      */
-    public void addCat(Cat p) {
-        cats.add(p);
+    public void addCat(Cat cat) {
+        cats.add(cat);
     }
 
     /**

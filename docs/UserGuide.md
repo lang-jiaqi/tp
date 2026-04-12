@@ -186,7 +186,7 @@ Use **↑** and **↓** to move the selection (works even when the cursor is in 
 
 ### Confirmation dialogs
 
-For **`update`**, **`delete`**, and **`clear`**, a dialog will ask you to confirm. Press **Enter** to confirm or **Esc** to cancel. No mouse required. See [Update](#updating-a-cat-profile--update) and [Delete](#deleting-a-cat--delete) for examples.
+For **`update`**, **`delete`**, **`clear`**, and **`undo`**, a dialog will ask you to confirm. Press **Enter** to confirm or **Esc** to cancel. No mouse required. See [Update](#updating-a-cat-profile--update) and [Delete](#deleting-a-cat--delete) for examples.
 
 ---
 
@@ -525,8 +525,20 @@ Format: `undo`
 | [`export`](#exporting-the-cat-list--export), [`clear`](#clearing-all-entries--clear) | No change — **not** undoable; cleared data cannot be recovered with `undo` |
 | [`undo`](#undo-the-previous-action--undo) again | No effect |
 
-**Rules:** Only **one** level of undo is supported. Exported files stay on disk even if you `undo` another command afterward.
->There will be a confirmation window for `undo` command. Please press 'enter' to confirm or `esc` to cancel.
+**Rules:**
+* `undo` reverses the most recent data-changing command (see the table above for which commands are undoable). Read-only commands like `list` and `find` do not affect the undo state, so you can still undo even after running them.
+* Only **one** level of undo is supported — once you undo, the saved state is consumed and you cannot undo again until another undoable command is run.
+* Running `clear` also clears the undo state, so a previous action cannot be recovered after a `clear`.
+* Exported files stay on disk even if you `undo` another command afterward.
+* A confirmation dialog will appear before the undo is applied, showing the exact command that will be undone. Press **Enter** to confirm or **Esc** to cancel.
+
+**Example:**
+
+1. You run `add n/Mochi t/Calico l/UTown` — Mochi is added.
+2. You run `update Mochi l/PGPR` — Mochi's location changes to PGPR.
+3. You run `find n/Mochi` — this is read-only, so the undo state is **not** affected.
+4. You run `undo` — the confirmation dialog shows: *"Are you sure you want to undo the following command? > update Mochi l/PGPR"*. After confirming, Mochi's location reverts to UTown.
+5. You run `undo` again — nothing to undo, because the saved state was already consumed in step 4.
 
 ### Exiting the program : `exit`
 

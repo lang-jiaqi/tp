@@ -13,7 +13,6 @@ import seedu.address.model.cat.Name;
  * Parses input arguments and creates a new AttachCommand object.
  * Expected format: attach INDEX IMAGE_PATH or attach CAT_NAME IMAGE_PATH
  *                  attach INDEX --reset   or attach CAT_NAME --reset
- * AI-generated.
  */
 public class AttachCommandParser implements Parser<AttachCommand> {
 
@@ -21,7 +20,6 @@ public class AttachCommandParser implements Parser<AttachCommand> {
 
     /**
      * Parses the given {@code String} of arguments and returns an AttachCommand.
-     * AI-generated.
      * @throws ParseException if the input does not conform to the expected format.
      */
     public AttachCommand parse(String args) throws ParseException {

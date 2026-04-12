@@ -27,7 +27,6 @@ public class DeleteCommand extends Command {
             + "Example: " + COMMAND_WORD + " Whiskers";
 
     public static final String MESSAGE_DELETE_CAT_SUCCESS = "Deleted Cat: %1$s";
-    // AI-generated
     public static final String MESSAGE_CAT_NOT_FOUND = "No cat with the name '%1$s' found in the displayed list.";
 
     private final Index targetIndex;
@@ -43,7 +42,6 @@ public class DeleteCommand extends Command {
 
     /**
      * Creates a DeleteCommand to delete the cat with the specified {@code targetName} (case-sensitive).
-     * AI-generated.
      */
     public DeleteCommand(Name targetName) {
         this.targetIndex = null;

@@ -24,6 +24,7 @@ public class HelpWindow extends UiPart<Stage> {
 
     private static final Logger logger = LogsCenter.getLogger(HelpWindow.class);
     private static final String FXML = "HelpWindow.fxml";
+    private static final double COPY_FEEDBACK_DURATION_SECONDS = 2;
 
     @FXML
     private Button copyButton;
@@ -111,7 +112,7 @@ public class HelpWindow extends UiPart<Stage> {
         copyButton.setText("Copied");
         copyButton.getStyleClass().add("copied");
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(COPY_FEEDBACK_DURATION_SECONDS));
         pause.setOnFinished(e -> {
             copyButton.setText("Copy URL");
             copyButton.getStyleClass().remove("copied");

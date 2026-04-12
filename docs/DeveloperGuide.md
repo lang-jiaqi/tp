@@ -24,7 +24,7 @@ title: Developer Guide
     * [List feature](#list-feature)
     * [Help feature](#help-feature)
     * [Exit feature](#exit-feature)
-    * [Undo/redo feature](#undoredo-feature)
+    * [Undo feature](#undo-feature)
       * [Design considerations:](#design-considerations)
     * [\[Proposed\] Data archiving](#proposed-data-archiving)
   * [**Documentation, logging, testing, configuration, dev-ops**](#documentation-logging-testing-configuration-dev-ops)
@@ -63,7 +63,8 @@ title: Developer Guide
 ## **Acknowledgements**
 
 * This project is based on the [AddressBook Level-3](https://se-education.org/addressbook-level3/) application.
-* Class names were renamed from AB3 defaults to CatPals-related names with the help of [Cursor](https://www.cursor.com/) to improve development efficiency(to help us focus on functional code development)
+* Class names were renamed from AB3 defaults to CatPals-related names to better match the project domain.
+* AI-assisted development tools used: [Claude Code](https://www.anthropic.com/claude-code) and [Cursor](https://www.cursor.com/).
 
 ---
 
@@ -162,7 +163,7 @@ How the `Logic` component works:
 
 1. When `Logic` is called upon to execute a command, it is passed to an `AddressBookParser` object which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
 2. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
-3. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
+3. The command can communicate with the `Model` when it is executed (e.g. to delete a cat).<br>
    Note that although this is shown as a single step in the diagram above (for simplicity), in the code it can take several interactions (between the command object and the `Model`) to achieve.
 4. The result of the command execution is encapsulated as a `CommandResult` object which is returned back from `Logic`.
 
@@ -356,7 +357,7 @@ The `export` command works as follows:
 5. An HTML string is built for each cat and written to `<filename>.html` in the application's working directory.
 6. A `CommandResult` is returned indicating how many cats were exported and the output filename.
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** `export` is not undoable — it does not modify address book data, so executing `export` clears any previously saved undo state.
+<div markdown="span" class="alert alert-info">:information_source: **Note:** `export` is not undoable — it does not modify address book data. As a read-only command, it leaves the undo state untouched, so a previous undoable command can still be undone after exporting.
 </div>
 
 ### Clear feature
@@ -427,40 +428,37 @@ The `exit` command works as follows:
 3. `LogicManager` calls `ExitCommand#execute(model)` (the model is not modified).
 4. A `CommandResult` is returned with `exit` set to true; the UI then terminates the application.
 
-### Undo/redo feature
+### Undo feature
 
-The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
+The undo mechanism uses a single-snapshot approach managed by `ModelManager`. Before executing any undoable command (`add`, `delete`, `update`, `attach`), `LogicManager` calls `Model#saveUndoState()`, which saves a deep copy of the current `AddressBook` into a `previousAddressBook` field. When the user runs `undo`, the saved snapshot is restored.
 
-* `VersionedAddressBook#commit()` — Saves the current address book state in its history.
-* `VersionedAddressBook#undo()` — Restores the previous address book state from its history.
-* `VersionedAddressBook#redo()` — Restores a previously undone address book state from its history.
+The mechanism exposes the following operations via the `Model` interface:
 
-These operations are exposed in the `Model` interface as `Model#commitAddressBook()`, `Model#undoAddressBook()` and `Model#redoAddressBook()` respectively.
+* `Model#saveUndoState()` — Saves a snapshot of the current address book before an undoable command runs.
+* `Model#clearUndoState()` — Clears the saved snapshot. Only called after `clear`, since it is a destructive non-reversible command.
+* `Model#canUndo()` — Returns true if there is a saved snapshot available.
+* `Model#undoLastChange()` — Restores the address book to the saved snapshot and clears it.
 
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
+Given below is an example usage scenario and how the undo mechanism behaves at each step.
 
-Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial address book state, and the `currentStatePointer` pointing to that single address book state.
+Step 1. The user launches the application for the first time. No undo snapshot exists yet (`previousAddressBook` is `null`, `hasUndoableState` is `false`).
 
-![UndoRedoState0](images/UndoRedoState0.png)
+Step 2. The user executes `add n/Mochi t/Calico l/UTown` to add a new cat. Before the `add` command executes, `LogicManager` calls `Model#saveUndoState()`, saving the current address book state. `LogicManager` also stores the full command text (`"add n/Mochi t/Calico l/UTown"`) for use in the undo confirmation dialog.
 
-Step 2. The user executes `delete 5` command to delete the 5th person in the address book. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the address book after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted address book state.
+Step 3. The user executes `update Mochi l/PGPR` to update the cat's location. Before the `update` command executes, `LogicManager` calls `Model#saveUndoState()` again, overwriting the previous snapshot with the current state (post-add). The stored command text is updated to `"update Mochi l/PGPR"`.
 
-![UndoRedoState1](images/UndoRedoState1.png)
-
-Step 3. The user executes `add n/David t/Tabby l/Utown …` to add a new cat. The `add` command also calls `Model#commitAddressBook()`, causing another modified address book state to be saved into the `addressBookStateList`.
-
-![UndoRedoState2](images/UndoRedoState2.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If a command fails its execution, it will not call `Model#commitAddressBook()`, so the address book state will not be saved into the `addressBookStateList`.
+<div markdown="span" class="alert alert-info">:information_source: **Note:** If a command fails its execution, the snapshot was already saved but the address book was not modified, so the snapshot simply reflects the unchanged state. Only one level of undo is supported — the most recent undoable command overwrites any previous snapshot.
 
 </div>
 
-Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous address book state, and restores the address book to that state.
+Step 4. The user now decides that updating the location was a mistake, and executes the `undo` command.
 
-![UndoRedoState3](images/UndoRedoState3.png)
+1. `MainWindow` checks `Logic#canUndo()` to see if a snapshot exists.
+2. Since a snapshot exists, `MainWindow` shows a confirmation dialog displaying the last undoable command: *"Are you sure you want to undo the following command? > update Mochi l/PGPR"*.
+3. If the user confirms, `MainWindow` calls `Logic#executeCommand(undoCommand)`.
+4. `UndoCommand#execute()` calls `Model#undoLastChange()`, which restores the address book to the snapshot (post-add state) and clears the snapshot.
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index 0, pointing to the initial AddressBook state, then there are no previous AddressBook states to restore. The `undo` command uses `Model#canUndoAddressBook()` to check if this is the case. If so, it will return an error to the user rather
-than attempting to perform the undo.
+<div markdown="span" class="alert alert-info">:information_source: **Note:** If there is no saved snapshot (e.g. no undoable command has been run yet, or the state was cleared by `clear`), `Model#canUndo()` returns `false`. `MainWindow` skips the confirmation dialog, and `UndoCommand` returns a "Nothing to undo." message.
 
 </div>
 
@@ -476,37 +474,35 @@ Similarly, how an undo operation goes through the `Model` component is shown bel
 
 ![UndoSequenceDiagram](images/UndoSequenceDiagram-Model.png)
 
-The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the address book to that state.
+Step 5. The user then executes the command `list`. Read-only commands (`list`, `find`, `help`, `export`, `exit`) do not modify the address book and do not affect the undo state. If a snapshot existed before `list`, it remains available for undo afterwards.
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index `addressBookStateList.size() - 1`, pointing to the latest address book state, then there are no undone AddressBook states to restore. The `redo` command uses `Model#canRedoAddressBook()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
+Step 6. The user executes `clear`. Since `clear` is a destructive non-reversible command, `LogicManager` calls `Model#clearUndoState()` to discard any saved snapshot. The user cannot undo a `clear`.
 
-</div>
+#### Undo state behaviour summary
 
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the address book, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
-
-![UndoRedoState4](images/UndoRedoState4.png)
-
-Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all address book states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David t/Tabby l/Utown …` command. This is the behavior that most modern desktop applications follow.
-
-![UndoRedoState5](images/UndoRedoState5.png)
-
-The following activity diagram summarizes what happens when a user executes a new command:
-
-<img src="images/CommitActivityDiagram.png" width="250" />
+| Command type | Examples | Effect on undo state |
+|---|---|---|
+| Undoable | `add`, `delete`, `update`, `attach` | Saves a new snapshot (overwrites any previous) |
+| Destructive non-reversible | `clear` | Clears the snapshot |
+| Read-only | `list`, `find`, `help`, `export`, `exit`, `undo` | No effect — snapshot is preserved |
 
 #### Design considerations:
 
-**Aspect: How undo & redo executes:**
+**Aspect: How undo executes:**
 
-* **Alternative 1 (current choice):** Saves the entire address book.
+* **Alternative 1 (current choice):** Saves the entire address book as a single snapshot.
 
-  * Pros: Easy to implement.
-  * Cons: May have performance issues in terms of memory usage.
-* **Alternative 2:** Individual command knows how to undo/redo by
+  * Pros: Easy to implement. One level of undo is sufficient for most use cases.
+  * Cons: May have performance issues in terms of memory usage for very large data sets. Only supports one level of undo.
+* **Alternative 2:** Individual command knows how to undo by
   itself.
 
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
-  * Cons: We must ensure that the implementation of each individual command are correct.
+  * Pros: Will use less memory (e.g. for `delete`, just save the cat being deleted). Could support multi-level undo.
+  * Cons: We must ensure that the implementation of each individual command is correct.
+
+### \[Proposed\] Data archiving
+
+_{Explain here how the data archiving feature will be implemented}_
 
 ---
 
@@ -770,22 +766,27 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
 
 **MSS**
 
-1. User requests to undo the previous command
-2. CatPals reverts the last change made to the notebook
-3. CatPals shows a success message confirming the restoration
+1. User requests to undo the previous command.
+2. CatPals shows a confirmation dialog displaying the command that will be undone.
+3. User confirms the undo.
+4. CatPals reverts the last change made to the notebook.
+5. CatPals shows a success message confirming the restoration.
 
    Use case ends.
 
 **Extensions**
 
-* 1a. There is no previous command to undo.
+* 1a. There is no saved undo state (no undoable command has been run yet, or the state was cleared by `clear`).
 
-  * 1a1. CatPals shows an error message: "No more commands to undo!".
+  * 1a1. CatPals shows a message: "Nothing to undo."
 
     Use case ends.
-* 1b. The last command was a "Find" or "List" command (no state change).
+* 1b. Read-only commands (`list`, `find`, `help`, `export`) were run after the last undoable command.
 
-  * 1b1. CatPals shows an error message: "Last command did not change data; nothing to undo.".
+  * 1b1. The undo state is preserved across read-only commands, so the user can still undo the last undoable command. Flow continues at step 2.
+* 3a. User cancels the confirmation dialog.
+
+  * 3a1. The undo is not performed. No state change occurs.
 
     Use case ends.
 
@@ -1106,20 +1107,30 @@ testers are expected to do more *exploratory* testing.
 1. Undo supported commands
 
    1. Perform `add`, then `undo`.
-   2. Expected: added cat is reverted.
+   2. Expected: confirmation dialog appears showing the full `add` command. After confirming, added cat is reverted.
    3. Repeat for `delete`, `update`, and `attach`.
-2. Undo after non-undoable commands
+2. Undo after read-only commands (state preserved)
 
-   1. Run `find` then `undo`.
+   1. Run `add`, then `find`, then `undo`.
+   2. Expected: undo still works — the `add` is reverted because read-only commands preserve the undo state.
+   3. Run `add`, then `list`, then `undo`.
+   4. Expected: undo still works — the `add` is reverted.
+3. Undo after `clear` (state cleared)
+
+   1. Run `add`, then `clear`, then `undo`.
+   2. Expected: `Nothing to undo.` (`clear` clears the undo state).
+4. Undo with no prior undoable command
+
+   1. Launch app fresh, then `undo`.
    2. Expected: `Nothing to undo.`
-   3. Run `export` then `undo`.
-   4. Expected: `Nothing to undo.`
-   5. Run `clear` then `undo`.
-   6. Expected: `Nothing to undo.` (clear is not undoable in current implementation).
-3. Repeated undo
+5. Repeated undo
 
    1. Run one undoable command, then `undo` twice.
-   2. Expected: first succeeds, second reports nothing to undo.
+   2. Expected: first succeeds (with confirmation dialog), second reports nothing to undo.
+6. Undo confirmation cancel
+
+   1. Run `add`, then `undo`, then press Escape on the confirmation dialog.
+   2. Expected: undo is cancelled, the added cat remains.
 
 ### Data persistence and recovery tests
 
