@@ -36,6 +36,8 @@ public class AttachCommand extends Command {
     public static final String MESSAGE_RESET_SUCCESS = "Image reset for cat: %1$s";
     public static final String MESSAGE_CAT_NOT_FOUND = "No cat with the name '%1$s' found.";
     public static final String MESSAGE_FILE_NOT_FOUND = "Image file not found: %1$s";
+    public static final String MESSAGE_FILE_FORMAT_INCORRECT = "Image file does not have the correct format: %1$s. " +
+            "Please use .jpg, .png, or .jpeg file.";
 
     private final Index index;
     private final Name targetName;
@@ -96,8 +98,14 @@ public class AttachCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        if (!reset && !new File(image.value).exists()) {
-            throw new CommandException(String.format(MESSAGE_FILE_NOT_FOUND, image.value));
+        if (!reset) {
+            if (!new File(image.value).exists()) {
+                throw new CommandException(String.format(MESSAGE_FILE_NOT_FOUND, image.value));
+            }
+            String lower = image.value.toLowerCase();
+            if (!lower.endsWith(".jpg") && !lower.endsWith(".jpeg") && !lower.endsWith(".png")) {
+                throw new CommandException(String.format(MESSAGE_FILE_FORMAT_INCORRECT, image.value));
+            }
         }
 
         List<Cat> lastShownList = model.getFilteredCatList();
