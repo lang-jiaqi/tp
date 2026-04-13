@@ -751,7 +751,7 @@ MVP - `* * * *`, High (must have) - `* * *`, Medium (nice to have) - `* *`, Low 
     * 3b1a. CatPals shows an error message: "The info to be updated must not be blank!".
       Use case ends.
   * 3b2. The index is out of range (invalid index).
-    * 3b2a. CatPals shows an error message: "No such profile is found in my records. Please ensure the cat number is in the range!".
+    * 3b2a. CatPals shows an error message: "The cat index provided is invalid!".
       Use case resumes at step 2.
 * 3c. The updated status data is invalid.
 
